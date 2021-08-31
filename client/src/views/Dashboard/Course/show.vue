@@ -94,7 +94,6 @@
 								</b-card>
 							</div>
 						</div>
-						configrationconfigration
 						<div class="course-requirments py-4">
 							<h4 class="mb-3 font-weight-700">Requirements</h4>
 							<div class="requirments-content font-md">
