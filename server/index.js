@@ -28,8 +28,8 @@ require("./database/config");
 // 	console.log(req.files);
 // 	return res.json({ msg: "done" });
 // });
-const path = require("path")
-app.use(express.static(path.join(__dirname, "configrationconfigration./public/main")));
+const path = require("path");
+app.use(express.static(path.join(__dirname, "./public/main")));
 app.use("/api/v1/lectures", express.static("./public/videos/courses/lectures"));
 app.use("/api/v1/thumbnails", express.static("./public/images/courses/thumbnails"));
 
@@ -41,7 +41,7 @@ app.use("/api/v1/courses", require("./routes/courses"));
 app.use("/api/v1/courses", require("./routes/courseSections"));
 
 app.get(/.*/, (req, res) => {
-	res.sendFile(__dirname + "/public/main/index.html")
+	res.sendFile(__dirname + "/public/main/index.html");
 });
 
 app.use((err, req, res, next) => {
@@ -51,7 +51,6 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
-
 
 // const CourseSections = require("./Models/CourseSections");
 // const { Types } = require( "mongoose" );
