@@ -41,7 +41,6 @@ export default {
 
 			if (index != -1) {
 				sections[index] = section;
-				configrationconfigration;
 				state.one = { ...state.one, sections };
 			}
 		}
