@@ -46,7 +46,7 @@
 									{{ lecture.title }}
 								</span>
 								<span class="mx-2" v-else>{{ lecture.title }}</span>
-								<b-iconconfigrationconfigration
+								<b-icon
 									:icon="`chevron-${lecture.descriptionVisible ? 'up' : 'down'}`"
 									variant="dark"
 									class="c-pointer"
