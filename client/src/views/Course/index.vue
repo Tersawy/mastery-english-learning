@@ -19,7 +19,6 @@
 								</span>
 							</div>
 						</div>
-						configrationconfigration
 					</b-col>
 				</b-row>
 			</b-container>
