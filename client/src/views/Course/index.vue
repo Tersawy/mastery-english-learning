@@ -56,7 +56,7 @@
 															class="rounded-circle bg-dark p-1 c-pointer"
 															v-if="lecture.video"
 															@click="showLectureVideo(lecture)"
-														/>configration
+														/>
 														<b-icon icon="dash-circle" scale="2" variant="white" class="rounded-circle bg-dark p-1" v-else />
 													</span>
 													<span class="mx-2 text-primary c-pointer" style="text-decoration: underline">{{ lecture.title }}</span>
