@@ -7,7 +7,7 @@ let api = async (method, route, data, config, callback) => {
 
 	axios.defaults.headers.common["Authorization"] = store.state.Auth.token;
 
-	axios.defaults.baseURL = process.env.VUE_APconfigrationconfigrationP_API_URL;
+	axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 
 	callback = typeof data === "function" ? data : callback;
 
