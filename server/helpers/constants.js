@@ -1,0 +1,3 @@
+exports.COURSE_PENDING = 0,
+exports.COURSE_APPROVED = 1,
+exports.COURSE_STATUS = [this.COURSE_PENDING, this.COURSE_APPROVED]
