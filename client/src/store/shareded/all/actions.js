@@ -48,7 +48,7 @@ const show = ({ commit, state }, itemId) => {
 };
 
 const create = ({ state, commit, dispatch }, item) => {
-	return api("post", `${state.prefix}/create`, item, (err, data) => {
+	return api("post", `${state.prefix}`, item, (err, data) => {
 		if (err) {
 			commit("setErrors", err);
 			return Promise.reject(err);
