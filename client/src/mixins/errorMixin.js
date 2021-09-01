@@ -7,6 +7,9 @@ export default {
 		},
 		setGlobalSuccess(msg) {
 			showToast(msg, "success");
+		},
+		removeAllErrors() {
+			this.$store.dispatch("removeErrors");
 		}
 	}
 };
