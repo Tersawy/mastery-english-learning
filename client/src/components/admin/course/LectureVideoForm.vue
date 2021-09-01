@@ -164,6 +164,8 @@
 			resetModal() {
 				this.$v.$reset();
 
+				this.removeAllErrors();
+
 				this.video = null;
 
 				this.$emit("closed");

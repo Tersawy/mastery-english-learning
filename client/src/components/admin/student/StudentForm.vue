@@ -120,6 +120,8 @@
 			resetModal() {
 				this.$v.$reset();
 
+				this.removeAllErrors();
+
 				this.student = { username: null, fullname: null, phone: null, email: null, password: null };
 			}
 		}

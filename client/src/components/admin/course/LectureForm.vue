@@ -102,6 +102,8 @@
 			resetModal() {
 				this.$v.$reset();
 
+				this.removeAllErrors();
+
 				this.lecture = { title: null, description: null };
 			}
 		}

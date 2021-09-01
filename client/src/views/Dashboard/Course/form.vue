@@ -265,6 +265,11 @@
 
 			resetForm() {
 				this.formData = null;
+
+				this.$v.$reset();
+
+				this.removeAllErrors();
+
 				this.course = {
 					title: "",
 					short_description: "",

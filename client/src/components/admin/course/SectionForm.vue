@@ -98,6 +98,8 @@
 			resetModal() {
 				this.$v.$reset();
 
+				this.removeAllErrors();
+
 				this.section.title = null;
 
 				this.$emit("closed");
