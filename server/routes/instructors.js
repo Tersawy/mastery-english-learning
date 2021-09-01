@@ -2,14 +2,14 @@ const router = require("express").Router();
 
 const { auth, admin } = require("../middlewares/auth");
 
-const InstructoController = require("../Controllers/InstructoController");
+const InstructorController = require("../Controllers/InstructorController");
 
-router.get("/", auth, admin, InstructoController.instructors);
+router.get("/", auth, admin, InstructorController.instructors);
 
-router.post("/", auth, admin, InstructoController.create);
+router.post("/", auth, admin, InstructorController.create);
 
-router.put("/:instructorId", auth, admin, InstructoController.update);
+router.put("/:instructorId", auth, admin, InstructorController.update);
 
-router.delete("/:instructorId", auth, admin, InstructoController.remove);
+router.delete("/:instructorId", auth, admin, InstructorController.remove);
 
 module.exports = router;
