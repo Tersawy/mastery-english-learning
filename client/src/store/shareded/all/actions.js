@@ -53,7 +53,6 @@ const create = ({ state, commit, dispatch }, item) => {
 			commit("setErrors", err);
 			return Promise.reject(err);
 		}
-		dispatch("all");
 		return Promise.resolve(data);
 	});
 };
