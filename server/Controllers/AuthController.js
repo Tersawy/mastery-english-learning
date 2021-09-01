@@ -19,7 +19,7 @@ const publicKey = fs.readFileSync("jwtRS256.key.pub", "utf8");
 exports.login = async (req, res) => {
 	const { email, password } = req.body;
 
-	let user = await User.findOne({ email, deleted_at: null });
+	let user = await User.findOne({ email });
 
 	if (!user) throw { status: 401, msg: "Email or password are not valid" };
 
@@ -75,7 +75,7 @@ exports.me = (req, res) => {
 	jwt.verify(token, publicKey, JWTVerifyOptions, async (err, decoded) => {
 		if (err) return res.status(401).json({ msg: "Unauthentication" });
 
-		let userQuery = { _id: decoded.userId, deleted_at: null };
+		let userQuery = { _id: decoded.userId };
 
 		let user = await User.findOne(userQuery, { password: 0 });
 
@@ -95,7 +95,7 @@ exports.reset = (req, res) => {
 
 		const token = buffer.toString("hex");
 
-		let _user = await User.findOne({ email, deleted_at: null });
+		let _user = await User.findOne({ email });
 
 		if (!_user) throw { status: 422, errors: { email: "Email doesn't exist !" } };
 
@@ -132,7 +132,7 @@ exports.reset = (req, res) => {
 exports.newPassword = async (req, res) => {
 	const { token, password } = req.body;
 
-	let _user = await User.findOne({ remmemberToken: token, expiresToken: { $gt: Date.now() }, deleted_at: null });
+	let _user = await User.findOne({ remmemberToken: token, expiresToken: { $gt: Date.now() } });
 
 	if (!_user) throw { status: 404, msg: "Url has been expired !" };
 
@@ -152,7 +152,7 @@ exports.verifyToken = async (req, res) => {
 
 	if (!token) throw { status: 404, msg: "Url has been expired !" };
 
-	let user = await User.findOne({ remmemberToken: token, expiresToken: { $gt: Date.now() }, deleted_at: null });
+	let user = await User.findOne({ remmemberToken: token, expiresToken: { $gt: Date.now() } });
 
 	if (!user) throw { status: 404, msg: "Url has been expired !" };
 
