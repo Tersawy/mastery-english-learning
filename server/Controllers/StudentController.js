@@ -7,9 +7,13 @@ const { USER_STUDENT } = require("../helpers/constants");
 const bcrypt = require("bcrypt");
 
 exports.students = async (req, res) => {
-	const students = await User.find({ deleted_at: null, type: USER_STUDENT });
+	let students = User.find({ type: USER_STUDENT });
 
-	res.json(students);
+	let studentsCount = User.find({ type: USER_STUDENT });
+
+	let [docs, total] = await Promise.all([students, studentsCount]);
+
+	res.json({ docs, total });
 };
 
 exports.create = async (req, res) => {
