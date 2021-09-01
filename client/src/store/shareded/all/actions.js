@@ -98,12 +98,12 @@ const restore = ({ commit, state }, item) => {
 };
 
 const remove = ({ commit, state }, item) => {
-	return api("post", `${state.prefix}/${item._id}`, item, (err, data) => {
+	return api("delete", `${state.prefix}/${item._id}`, item, (err, data) => {
 		if (err) {
 			commit("setErrors", err);
 			return Promise.reject(err);
 		}
-		commit("remove", item.id);
+		commit("remove", item._id);
 		return Promise.resolve(data);
 	});
 };
