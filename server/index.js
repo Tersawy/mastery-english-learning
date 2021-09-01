@@ -40,6 +40,7 @@ app.use("/api/v1/categories", require("./routes/categories"));
 app.use("/api/v1/courses", require("./routes/courses"));
 app.use("/api/v1/courses", require("./routes/courseSections"));
 app.use("/api/v1/students", require("./routes/students"));
+app.use("/api/v1/instructors", require("./routes/instructors"));
 
 app.get(/.*/, (req, res) => {
 	res.sendFile(__dirname + "/public/main/index.html");
