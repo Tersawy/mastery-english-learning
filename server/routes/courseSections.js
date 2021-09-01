@@ -18,8 +18,25 @@ router.post("/sections/:sectionId/lectures", auth, instructorAndAdmin, CourseSec
 
 router.put("/sections/:sectionId/lectures/:lectureId", auth, instructorAndAdmin, CourseSectionController.updateLecture);
 
-router.delete("/sections/:sectionId/lectures/:lectureId", auth, instructorAndAdmin, CourseSectionController.removeLecture);
+router.delete(
+	"/sections/:sectionId/lectures/:lectureId",
+	auth,
+	instructorAndAdmin,
+	CourseSectionController.removeLecture
+);
 
-router.post("/sections/:sectionId/lectures/:lectureId/upload-video", auth, instructorAndAdmin, CourseSectionController.uploadLectureVideo);
+router.post(
+	"/sections/:sectionId/lectures/:lectureId/upload-video",
+	auth,
+	instructorAndAdmin,
+	CourseSectionController.uploadLectureVideo
+);
+
+router.post(
+	"/sections/:sectionId/lectures/:lectureId/change-video",
+	auth,
+	instructorAndAdmin,
+	CourseSectionController.changeLectureVideo
+);
 
 module.exports = router;

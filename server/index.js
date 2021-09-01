@@ -53,6 +53,14 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
 
 // const CourseSections = require("./Models/CourseSections");
+// CourseSections.findOne(
+// 	{ _id: "6127c50c545340f36b6db150" },
+// 	{ _id: 0, lectures: { $elemMatch: { _id: "612a8d4b54a32d8bfd662112" } } },
+// 	(err, res) => {
+// 		if (err) console.log("error", err);
+// 		console.log(res);
+// 	}
+// );
 // const { Types } = require( "mongoose" );
 // CourseSections.updateOne({ _id: "6127c8846a715af67aab425b" }, { $push: { lectures: { title: "Welcome Back",description: "Welcome Back" } } }).then((section) => {
 // console.log(section)

@@ -155,5 +155,18 @@ export default {
 			commit("toggleLectures", state.oneSection);
 			return Promise.resolve(data);
 		});
+	},
+
+	changeLectureVideo({ state, commit, dispatch }, { formData, config }) {
+		return api("post", `${state.prefix}/sections/${state.oneSection._id}/lectures/${state.oneLecture._id}/change-video`, formData, config, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			await dispatch("section");
+
+			commit("toggleLectures", state.oneSection);
+			return Promise.resolve(data);
+		});
 	}
 };
