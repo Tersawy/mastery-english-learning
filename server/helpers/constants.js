@@ -5,4 +5,5 @@ exports.COURSE_STATUS = [this.COURSE_PENDING, this.COURSE_APPROVED];
 exports.USER_STUDENT = 0;
 exports.USER_INSTRUCTOR = 1;
 exports.USER_ADMIN = 2;
-exports.USER_TYPES = [this.USER_STUDENT, this.USER_INSTRUCTOR, this.USER_ADMIN];
+exports.USER_OWNER = 3;
+exports.USER_TYPES = [this.USER_STUDENT, this.USER_INSTRUCTOR, this.USER_ADMIN, this.USER_OWNER];
