@@ -19,7 +19,7 @@ exports.create = async (req, res) => {
 
 	let passwordHashed = await bcrypt.hash(password, 10);
 
-	const instructor = new User({ username, fullname, phone, email, password: passwordHashed });
+	const instructor = new User({ username, fullname, phone, email, password: passwordHashed, type: USER_INSTRUCTOR });
 
 	await instructor.save();
 
