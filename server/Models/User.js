@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const { USER_STUDENT } = require("../helpers/constants");
+
 const userSchema = new Schema(
 	{
 		username: {
@@ -33,11 +35,10 @@ const userSchema = new Schema(
 			required: [true, "Email is required"],
 		},
 		password: { type: String, required: [true, "Password is required"] },
-		type: { type: Number, default: 0 } /* [ 0 ] student | [ 1 ] For instructor | [ 2 ] For Admin | [ 3 ] For Owner */,
-		deleted_at: { type: Date, default: null },
+		type: { type: Number, default: USER_STUDENT },
+		courses: { type: Array, default: [] }, // for students only
 		remmemberToken: { type: String, default: null },
 		expiresToken: { type: Date, default: Date.now },
-    deleted_at: { type: Date, default: null }
 	},
 	{ timestamps: true }
 );
