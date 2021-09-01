@@ -9,7 +9,7 @@ export default {
 			showToast(msg, "success");
 		},
 		removeAllErrors() {
-			this.$store.dispatch("removeErrors");
+			this.$store.commit(`${this.namespace}/removeErrors`);
 		}
 	}
 };
