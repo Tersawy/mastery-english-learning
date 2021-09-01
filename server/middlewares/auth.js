@@ -4,6 +4,8 @@ const User = require("../Models/User");
 
 const fs = require("fs");
 
+const { USER_ADMIN, USER_INSTRUCTOR, USER_STUDENT, USER_OWNER } = require("../helpers/constants");
+
 const publicKey = fs.readFileSync("jwtRS256.key.pub", "utf8");
 
 const permissionError = { msg: "Sorry, You Don't Have Any Permissions To Do That" };
@@ -36,28 +38,30 @@ module.exports = {
 	},
 
 	student: (req, res, next) => {
-		if (req.body.me.type != 0) return res.status(403).json(permissionError);
+		if (req.body.me.type != USER_STUDENT) return res.status(403).json(permissionError);
 		next();
 	},
 
 	instructor: (req, res, next) => {
-		if (req.body.me.type != 1) return res.status(403).json(permissionError);
+		if (req.body.me.type != USER_INSTRUCTOR) return res.status(403).json(permissionError);
 		next();
 	},
 
 	admin: (req, res, next) => {
-		if (req.body.me.type != 2) return res.status(403).json(permissionError);
+		let type = req.body.me.type;
+		if (type != USER_ADMIN && type != USER_OWNER) return res.status(403).json(permissionError);
 		next();
 	},
 
 	owner: (req, res, next) => {
-		if (req.body.me.type != 3) return res.status(403).json(permissionError);
+		if (req.body.me.type != USER_OWNER) return res.status(403).json(permissionError);
 		next();
 	},
 
 	instructorAndAdmin: (req, res, next) => {
 		let type = req.body.me.type;
-		if (type != 1 && type != 2 && type != 3) return res.status(403).json(permissionError);
+		if (type != USER_INSTRUCTOR && type != USER_ADMIN && type != USER_OWNER)
+			return res.status(403).json(permissionError);
 		next();
 	},
 };
