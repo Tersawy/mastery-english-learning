@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 exports.students = async (req, res) => {
 	let students = User.find({ type: USER_STUDENT });
 
-	let studentsCount = User.find({ type: USER_STUDENT });
+	let studentsCount = User.countDocuments({ type: USER_STUDENT });
 
 	let [docs, total] = await Promise.all([students, studentsCount]);
 
