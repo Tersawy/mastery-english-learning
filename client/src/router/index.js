@@ -73,7 +73,14 @@ const routes = [
 		name: "Students",
 		// component: require("@/views/Dashboard/Student/index").default,
 		component: () => import(/* webpackChunkName: "Students" */ "@/views/Dashboard/Student/index"),
-		meta: { dashboard: true, auth: true, only: [OWNER, ADMIN, INSTRUCTOR] }
+		meta: { dashboard: true, auth: true, only: [OWNER, ADMIN] }
+	},
+	{
+		path: "/dashboard/instructors",
+		name: "Instructors",
+		// component: require("@/views/Dashboard/Instructor/index").default,
+		component: () => import(/* webpackChunkName: "Instructors" */ "@/views/Dashboard/Instructor/index"),
+		meta: { dashboard: true, auth: true, only: [OWNER, ADMIN] }
 	}
 	// {
 	//   path: "/about",
