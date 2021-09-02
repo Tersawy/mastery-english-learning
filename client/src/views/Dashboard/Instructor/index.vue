@@ -153,22 +153,11 @@
 				this.$bvModal.show("dropdownActionModal");
 			},
 
-			async changeStatusInstructor() {
-				try {
-					await this.$store.dispatch("Instructor/changeStatus", this.instructor);
-
-					this.$nextTick(() => {
-						this.$bvModal.hide("approveFieldModal");
-						this.$bvModal.hide("dropdownActionModal");
-					});
-				} catch (err) {
-					//
-				}
-			},
-
 			async removeInstructor() {
 				try {
-					await this.$store.dispatch("Instructor/remove", this.instructor);
+					let res = await this.$store.dispatch("Instructor/remove", this.instructor);
+
+					if (res && res.msg) this.setGlobalSuccess(res.msg);
 
 					this.$nextTick(() => {
 						this.$bvModal.hide("deleteInstructorModal");

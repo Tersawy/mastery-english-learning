@@ -116,7 +116,9 @@
 
 			async removeAdmin() {
 				try {
-					await this.$store.dispatch("Admin/remove", this.admin);
+					let res = await this.$store.dispatch("Admin/remove", this.admin);
+
+					if (res && res.msg) this.setGlobalSuccess(res.msg);
 
 					this.$nextTick(() => {
 						this.$bvModal.hide("deleteAdminModal");
