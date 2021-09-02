@@ -20,7 +20,7 @@
 					{ text: "Courses", icon: "collection", path: "/dashboard/courses" },
 					{ text: "Students", icon: "people", path: "/dashboard/students" },
 					{ text: "Instructors", icon: "person-plus", path: "/dashboard/instructors" },
-					{ text: "Enrollments", icon: "diagram3", path: "/dashboard/enrollments" },
+					{ text: "Admins", icon: "diagram3", path: "/dashboard/admins" },
 					{ text: "Enroll a Student", icon: "bezier2", path: "/dashboard/enroll-student" }
 				]
 			};
