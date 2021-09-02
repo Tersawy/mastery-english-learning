@@ -48,7 +48,7 @@
 			class="bg-white shadow-sm mt-3 mb-0"
 		>
 			<template #cell(actions)="row">
-				<b-icon icon="trash" v-b-tooltip="`Delete`" scale="1.2" variant="danger" v-b-modal.deleteAdminModal></b-icon>
+				<b-icon icon="trash" v-b-tooltip="`Delete`" scale="1.2" variant="danger" @click="admin = row.item" v-b-modal.deleteAdminModal></b-icon>
 				<b-icon icon="pencil-square" v-b-tooltip="`Update`" scale="1.2" variant="success" class="mx-3" @click="editAdmin(row.item)"></b-icon>
 			</template>
 
@@ -114,31 +114,12 @@
 				this.$bvModal.show("adminForm");
 			},
 
-			showActions(admin) {
-				this.admin = admin;
-				this.$bvModal.show("dropdownActionModal");
-			},
-
-			async changeStatusAdmin() {
-				try {
-					await this.$store.dispatch("Admin/changeStatus", this.admin);
-
-					this.$nextTick(() => {
-						this.$bvModal.hide("approveFieldModal");
-						this.$bvModal.hide("dropdownActionModal");
-					});
-				} catch (err) {
-					//
-				}
-			},
-
 			async removeAdmin() {
 				try {
 					await this.$store.dispatch("Admin/remove", this.admin);
 
 					this.$nextTick(() => {
 						this.$bvModal.hide("deleteAdminModal");
-						this.$bvModal.hide("dropdownActionModal");
 					});
 				} catch (err) {
 					//
@@ -147,5 +128,3 @@
 		}
 	};
 </script>
-
-<style lang="scss" scoped></style>
