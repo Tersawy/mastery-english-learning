@@ -1,11 +1,13 @@
 const User = require("../Models/User");
 
-const { USER_ADMIN } = require("../helpers/constants");
+const { USER_ADMIN, USER_OWNER } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
 exports.admins = async (req, res) => {
-	let admins = User.find({ type: USER_ADMIN });
+	let admins = User.find({
+		$or: [{ type: USER_ADMIN }, { $and: [{ type: USER_OWNER }, { _id: { $ne: req.body.me._id } }] }],
+	});
 
 	let adminsCount = User.countDocuments({ type: USER_ADMIN });
 
