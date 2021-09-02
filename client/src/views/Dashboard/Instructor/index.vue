@@ -1,0 +1,185 @@
+<template>
+	<div class="instructors">
+		<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 mb-30px">
+			<b-breadcrumb-item to="/dashboard">
+				<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
+				Dashboard
+			</b-breadcrumb-item>
+			<b-breadcrumb-item active> Instructors </b-breadcrumb-item>
+		</b-breadcrumb>
+
+		<b-row class="mb-30px">
+			<b-col cols="4">
+				<b-form-group class="mb-0">
+					<b-input-group>
+						<b-form-input placeholder="Search in Instructors" v-model="search" />
+						<b-input-group-append>
+							<b-btn variant="blue">
+								<i class="fas fa-filter"></i>
+							</b-btn>
+						</b-input-group-append>
+					</b-input-group>
+				</b-form-group>
+			</b-col>
+			<b-col class="text-right">
+				<b-btn variant="primary" class="d-inline-flex align-items-center" @click="createInstructor">
+					<b-icon icon="plus" scale="1.3" class="mr-1"></b-icon>
+					Create
+				</b-btn>
+			</b-col>
+		</b-row>
+
+		<b-modal id="dropdownActionModal" hide-header hide-footer body-class="p-0" centered size="sm">
+			<ul class="m-0 p-0 list-unstyled">
+				<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="showCourses">
+					<b-icon icon="eye" scale="0.8"></b-icon>
+					<span class="mx-2 text-muted">Show Courses</span>
+				</b-dropdown-item>
+
+				<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="editInstructor">
+					<b-icon icon="pencil-square" scale="0.8"></b-icon>
+					<span class="mx-2 text-muted">Edit Instructor</span>
+				</b-dropdown-item>
+
+				<hr class="m-0" />
+
+				<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" v-b-modal.deleteInstructorModal>
+					<b-icon icon="trash" scale="0.8"></b-icon>
+					<span class="mx-2 text-muted">Delete Instructor</span>
+				</b-dropdown-item>
+			</ul>
+		</b-modal>
+
+		<b-table
+			show-empty
+			stacked="lg"
+			responsive
+			hover
+			sort-icon-left
+			:busy="tableIsBusy"
+			:items="items"
+			:fields="fields"
+			:current-page="1"
+			:per-page="perPage"
+			:sort-by.sync="sortBy"
+			:sort-desc.sync="sortDesc"
+			@context-changed="contextChanged"
+			:filter="search"
+			:filter-function="() => items"
+			class="bg-white shadow-sm mt-3 mb-0"
+		>
+			<template #cell(actions)="row">
+				<b-icon @click="showActions(row.item)" icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+			</template>
+
+			<template #cell(image)="row">
+				<b-avatar :src="require('@/assets/images/course.jpg')" :alt="row.value" class="shadow-sm" rounded="lg"></b-avatar>
+			</template>
+		</b-table>
+
+		<b-row class="pt-3">
+			<b-col sm="6" md="6" lg="4">
+				<div class="d-flex align-items-center">
+					<b-card body-class="d-flex align-items-center py-0 px-3" class="rounded-pill">
+						<span class="text-muted">Rows per page: </span>
+						<b-form-group class="mb-0">
+							<b-form-select v-model="perPage" :options="perPageOptions" class="bg-transparent border-0 shadow-none"></b-form-select>
+						</b-form-group>
+					</b-card>
+				</div>
+			</b-col>
+			<b-col sm="6" md="6" lg="4" class="ml-auto">
+				<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
+			</b-col>
+		</b-row>
+		<DeleteFieldModal msg="Are you sure to delete this instructor ?" @done="removeInstructor" modal-id="deleteInstructorModal" />
+		<InstructorForm />
+	</div>
+</template>
+
+<script>
+	import dataTableMixin from "@/mixins/dataTableMixin";
+	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
+	import InstructorForm from "@/components/admin/instructor/InstructorForm.vue";
+	export default {
+		mixins: [dataTableMixin],
+
+		components: { DeleteFieldModal, InstructorForm },
+
+		data() {
+			return {
+				namespace: "Instructor",
+				instructor: {},
+				fields: [
+					{ key: "image", lable: "Image", sortable: true },
+					{ key: "username", lable: "Username", sortable: true },
+					{ key: "fullname", lable: "Fullname", sortable: true },
+					{ key: "phone", lable: "Phone", sortable: true },
+					{ key: "email", lable: "Email", sortable: true },
+					{ key: "actions", lable: "Actions" }
+				]
+			};
+		},
+
+		computed: {},
+
+		methods: {
+			async showCourses() {
+				try {
+					this.$store.commit("Instructor/setOne", this.instructor);
+
+					await this.$store.dispatch("Instructor/courses");
+				} catch (err) {
+					//
+				}
+
+				this.$nextTick(() => {
+					this.$bvModal.show("instructorCourses");
+				});
+			},
+
+			createInstructor() {
+				this.$store.commit("Instructor/setOne", {});
+				this.$bvModal.show("instructorForm");
+			},
+
+			editInstructor() {
+				this.$store.commit("Instructor/setOne", this.instructor);
+				this.$bvModal.show("instructorForm");
+			},
+
+			showActions(instructor) {
+				this.instructor = instructor;
+				this.$bvModal.show("dropdownActionModal");
+			},
+
+			async changeStatusInstructor() {
+				try {
+					await this.$store.dispatch("Instructor/changeStatus", this.instructor);
+
+					this.$nextTick(() => {
+						this.$bvModal.hide("approveFieldModal");
+						this.$bvModal.hide("dropdownActionModal");
+					});
+				} catch (err) {
+					//
+				}
+			},
+
+			async removeInstructor() {
+				try {
+					await this.$store.dispatch("Instructor/remove", this.instructor);
+
+					this.$nextTick(() => {
+						this.$bvModal.hide("deleteInstructorModal");
+						this.$bvModal.hide("dropdownActionModal");
+					});
+				} catch (err) {
+					//
+				}
+			}
+		}
+	};
+</script>
+
+<style lang="scss" scoped></style>
