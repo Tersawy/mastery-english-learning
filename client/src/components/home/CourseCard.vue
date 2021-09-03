@@ -1,17 +1,25 @@
 <template>
-	<b-card img-top tag="article" :class="`mb-2 course-card ${cardIsHovered ? 'hovered' : ''}`" header-class="p-0" v-b-hover="handleCardHover">
+	<b-card
+		img-top
+		tag="article"
+		:class="`mb-2 course-card ${cardIsHovered ? 'hovered' : ''}`"
+		header-class="p-0"
+		v-b-hover="handleCardHover"
+		@click="showCourse(course)"
+	>
 		<template #header>
-			<b-card-img :src="require('@/assets/images/course.jpg')"> </b-card-img>
+			<b-card-img style="height: 200px" :src="`${thumbnailsURL}/${course.thumbnail}`"> </b-card-img>
 		</template>
 		<b-card-title>
-			<h5 class="mb-0">Card Title</h5>
+			<h5 class="mb-0 text-truncate">{{ course.title }}</h5>
 		</b-card-title>
-		<span class="text-muted font-md"> Some quick example text to build on the card title and make up the bulk of the card's content. </span>
+		<span class="text-muted font-md"> {{ course.short_description | strLength(75) }} </span>
 	</b-card>
 </template>
 
 <script>
 	export default {
+		props: ["course"],
 		data() {
 			return {
 				cardIsHovered: false
@@ -21,6 +29,9 @@
 		methods: {
 			handleCardHover(v) {
 				this.cardIsHovered = v;
+			},
+			showCourse(course) {
+				this.$router.push(`/courses/${course._id}`);
 			}
 		}
 	};
@@ -46,6 +57,7 @@
 		&.hovered {
 			box-shadow: 0 0.5rem 1rem #00000026 !important;
 			cursor: pointer;
+			transform: scale(1.03);
 			.card-header {
 				&::before {
 					opacity: 0.2;
