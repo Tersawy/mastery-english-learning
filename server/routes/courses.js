@@ -6,7 +6,7 @@ const { auth, instructorAndAdmin } = require("../middlewares/auth");
 
 router.get("/", auth, instructorAndAdmin, CourseController.all);
 
-router.get("/:courseId", auth, instructorAndAdmin, CourseController.show);
+router.get("/:courseId", CourseController.show);
 
 router.get("/:courseId/edit", auth, instructorAndAdmin, CourseController.edit);
 
