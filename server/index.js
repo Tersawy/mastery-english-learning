@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
-app.use(fileUpload({ safeFileNames: false, useTempFiles: true, uploadTimeout: 0, parseNested: true }));
+app.use(fileUpload({ useTempFiles: true, uploadTimeout: 0, parseNested: true }));
 
 require("express-async-errors");
 
@@ -42,6 +42,7 @@ app.use("/api/v1/courses", require("./routes/courseSections"));
 app.use("/api/v1/students", require("./routes/students"));
 app.use("/api/v1/instructors", require("./routes/instructors"));
 app.use("/api/v1/admins", require("./routes/admins"));
+app.use("/api/v1/pages", require("./routes/pages"));
 
 app.get(/.*/, (req, res) => {
 	res.sendFile(__dirname + "/public/main/index.html");
@@ -54,6 +55,67 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
+
+// const Category = require("./Models/Category");
+
+// let aggregation = [
+// 	{ $sort: { createdAt: -1 } },
+// 	{ $project: { "homePage.categories": 1, _id: 1, name: 1 } },
+// 	{ $limit: 1 },
+// 	{ $unwind: "$homePage.categories" },
+// 	{
+// 		$lookup: {
+// 			from: "courses",
+// 			let: { cats: "$homePage.categories" },
+// 			as: "courses",
+// 			pipeline: [
+// 				{ $match: { $expr: { $eq: ["$category", "$$cats"] }, deleted_at: null, parent: null } },
+// 				{ $sort: { studentsCount: -1 } },
+// 				{ $project: { _id: 1, title: 1, short_description: 1, thumbnail: 1 } },
+// 				{ $limit: 3 },
+// 			],
+// 		},
+// 	},
+// 	{
+// 		$lookup: {
+// 			from: "categories",
+// 			let: { cats: "$homePage.categories" },
+// 			as: "category",
+// 			pipeline: [
+// 				{ $match: { $expr: { $eq: ["$_id", "$$cats"] }, deleted_at: null, parent: null } },
+// 				{ $project: { _id: 1, name: 1 } },
+// 			],
+// 		},
+// 	},
+// 	{ $unwind: "$category" },
+// 	{
+// 		$group: { _id: { _id: "$category._id", name: "$category.name", courses: "$courses" } },
+// 	},
+// ];
+
+// const Setting = require("./Models/Setting");
+
+// Setting.aggregate(aggregation, (err, results) => {
+// 	let categories = results.map((r) => r._id);
+// 	console.log(categories);
+// });
+
+// let see = new Setting({
+// 	appName: "Mastery-English-Learning",
+// 	logoDark: "logo-dark.png",
+// 	logoLight: "logo-light.png",
+// 	homePage: {
+// 		categories: ["6126a51da0f256607f3a6aa0", "6126a51da0f256607f3a6aa1"],
+// 		headerBg: "header.jpeg",
+// 	},
+// })
+
+// see.save()
+
+// Setting.findOne({}, (err, doc) => {
+// 	if (err) return console.log("error", err);
+// 	console.log(doc);
+// }).populate("homePage.categories", "name");
 
 // const CourseSections = require("./Models/CourseSections");
 // CourseSections.findOne(
