@@ -12,7 +12,9 @@
 			</div>
 		</template>
 		<template #default>
-			<video class="video-review d-flex" controls :src="`${lecturesURL}/${lecture.video}`" ref="videoReview">Your browser does not support the video tag.</video>
+			<video class="video-review d-flex w-100" controls :src="`${lecturesURL}/${lecture.video}`" ref="videoReview">
+				Your browser does not support the video tag.
+			</video>
 		</template>
 	</b-modal>
 </template>
