@@ -80,7 +80,7 @@
 <script>
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
-	import AdminForm from "@/components/admin/admin/AdminForm.vue";
+	import AdminForm from "@/components/dashboard/admin/AdminForm.vue";
 	export default {
 		mixins: [dataTableMixin],
 

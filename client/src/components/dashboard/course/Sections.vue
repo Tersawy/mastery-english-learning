@@ -83,9 +83,9 @@
 </template>
 
 <script>
-	import LectureForm from "@/components/admin/course/LectureForm.vue";
-	import LectureVideo from "@/components/admin/course/LectureVideo.vue";
-	import LectureVideoForm from "@/components/admin/course/LectureVideoForm.vue";
+	import LectureForm from "@/components/dashboard/course/LectureForm.vue";
+	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
+	import LectureVideoForm from "@/components/dashboard/course/LectureVideoForm.vue";
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
 	export default {
 		components: { LectureForm, LectureVideo, LectureVideoForm, DeleteFieldModal },

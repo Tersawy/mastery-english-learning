@@ -121,7 +121,7 @@
 
 <script>
 	import { secondsToHms } from "@/helpers/functions";
-	import LectureVideo from "@/components/admin/course/LectureVideo.vue";
+	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
 	export default {
 		components: { LectureVideo },
 		data() {

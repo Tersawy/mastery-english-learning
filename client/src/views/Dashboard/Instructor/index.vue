@@ -100,7 +100,7 @@
 <script>
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
-	import InstructorForm from "@/components/admin/instructor/InstructorForm.vue";
+	import InstructorForm from "@/components/dashboard/instructor/InstructorForm.vue";
 	export default {
 		mixins: [dataTableMixin],
 

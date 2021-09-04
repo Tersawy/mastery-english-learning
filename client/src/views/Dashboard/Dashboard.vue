@@ -68,7 +68,7 @@
 </template>
 
 <script>
-	import ReportCard from "@/components/ReportCard";
+	import ReportCard from "@/components/dashboard/ReportCard";
 	export default {
 		components: { ReportCard },
 		data() {

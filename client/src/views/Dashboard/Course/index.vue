@@ -136,8 +136,8 @@
 </template>
 
 <script>
-	import Sections from "@/components/admin/course/Sections";
-	import SectionForm from "@/components/admin/course/SectionForm";
+	import Sections from "@/components/dashboard/course/Sections";
+	import SectionForm from "@/components/dashboard/course/SectionForm";
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	import ApproveFieldModal from "@/components/ApproveFieldModal.vue";
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
