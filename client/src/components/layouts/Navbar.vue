@@ -1,7 +1,7 @@
 <template>
 	<b-navbar toggleable="xl" variant="light" style="height: 65px">
 		<b-container fluid>
-			<b-navbar-brand href="#">
+			<b-navbar-brand to="/">
 				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
 			</b-navbar-brand>
 
