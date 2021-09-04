@@ -1,30 +1,45 @@
 const Category = require("../Models/Category");
 
 exports.all = async (req, res) => {
-	Promise.all([Category.find(), Category.countDocuments()]).then(([categories, total]) => {
-		return res.json({ docs: categories, total });
-	});
+	let query = { deleted_at: null };
+
+	let projection = "_id name";
+
+	let categories = Category.find(query, projection);
+
+	let categoriesCount = Category.countDocuments(query);
+
+	let [docs, total] = await Promise.all([categories, categoriesCount]);
+
+	return res.json({ docs, total });
 };
 
 exports.options = async (req, res) => {
-	let categories = await Category.find({}, "_id name");
+	let categories = await Category.find({ deleted_at: null }, "_id name");
 
 	return res.json({ data: categories });
 };
 
 exports.create = async (req, res) => {
-	let Category = new Category({});
-	// await Category.save();
-	const err = Category.validateSync();
-	return res.json(err);
+	let language = new Category({ name: req.body.name });
+
+	await language.save();
+
+	res.json({ msg: "Category has been created successfully" });
 };
 
-exports.show = (req, res) => {};
+exports.update = async (req, res) => {
+	let { categoryId } = req.params;
 
-exports.edit = (req, res) => {};
+	await Category.updateOne({ _id: categoryId, deleted_at: null }, { name: req.body.name });
 
-exports.update = (req, res) => {};
+	res.json({ msg: "Category has been updated successfully" });
+};
 
-exports.approve = (req, res) => {};
+exports.remove = async (req, res) => {
+	let { categoryId } = req.params;
 
-exports.remove = (req, res) => {};
+	await Category.updateOne({ _id: categoryId }, { deleted_at: Date.now() });
+
+	res.json({ msg: "Category has been deleted successfully" });
+};
