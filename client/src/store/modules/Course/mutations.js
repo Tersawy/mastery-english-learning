@@ -1,4 +1,18 @@
 export default {
+	setOne: (state, data) => {
+		let sections = data.sections.map((section) => {
+			section.lecturesVisible = false;
+
+			section.lectures = section.lectures.map((l) => ({ ...l, descriptionVisible: false }));
+
+			return section;
+		});
+
+		data.sections = sections;
+
+		state.one = data;
+	},
+
 	setSections: (state, data) => {
 		state.one = { ...state.one, sections: data.docs };
 	},
