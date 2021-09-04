@@ -1,5 +1,9 @@
 import { showToast } from "@/helpers/utils";
 
+export const setHomePage = (state, data) => {
+	state.pages.home = data;
+};
+
 export const setSuccess = (_state, message) => showToast(message);
 
 export const setErrors = (state, { message, errors }) => {

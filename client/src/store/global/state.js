@@ -6,7 +6,10 @@ const state = {
 		{ text: COURSE_STATUS_STR[COURSE_APPROVED], value: COURSE_APPROVED },
 		{ text: COURSE_STATUS_STR[COURSE_PENDING], value: COURSE_PENDING }
 	],
-	uploads: []
+	uploads: [],
+	pages: {
+		home: {}
+	}
 };
 
 export default state;
