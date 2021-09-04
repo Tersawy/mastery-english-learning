@@ -57,13 +57,12 @@ const create = ({ state, commit }, item) => {
 	});
 };
 
-const update = ({ state, commit, dispatch }, item) => {
+const update = ({ state, commit }, item) => {
 	return api("put", `${state.prefix}/${item._id}`, item, (err, data) => {
 		if (err) {
 			commit("setErrors", err);
 			return Promise.reject(err);
 		}
-		dispatch("all");
 		return Promise.resolve(data);
 	});
 };
