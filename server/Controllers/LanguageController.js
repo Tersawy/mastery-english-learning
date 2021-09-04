@@ -1,30 +1,45 @@
 const Language = require("../Models/Language");
 
 exports.all = async (req, res) => {
-	Promise.all([Language.find(), Language.countDocuments()]).then(([languages, total]) => {
-		return res.json({ docs: languages, total });
-	});
+	let query = { deleted_at: null };
+
+	let projection = "_id name";
+
+	let languages = Language.find(query, projection);
+
+	let languagesCount = Language.countDocuments(query);
+
+	let [docs, total] = await Promise.all([languages, languagesCount]);
+
+	return res.json({ docs, total });
 };
 
 exports.options = async (req, res) => {
-	let languages = await Language.find({}, "_id name");
+	let languages = await Language.find({ deleted_at: null }, "_id name");
 
 	return res.json({ data: languages });
 };
 
 exports.create = async (req, res) => {
-	let Language = new Language({});
-	// await Language.save();
-	const err = Language.validateSync();
-	return res.json(err);
+	let language = new Language({ name: req.body.name });
+
+	await language.save();
+
+	res.json({ msg: "Language has been created successfully" });
 };
 
-exports.show = (req, res) => {};
+exports.update = async (req, res) => {
+	let { languageId } = req.params;
 
-exports.edit = (req, res) => {};
+	await Language.updateOne({ _id: languageId, deleted_at: null }, { name: req.body.name });
 
-exports.update = (req, res) => {};
+	res.json({ msg: "Language has been updated successfully" });
+};
 
-exports.approve = (req, res) => {};
+exports.remove = async (req, res) => {
+	let { languageId } = req.params;
 
-exports.remove = (req, res) => {};
+	await Language.updateOne({ _id: languageId }, { deleted_at: Date.now() });
+
+	res.json({ msg: "Language has been deleted successfully" });
+};
