@@ -8,4 +8,8 @@ router.get("/options", LevelController.options);
 
 router.post("/", LevelController.create);
 
+router.put("/:levelId", LevelController.update);
+
+router.delete("/:levelId", LevelController.remove);
+
 module.exports = router;
