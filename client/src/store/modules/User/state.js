@@ -1,3 +1,7 @@
 export default {
-	prefix: "user"
+	prefix: "user",
+	all: { docs: [], total: 0 },
+	one: {},
+	options: [],
+	errors: {}
 };

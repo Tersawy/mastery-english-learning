@@ -1,3 +1,7 @@
 export default {
-	prefix: "languages"
+	prefix: "languages",
+	all: { docs: [], total: 0 },
+	one: {},
+	options: [],
+	errors: {}
 };
