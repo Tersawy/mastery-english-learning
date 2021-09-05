@@ -10,7 +10,7 @@
 							<p class="subtitle">{{ course.short_description }}</p>
 							<div class="rating-row">
 								<span class="course-badge best-seller">beginner</span>
-								<span class="enrolled-num"> {{ course.sconfigrationtudentsCount }} Students enrolled </span>
+								<span class="enrolled-num"> {{ course.studentsCount }} Students enrolled </span>
 							</div>
 							<div class="created-row">
 								<span class="last-updated-date">Last updated {{ course.updatedAt | date }}</span>
@@ -107,7 +107,8 @@
 							</div>
 							<div class="course-sidebar-text-box">
 								<div class="buy-btns">
-									<router-link to="/login" class="btn btn-enroll">Enroll</router-link>
+									<b-btn @click="enroll" class="btn-enroll" v-if="!isAuth || isStudent">Enroll</b-btn>
+									<b-btn class="btn-enroll" disabled v-else>Enroll</b-btn>
 								</div>
 							</div>
 						</div>
@@ -176,7 +177,9 @@
 			showLectureVideo(lecture) {
 				this.$store.commit("Course/setLecture", lecture);
 				this.$bvModal.show("lectureVideo");
-			}
+			},
+
+			enroll() {}
 		}
 	};
 </script>
@@ -264,9 +267,13 @@
 					background: transparent;
 					border-color: #505763;
 					color: #686f7a;
-					&:hover,
-					&:focus {
+					&:hover:not(:disabled),
+					&:focus:not(:disabled) {
 						background-color: #f2f3f5;
+					}
+					&:disabled {
+						background-color: #f2f3f5;
+						cursor: not-allowed;
 					}
 				}
 			}
