@@ -37,6 +37,39 @@ module.exports = {
 		});
 	},
 
+	getAuth: (req, res, next) => {
+		let token = req.headers.authorization;
+
+		if (!token || token == "undefined") {
+			req.body.me = null;
+			return next();
+		}
+
+		const JWTVerifyOptions = { algorithms: ["RS256"] };
+
+		jwt.verify(token, publicKey, JWTVerifyOptions, async (err, decoded) => {
+			if (err) {
+				req.body.me = null;
+				return next();
+			}
+
+			let userQuery = { _id: decoded.userId, deleted_at: null };
+
+			let user = await User.findOne(userQuery, { password: 0 });
+
+			if (!user) {
+				req.body.me = null;
+				return next();
+			}
+
+			let _user = { ...user._doc };
+
+			req.body.me = _user;
+
+			next();
+		});
+	},
+
 	student: (req, res, next) => {
 		if (req.body.me.type != USER_STUDENT) return res.status(403).json(permissionError);
 		next();
