@@ -36,7 +36,7 @@ const userSchema = new Schema(
 		},
 		password: { type: String, required: [true, "Password is required"] },
 		type: { type: Number, default: USER_STUDENT },
-		courses: { type: Array, default: [] }, // for students only
+		courses: [{ type: "ObjectId", ref: "Course" }], // for students only
 		remmemberToken: { type: String, default: null },
 		expiresToken: { type: Date, default: Date.now },
 	},
