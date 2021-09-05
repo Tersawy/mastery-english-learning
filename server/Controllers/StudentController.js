@@ -66,6 +66,8 @@ exports.selfEnroll = async (req, res) => {
 
 	let query = { _id: me._id, type: USER_STUDENT };
 
+	if (me.courses.includes(courseId)) return res.status(422).json({ msg: "You have been enrolled already !" })
+
 	let userUpdate = User.updateOne(query, { $push: { courses: courseId } });
 
 	let courseUpdate = Course.updateOne({ _id: courseId }, { $inc: { studentsCount: 1 } });
