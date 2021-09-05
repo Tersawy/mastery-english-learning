@@ -70,7 +70,7 @@ exports.selfEnroll = async (req, res) => {
 
 	let courseUpdate = Course.updateOne({ _id: courseId }, { $inc: { studentsCount: 1 } });
 
-	await Promise.all(userUpdate, courseUpdate);
+	await Promise.all([userUpdate, courseUpdate]);
 
 	res.status(200).json({ msg: "You have been enrolled successfully" });
 };
