@@ -45,7 +45,6 @@ let api = async (method, route, data, config, callback) => {
 		if (status === 401) {
 			store.commit("Auth/logout");
 			if (router.history.current.name != "Login") router.push("/login");
-			return;
 		}
 
 		if (isCallback) {
