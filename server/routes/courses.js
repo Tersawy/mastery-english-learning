@@ -2,11 +2,11 @@ const router = require("express").Router();
 
 const CourseController = require("../Controllers/CourseController");
 
-const { auth, instructorAndAdmin } = require("../middlewares/auth");
+const { auth, instructorAndAdmin, getAuth } = require("../middlewares/auth");
 
 router.get("/", auth, instructorAndAdmin, CourseController.all);
 
-router.get("/:courseId", CourseController.show);
+router.get("/:courseId", getAuth, CourseController.show);
 
 router.get("/:courseId/edit", auth, instructorAndAdmin, CourseController.edit);
 
