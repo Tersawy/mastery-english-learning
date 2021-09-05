@@ -8,7 +8,9 @@ const fs = require("fs");
 
 const handleError = require("../helpers/handleError");
 
-const { randomChar, videoDuration } = require("../helpers/functions");
+const { randomChar } = require("../helpers/functions");
+
+const { getVideoDurationInSeconds } = require('get-video-duration')
 
 const { COURSE_APPROVED, COURSE_PENDING } = require( "../helpers/constants" );
 
@@ -17,7 +19,7 @@ const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnai
 const lecturePath = "../public/videos/courses/lectures";
 
 exports.all = async (req, res) => {
-	let courses = Course.find({ deleted_at: null })
+	let courses = Course.find()
 		.populate("category", "name")
 		.populate("langMadeIn", "name")
 		.populate("level", "name")
@@ -25,21 +27,21 @@ exports.all = async (req, res) => {
 
 	let coursesCount = Course.countDocuments();
 
-	Promise.all([courses, coursesCount]).then(([courses, total]) => {
-		courses = courses.map((course) => ({
-			_id: course._id,
-			thumbnail: course.thumbnail,
-			title: course.title,
-			status: course.status,
-			studentsCount: course.studentsCount,
-			level: course.level.name,
-			langMadeIn: course.langMadeIn.name,
-			category: course.category.name,
-			createdBy: course.createdBy.username,
-		}));
+	let [docs, total] = await Promise.all([courses, coursesCount])
 
-		return res.json({ docs: courses, total });
-	});
+	docs = docs.map((course) => ({
+		_id: course._id,
+		thumbnail: course.thumbnail,
+		title: course.title,
+		status: course.status,
+		studentsCount: course.studentsCount,
+		level: course.level.name,
+		langMadeIn: course.langMadeIn.name,
+		category: course.category.name,
+		createdBy: course.createdBy.username,
+	}));
+
+	return res.json({ docs, total });
 };
 
 exports.create = (req, res) => {
@@ -108,7 +110,7 @@ exports.show = async (req, res) => {
 				fs.existsSync(path.join(__dirname, lecturePath, course.sections[i].lectures[l].video));
 
 			course.sections[i].lectures[l].time = videoExist
-				? await videoDuration(path.join(__dirname, lecturePath, course.sections[i].lectures[l].video))
+				? await getVideoDurationInSeconds(path.join(__dirname, lecturePath, course.sections[i].lectures[l].video))
 				: 0;
 
 			course.sections[i].time += course.sections[i].lectures[l].time;
