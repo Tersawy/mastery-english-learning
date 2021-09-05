@@ -55,7 +55,7 @@
 				if (!this.login.email || !this.login.password) return;
 
 				if (this.$v.login.$invalid) {
-					return this.$store.commit("setError", "Email or password are not valid");
+					return this.setGlobalError("Email or password are not valid");
 				}
 
 				try {
