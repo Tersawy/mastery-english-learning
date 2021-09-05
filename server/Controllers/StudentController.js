@@ -62,10 +62,8 @@ exports.enroll = async (req, res) => {
 };
 
 exports.selfEnroll = async (req, res) => {
-	const { me } = req.body;
+	const { courseId, me } = req.body;
 
-	const { courseId } = req.params;
-	
 	let query = { _id: me._id, type: USER_STUDENT };
 
 	let userUpdate = User.updateOne(query, { $push: { courses: courseId } });
