@@ -81,6 +81,8 @@ exports.create = (req, res) => {
 exports.show = async (req, res) => {
 	const { courseId } = req.params;
 
+	const { me } = req.body;
+
 	let course = await Course.aggregate([
 		{ $match: { _id: mongoose.Types.ObjectId(courseId), deleted_at: null } },
 		{
@@ -118,6 +120,8 @@ exports.show = async (req, res) => {
 
 		course.time += course.sections[i].time;
 	}
+
+	course.isEnrolled = me && me.courses.includes(courseId);
 
 	res.status(200).json(course);
 };
