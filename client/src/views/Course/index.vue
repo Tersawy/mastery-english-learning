@@ -107,7 +107,13 @@
 							</div>
 							<div class="course-sidebar-text-box">
 								<div class="buy-btns">
-									<b-btn @click="enroll" class="btn-enroll" v-if="!isAuth || isStudent">Enroll</b-btn>
+									<div v-if="!isAuth || isStudent">
+										<b-btn class="btn-enroll enrolled" v-if="course.isEnrolled">
+											<b-icon icon="check2-circle"></b-icon>
+											<span> Start Learning now </span>
+										</b-btn>
+										<b-btn @click="enroll" class="btn-enroll" v-else>Enroll</b-btn>
+									</div>
 									<b-btn class="btn-enroll" disabled v-else>Enroll</b-btn>
 								</div>
 							</div>
@@ -179,7 +185,15 @@
 				this.$bvModal.show("lectureVideo");
 			},
 
-			enroll() {}
+			async enroll() {
+				try {
+					let res = await this.$store.dispatch("Student/enroll", this.course);
+
+					if (res.msg) this.setGlobalSuccess(res.msg);
+				} catch (err) {
+					//
+				}
+			}
 		}
 	};
 </script>
@@ -274,6 +288,11 @@
 					&:disabled {
 						background-color: #f2f3f5;
 						cursor: not-allowed;
+					}
+					&.enrolled {
+						background-color: transparent;
+						color: var(--success);
+						border-color: var(--success);
 					}
 				}
 			}
