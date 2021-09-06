@@ -19,3 +19,17 @@ Vue.filter("date", function (value) {
 
 	return `${dayStr}, ${fullDate}`;
 });
+
+Vue.filter("relation", function (value, key) {
+	if (!value) return "Unknown";
+
+	if (typeof value === "string") return value;
+
+	if (typeof value === "object") {
+		if (typeof key !== "undefined" && value[key] !== "undefined") {
+			return value[key];
+		} else {
+			return value.name;
+		}
+	}
+});
