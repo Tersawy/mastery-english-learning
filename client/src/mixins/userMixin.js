@@ -32,6 +32,10 @@ export default {
 
 		thumbnailsURL() {
 			return process.env.VUE_APP_API_URL + "/thumbnails";
+		},
+
+		userImageURL() {
+			return process.env.VUE_APP_API_URL + "/user-image";
 		}
 	}
 };
