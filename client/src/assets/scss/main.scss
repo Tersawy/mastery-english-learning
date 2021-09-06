@@ -34,6 +34,15 @@ $btn-active-box-shadow: none;
 $primary: #d254aa !default;
 // $primary: #721c52 !default;
 
+$spacers: (
+	10px: 10px,
+	20px: 20px,
+	30px: 30px,
+	40px: 40px,
+	50px: 50px,
+	60px: 60px
+);
+
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~bootstrap-vue/src/index.scss";
 
@@ -63,54 +72,6 @@ $fontWeightSizes: 100, 200, 300, 400, 500, 600, 700, 800, 900;
 @each $size in $fontWeightSizes {
 	.font-weight-#{$size} {
 		font-weight: $size !important;
-	}
-}
-
-$marginSizes: 10, 20, 30, 40, 50, 60;
-
-@each $size in $marginSizes {
-	.m-#{$size}px {
-		margin: $size + px;
-	}
-	.mr-#{$size}px,
-	.mx-#{$size}px {
-		margin-right: $size + px;
-	}
-	.ml-#{$size}px,
-	.mx-#{$size}px {
-		margin-left: $size + px;
-	}
-	.mt-#{$size}px,
-	.my-#{$size}px {
-		margin-top: $size + px;
-	}
-	.mb-#{$size}px,
-	.my-#{$size}px {
-		margin-bottom: $size + px;
-	}
-}
-
-$paddingSizes: 10, 20, 30, 40, 50, 60;
-
-@each $size in $paddingSizes {
-	.p-#{$size}px {
-		padding: $size + px;
-	}
-	.pr-#{$size}px,
-	.px-#{$size}px {
-		padding-right: $size + px;
-	}
-	.pl-#{$size}px,
-	.px-#{$size}px {
-		padding-left: $size + px;
-	}
-	.pt-#{$size}px,
-	.py-#{$size}px {
-		padding-top: $size + px;
-	}
-	.pb-#{$size}px,
-	.py-#{$size}px {
-		padding-bottom: $size + px;
 	}
 }
 
