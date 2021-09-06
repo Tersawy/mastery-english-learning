@@ -32,6 +32,7 @@ const path = require("path");
 app.use(express.static(path.join(__dirname, "./public/main")));
 app.use("/api/v1/lectures", express.static("./public/videos/courses/lectures"));
 app.use("/api/v1/thumbnails", express.static("./public/images/courses/thumbnails"));
+app.use("/api/v1/user-image", express.static("./public/images/users"));
 
 app.use("/api/v1/", require("./routes/auth"));
 app.use("/api/v1/levels", require("./routes/levels"));
