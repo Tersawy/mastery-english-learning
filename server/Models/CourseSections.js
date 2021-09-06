@@ -2,20 +2,23 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const lectureSchema = new Schema({
-	title: {
-		type: String,
-		trim: true,
-		minLength: [3, "Lecture Title Must be greater than or equal 3 characters"],
-		maxLength: [54, "Lecture Title Must be less than or equal 54 characters"],
+const lectureSchema = new Schema(
+	{
+		title: {
+			type: String,
+			trim: true,
+			minLength: [3, "Lecture Title Must be greater than or equal 3 characters"],
+			maxLength: [54, "Lecture Title Must be less than or equal 54 characters"],
+		},
+		description: {
+			type: String,
+			trim: true,
+			maxLength: [255, "Lecture Description Must be less than or equal 255 characters"],
+		},
+		video: { type: String, default: null },
 	},
-	description: {
-		type: String,
-		trim: true,
-		maxLength: [255, "Lecture Description Must be less than or equal 255 characters"],
-	},
-	video: { type: String, default: null },
-});
+	{ timestamps: true }
+);
 
 const sectionSchema = new Schema(
 	{
