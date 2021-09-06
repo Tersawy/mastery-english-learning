@@ -93,6 +93,18 @@ exports.show = async (req, res) => {
 				as: "sections",
 			},
 		},
+		{
+			$lookup: {
+				from: "users",
+				let: { createdBy: "$createdBy" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$_id", "$$createdBy"] } } },
+					{ $project: { username: 1, _id: 1, image: 1 } },
+				],
+				as: "createdBy",
+			},
+		},
+		{ $unwind: "$createdBy" }
 	]);
 
 	course = course[0];
