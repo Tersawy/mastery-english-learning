@@ -13,3 +13,10 @@ export const STUDENT = 0;
 export const INSTRUCTOR = 1;
 export const ADMIN = 2;
 export const OWNER = 3;
+
+export const QUESTION_COMPLETE = 0;
+export const QUESTION_CHOISE_ONE = 1;
+export const QUESTION_TRUE_OR_FALSE = 2;
+export const QUESTION_ESSAY = 3;
+export const QUESTION_SPEECH = 4;
+export const QUESTION_TYPES = [QUESTION_COMPLETE, QUESTION_CHOISE_ONE, QUESTION_TRUE_OR_FALSE, QUESTION_ESSAY];
