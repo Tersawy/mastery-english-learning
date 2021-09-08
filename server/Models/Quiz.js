@@ -13,7 +13,7 @@ const questionSchema = new Schema(
 			minLength: [3, "Question Must be greater than or equal 3 characters"],
 			maxLength: [255, "Question Must be less than or equal 255 characters"],
 		},
-		choises: Array,
+		choices: Array,
 	},
 	{ timestamps: true }
 );
