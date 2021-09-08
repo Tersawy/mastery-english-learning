@@ -108,7 +108,7 @@
 							<div class="course-sidebar-text-box">
 								<div class="buy-btns">
 									<div v-if="!isAuth || isStudent">
-										<b-btn class="btn-enroll enrolled" v-if="course.isEnrolled">
+										<b-btn class="btn-enroll enrolled" v-if="course.isEnrolled" :to="`/courses/${course._id}/start`">
 											<b-icon icon="check2-circle"></b-icon>
 											<span> Start Learning now </span>
 										</b-btn>
