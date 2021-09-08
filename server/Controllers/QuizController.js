@@ -17,5 +17,5 @@ exports.show = async (req, res) => {
 
 	let quiz = await Quiz.findOne({ lecture });
 
-	res.json(quiz);
+	res.json(quiz || {});
 };
