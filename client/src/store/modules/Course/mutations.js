@@ -1,14 +1,16 @@
 export default {
 	setOne: (state, data) => {
-		let sections = data.sections.map((section) => {
-			section.lecturesVisible = false;
+		if (data.sections && data.sections.length) {
+			let sections = data.sections.map((section) => {
+				section.lecturesVisible = false;
 
-			section.lectures = section.lectures.map((l) => ({ ...l, descriptionVisible: false }));
+				section.lectures = section.lectures.map((l) => ({ ...l, descriptionVisible: false }));
 
-			return section;
-		});
+				return section;
+			});
 
-		data.sections = sections;
+			data.sections = sections;
+		}
 
 		state.one = data;
 	},
