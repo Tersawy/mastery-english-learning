@@ -60,14 +60,14 @@ router.post(`${lecturesURL}/:lectureId/change-video`, auth, instructorAndAdmin, 
 
 const QuizController = require("../Controllers/QuizController");
 
-const quizzesURL = "/sections/lectures/:lectureId/quiz";
+const quizURL = "/sections/lectures/:lectureId/quiz";
 
-router.get(sectionsURL, auth, instructorAndAdmin, QuizController.show);
+router.get(quizURL, auth, instructorAndAdmin, QuizController.show);
 
-router.post(quizzesURL, auth, instructorAndAdmin, QuizController.create);
+router.post(quizURL, auth, instructorAndAdmin, QuizController.create);
 
-// router.put(`${quizzesURL}/:quizId`, auth, instructorAndAdmin, update);
+// router.put(`${quizURL}/:quizId`, auth, instructorAndAdmin, update);
 
-// router.delete(`${quizzesURL}/:quizId`, auth, instructorAndAdmin, remove);
+// router.delete(`${quizURL}/:quizId`, auth, instructorAndAdmin, remove);
 
 module.exports = router;
