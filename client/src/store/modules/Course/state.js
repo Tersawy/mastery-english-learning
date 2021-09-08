@@ -4,7 +4,7 @@ export default {
 	all: { docs: [], total: 0 },
 	options: [],
 	oneSection: {},
-	oneLecture: {},
+	oneLecture: { quiz: {} },
 	oneQuiz: {},
 	errors: {}
 };

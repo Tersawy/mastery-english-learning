@@ -31,7 +31,7 @@ export default {
 	},
 
 	setLecture: (state, lecture) => {
-		state.oneLecture = lecture;
+		state.oneLecture = { ...lecture, quiz: {} };
 	},
 
 	removeLecture: (state, id) => {
