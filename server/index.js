@@ -39,7 +39,6 @@ app.use("/api/v1/levels", require("./routes/levels"));
 app.use("/api/v1/languages", require("./routes/languages"));
 app.use("/api/v1/categories", require("./routes/categories"));
 app.use("/api/v1/courses", require("./routes/courses"));
-app.use("/api/v1/courses", require("./routes/courseSections"));
 app.use("/api/v1/students", require("./routes/students"));
 app.use("/api/v1/instructors", require("./routes/instructors"));
 app.use("/api/v1/admins", require("./routes/admins"));
