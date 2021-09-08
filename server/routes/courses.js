@@ -22,19 +22,19 @@ router.delete("/:courseId", auth, instructorAndAdmin, CourseController.remove);
 //---------------------------------------------> Start Sections <-----------------------------------------------------//
 //====================================================================================================================//
 
-const CourseSectionController = require("../Controllers/CourseSectionController");
+const SectionController = require("../Controllers/SectionController");
 
 const sectionsURL = "/:courseId/sections";
 
-router.get(sectionsURL, CourseSectionController.all);
+router.get(sectionsURL, SectionController.all);
 
-router.get(`${sectionsURL}/:sectionId`, CourseSectionController.show);
+router.get(`${sectionsURL}/:sectionId`, SectionController.show);
 
-router.post(sectionsURL, auth, instructorAndAdmin, CourseSectionController.create);
+router.post(sectionsURL, auth, instructorAndAdmin, SectionController.create);
 
-router.put(`${sectionsURL}/:sectionId`, auth, instructorAndAdmin, CourseSectionController.update);
+router.put(`${sectionsURL}/:sectionId`, auth, instructorAndAdmin, SectionController.update);
 
-router.delete(`${sectionsURL}/:sectionId`, auth, instructorAndAdmin, CourseSectionController.remove);
+router.delete(`${sectionsURL}/:sectionId`, auth, instructorAndAdmin, SectionController.remove);
 
 //====================================================================================================================//
 //---------------------------------------------> Start Lectures <-----------------------------------------------------//
