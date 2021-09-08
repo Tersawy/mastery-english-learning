@@ -1,21 +1,21 @@
 const Quiz = require("../Models/Quiz");
 
-exports.all = async (req, res) => {
-	let query = { deleted_at: null };
-
-	let quizzes = Quiz.find(query);
-
-	let quizzesCount = Quiz.countDocuments(query);
-
-	let [docs, total] = await Promise.all([quizzes, quizzesCount]);
-
-	return res.json({ docs, total });
-};
-
 exports.create = async (req, res) => {
-	console.log(req.body);
+	let { lectureId: lecture } = req.params;
+
+	let { questions } = req.body;
+
+	let quiz = new Quiz({ lecture, questions });
+
+	await quiz.save();
+
+	res.json({ msg: "The quiz has been created successfully" });
 };
 
 exports.show = async (req, res) => {
-	console.log(req.body);
+	let { lectureId: lecture } = req.params;
+
+	let quiz = await Quiz.findOne({ lecture });
+
+	res.json(quiz);
 };
