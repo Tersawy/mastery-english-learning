@@ -171,7 +171,7 @@ export default {
 	},
 
 	quiz({ state, commit }) {
-		return api("get", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes`, (err, data) => {
+		return api("get", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quiz`, (err, data) => {
 			if (err) {
 				commit("setErrors", err);
 				return Promise.reject(err);
@@ -184,7 +184,7 @@ export default {
 	},
 
 	createQuiz({ state, commit, dispatch }, item) {
-		return api("post", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes`, item, async (err, data) => {
+		return api("post", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quiz`, item, async (err, data) => {
 			if (err) {
 				commit("setErrors", err);
 				return Promise.reject(err);
@@ -195,7 +195,7 @@ export default {
 	},
 
 	updateQuiz({ state, commit, dispatch }, item) {
-		return api("put", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes/${state.oneQuiz._id}`, item, async (err, data) => {
+		return api("put", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quiz/${state.oneQuiz._id}`, item, async (err, data) => {
 			if (err) {
 				commit("setErrors", err);
 				return Promise.reject(err);
@@ -206,7 +206,7 @@ export default {
 	},
 
 	removeQuiz({ state, commit }, item) {
-		return api("delete", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes/${state.oneQuiz._id}`, item, async (err, data) => {
+		return api("delete", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quiz/${state.oneQuiz._id}`, item, async (err, data) => {
 			if (err) {
 				commit("setErrors", err);
 				return Promise.reject(err);
