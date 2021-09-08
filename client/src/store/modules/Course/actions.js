@@ -168,5 +168,51 @@ export default {
 			commit("toggleLectures", state.oneSection);
 			return Promise.resolve(data);
 		});
+	},
+
+	quiz({ state, commit }) {
+		return api("get", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes`, (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+
+			commit("setQuiz", data);
+
+			return Promise.resolve(data);
+		});
+	},
+
+	createQuiz({ state, commit, dispatch }, item) {
+		return api("post", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes`, item, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			await dispatch("quiz");
+			return Promise.resolve(data);
+		});
+	},
+
+	updateQuiz({ state, commit, dispatch }, item) {
+		return api("put", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes/${state.oneQuiz._id}`, item, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			await dispatch("quiz");
+			return Promise.resolve(data);
+		});
+	},
+
+	removeQuiz({ state, commit }, item) {
+		return api("delete", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quizzes/${state.oneQuiz._id}`, item, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			commit("removeQuiz", item._id);
+			return Promise.resolve(data);
+		});
 	}
 };

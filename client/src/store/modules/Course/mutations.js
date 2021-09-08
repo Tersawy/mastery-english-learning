@@ -66,5 +66,15 @@ export default {
 		let sections = state.one.sections.filter((d) => d._id != id);
 
 		state.one = { ...state.one, sections };
+	},
+
+	setQuiz: (state, quiz) => {
+		state.oneQuiz = quiz;
+		state.oneLecture = { ...state.oneLecture, quiz };
+	},
+
+	removeQuiz: (state) => {
+		state.oneQuiz = {};
+		state.oneLecture = { ...state.oneLecture, quiz: {} };
 	}
 };
