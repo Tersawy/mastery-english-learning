@@ -60,11 +60,11 @@ router.post(`${lecturesURL}/:lectureId/change-video`, auth, instructorAndAdmin, 
 
 const QuizController = require("../Controllers/QuizController");
 
-const quizzesURL = "/sections/lectures/:lectureId/quizzes";
+const quizzesURL = "/sections/lectures/:lectureId/quiz";
+
+router.get(sectionsURL, auth, instructorAndAdmin, QuizController.show);
 
 router.post(quizzesURL, auth, instructorAndAdmin, QuizController.create);
-
-router.get(`${sectionsURL}/:quizId`, auth, instructorAndAdmin, QuizController.show);
 
 // router.put(`${quizzesURL}/:quizId`, auth, instructorAndAdmin, update);
 
