@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { ADMIN, INSTRUCTOR, OWNER } from "../helpers/constants";
+import { ADMIN, INSTRUCTOR, OWNER, STUDENT } from "../helpers/constants";
 import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
@@ -32,6 +32,13 @@ const routes = [
 		// component: require("@/views/Course/index").default,
 		component: () => import(/* webpackChunkName: "Course" */ "@/views/Course/index"),
 		meta: { auth: false }
+	},
+	{
+		path: "/courses/:courseId/start",
+		name: "StartCourse",
+		// component: require("@/views/Course/index").default,
+		component: () => import(/* webpackChunkName: "Course" */ "@/views/Course/start"),
+		meta: { auth: true, only: [STUDENT] }
 	},
 	{
 		path: "/dashboard",
