@@ -1,0 +1,78 @@
+<template>
+	<b-modal id="quiz" hide-footer size="xl">
+		<template #modal-header="{ close }">
+			<div class="d-flex align-items-center justify-content-between w-100">
+				<div class="d-flex align-items-center">
+					<h6 class="mb-0">
+						<span class="font-weight-700">Quiz: </span>
+						<span>{{ lecture.title }}</span>
+					</h6>
+				</div>
+				<b-button size="sm" variant="outline-danger" @click="close()"> Close </b-button>
+			</div>
+		</template>
+		<template #default>
+			<p class="mb-0 lead text-center" v-if="!quiz || !quiz.questions || quiz.questions.length == 0">
+				<span>There's no quiz to show, </span>
+				<span class="text-blue c-pointer" style="text-decoration: underline" @click="createQuiz">Create quiz</span>
+			</p>
+			<ul class="list-unstyled">
+				<li v-for="(question, i) in quiz.questions" :key="i" class="question-item odd-light px-2 py-3">
+					<!-- <div class="d-flex align-items-center justify-content-between"> -->
+					<div class="d-flex align-items-center justify-content-between">
+						<span> {{ i + 1 }} )&nbsp;&nbsp;{{ question.text }}</span>
+						<span style="font-size: 11px; letter-spacing: 1px"> &nbsp;&nbsp;(&nbsp;{{ QUESTION_TYPES_STR[question.type] }}&nbsp;)&nbsp;&nbsp; </span>
+					</div>
+					<!-- </div> -->
+					<div v-if="question.choices && question.choices.length">
+						<ul class="d-flex align-items-center justify-content-around p-0 mt-2">
+							<li v-for="(choice, i) in question.choices" :key="i">{{ choice }}</li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+			<QuizForm />
+		</template>
+	</b-modal>
+</template>
+
+<script>
+	import { QUESTION_TYPES_STR } from "@/helpers/constants";
+	import QuizForm from "@/components/dashboard/course/QuizForm.vue";
+	export default {
+		components: { QuizForm },
+		data() {
+			return {
+				namespace: "Course"
+			};
+		},
+
+		computed: {
+			quiz() {
+				return this.$store.state.Course.oneQuiz;
+			},
+
+			lecture() {
+				return this.$store.state.Course.oneLecture;
+			},
+
+			QUESTION_TYPES_STR() {
+				return QUESTION_TYPES_STR;
+			}
+		},
+
+		methods: {
+			createQuiz() {
+				this.$store.commit("Course/setQuiz", {});
+
+				this.$bvModal.show("quizForm");
+			}
+		}
+	};
+</script>
+
+<style lang="scss">
+	.odd-light:nth-child(odd) {
+		background-color: #f5f5f5;
+	}
+</style>
