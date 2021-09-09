@@ -24,17 +24,15 @@
 								{{ lecture.description }}
 							</div>
 						</div>
-						<div class="lecture-quiz pt-3">
-							<!--  v-if="lecture.questions && lecture.questions.length" -->
+						<div class="lecture-quiz pt-3" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
 							<h3 class="mb-3" style="text-decoration: underline">Quiz :-</h3>
 							<div class="questions ml-3">
 								<ul class="questions-list" style="list-style: upper-latin">
-									<li v-for="(question, i) in questions" :key="i" class="questions-item px-2 py-4">
+									<li v-for="(question, i) in lecture.quiz.questions" :key="i" class="questions-item px-2 py-4">
 										<Question :question="question" :formData="answers.formData" />
 									</li>
 								</ul>
 								<b-btn variant="primary" @click="saveAnswers">Save</b-btn>
-								<!-- <div class="question">1- Hello from every ..... you're welcome back</div> -->
 							</div>
 						</div>
 					</div>
@@ -112,44 +110,7 @@
 			return {
 				allExpanded: false,
 				isListen: false,
-				lecture: {},
-				// lecture: {
-				questions: [
-					{
-						_id: "123",
-						text: "... ...Hello from every ..... you're welcome .. back ... ...",
-						type: 0
-					},
-					{
-						_id: "456",
-						text: "Hello, where ..... you from",
-						choises: [
-							{ _id: "14567", text: "are" },
-							{ _id: "14556", text: "we" },
-							{ _id: "14565", text: "he" },
-							{ _id: "14568", text: "she" }
-						],
-						type: 1
-					},
-					{
-						_id: "1234",
-						text: "Are you sure?",
-						type: 2
-					},
-					{
-						_id: "1234",
-						text: "Where are you from?",
-						type: 3
-					},
-					{
-						_id: "1234",
-						text: "Where are you from?",
-						type: 4
-					}
-				],
-				// },
 				answers: {
-					lectureId: null,
 					formData: new FormData()
 				}
 			};
@@ -157,14 +118,13 @@
 
 		async mounted() {
 			await this.getCourse();
-			this.lecture = this.course.sections[0].lectures[0];
 
 			for (let i = 0; i < this.course.sections.length; i++) {
 				if (!this.course.sections[i].lectures.length) continue;
 
 				for (let l = 0; l < this.course.sections[i].lectures.length; l++) {
 					if (this.course.sections[i].lectures[l]) {
-						this.lecture = this.course.sections[i].lectures[l];
+						this.showLectureVideo(this.course.sections[i].lectures[l]);
 						break;
 					}
 				}
@@ -183,6 +143,10 @@
 					total += section.lectures.length;
 					return total;
 				}, 0);
+			},
+
+			lecture() {
+				return this.$store.state.Course.oneLecture;
 			}
 		},
 
@@ -212,8 +176,13 @@
 				return secondsToHms(time);
 			},
 
-			showLectureVideo(lecture) {
-				this.lecture = lecture;
+			async showLectureVideo(lecture) {
+				this.$store.commit("Course/setLecture", lecture);
+				try {
+					await this.$store.dispatch("Course/quiz");
+				} catch (err) {
+					//
+				}
 			},
 
 			textFromSpeech(text) {
