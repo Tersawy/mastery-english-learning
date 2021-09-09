@@ -113,6 +113,7 @@
 
 		methods: {
 			createSection() {
+				this.$store.commit("Course/setSection", {});
 				this.$bvModal.show("sectionForm");
 			},
 			updateSection(section) {
@@ -125,6 +126,7 @@
 			},
 			createLecture(section) {
 				this.$store.commit("Course/setSection", section);
+				this.$store.commit("Course/setLecture", {});
 				this.$bvModal.show("lectureForm");
 			},
 			updateLecture(lecture, section) {
