@@ -58,7 +58,6 @@
 							</div>
 							<div class="c-pointer">
 								<b-icon icon="file-earmark-spreadsheet" v-b-tooltip="`Quiz`" scale="1.2" variant="primary" class="mr-3" @click="showQuiz(lecture)"></b-icon>
-								<!-- <b-icon icon="file-earmark-spreadsheet" v-b-tooltip="`Edit Quiz`" scale="1.2" variant="success" class="mr-3" @click="showQuiz(lecture)"></b-icon> -->
 								<b-icon
 									icon="arrow-repeat"
 									v-b-tooltip="`Change Video`"
