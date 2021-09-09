@@ -96,13 +96,7 @@
 					{ text: QUESTION_TYPES_STR[QUESTION_SPEECH], value: QUESTION_SPEECH }
 				],
 				quiz: {
-					questions: [
-						{ text: "How ... you ?", type: QUESTION_CHOICE_ONE, choices: ["are", "we", "he", "she"] },
-						{ text: "How ... you ?", type: QUESTION_COMPLETE },
-						{ text: "How you sure ?", type: QUESTION_TRUE_OR_FALSE },
-						{ text: "Where are you from ?", type: QUESTION_ESSAY },
-						{ text: "Tell me How are you ?", type: QUESTION_SPEECH }
-					]
+					questions: []
 				},
 				question: {
 					text: null,
@@ -115,7 +109,7 @@
 
 		validations: {
 			question: {
-				text: { required, minLength: minLength(3), maxLength: maxLength(54) },
+				text: { required, minLength: minLength(3), maxLength: maxLength(255) },
 				type: { numeric },
 				choices: {
 					required: requiredIf(function (nestedModel) {
