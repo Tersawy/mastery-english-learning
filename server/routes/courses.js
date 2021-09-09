@@ -62,7 +62,7 @@ const QuizController = require("../Controllers/QuizController");
 
 const quizURL = "/sections/lectures/:lectureId/quiz";
 
-router.get(quizURL, auth, instructorAndAdmin, QuizController.show);
+router.get(quizURL, auth, QuizController.show);
 
 router.post(quizURL, auth, instructorAndAdmin, QuizController.create);
 
