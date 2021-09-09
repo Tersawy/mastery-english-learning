@@ -57,6 +57,8 @@
 								</b-collapse>
 							</div>
 							<div class="c-pointer">
+								<b-icon icon="file-earmark-spreadsheet" v-b-tooltip="`Quiz`" scale="1.2" variant="primary" class="mr-3" @click="showQuiz(lecture)"></b-icon>
+								<!-- <b-icon icon="file-earmark-spreadsheet" v-b-tooltip="`Edit Quiz`" scale="1.2" variant="success" class="mr-3" @click="showQuiz(lecture)"></b-icon> -->
 								<b-icon
 									icon="arrow-repeat"
 									v-b-tooltip="`Change Video`"
@@ -77,6 +79,7 @@
 		<LectureForm />
 		<LectureVideoForm :is-change="isChangeVideo" @closed="isChangeVideo = false" />
 		<LectureVideo />
+		<Quiz />
 		<DeleteFieldModal msg="Are you sure to delete this section ?" @done="handleRemoveSection" modal-id="removeSectionModal" />
 		<DeleteFieldModal msg="Are you sure to delete this lecture ?" @done="handleRemoveLecture" modal-id="removeLectureModal" />
 	</b-modal>
@@ -84,11 +87,12 @@
 
 <script>
 	import LectureForm from "@/components/dashboard/course/LectureForm.vue";
+	import Quiz from "@/components/dashboard/course/Quiz.vue";
 	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
 	import LectureVideoForm from "@/components/dashboard/course/LectureVideoForm.vue";
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
 	export default {
-		components: { LectureForm, LectureVideo, LectureVideoForm, DeleteFieldModal },
+		components: { LectureForm, LectureVideo, LectureVideoForm, Quiz, DeleteFieldModal },
 
 		data() {
 			return {
@@ -149,6 +153,19 @@
 				this.$store.commit("Course/setLecture", lecture);
 				this.$nextTick(() => {
 					this.$bvModal.show("lectureVideoForm");
+				});
+			},
+			async showQuiz(lecture) {
+				try {
+					this.$store.commit("Course/setLecture", lecture);
+
+					await this.$store.dispatch("Course/quiz");
+				} catch (err) {
+					//
+				}
+
+				this.$nextTick(() => {
+					this.$bvModal.show("quiz");
 				});
 			},
 			async handleRemoveSection() {
