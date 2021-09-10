@@ -1,5 +1,14 @@
 <template>
-	<b-modal id="lectureForm" @hidden="resetModal" hide-footer @ok="handleSave" size="lg" @show="modalIsShown">
+	<b-modal
+		:no-close-on-backdrop="isLoading"
+		:no-close-on-esc="isLoading"
+		id="lectureForm"
+		@hidden="resetModal"
+		hide-footer
+		@ok="handleSave"
+		size="lg"
+		@show="modalIsShown"
+	>
 		<template #modal-header="{ close }">
 			<div class="d-flex align-items-center justify-content-between w-100">
 				<div class="d-flex align-items-center">
@@ -10,26 +19,28 @@
 						<h6 class="mb-0">Create Lecture</h6>
 					</template>
 				</div>
-				<b-button size="sm" variant="outline-danger" @click="close()"> Close </b-button>
+				<b-button :disabled="isLoading" size="sm" variant="outline-danger" @click="close()"> Close </b-button>
 			</div>
 		</template>
 		<template #default="{ ok }">
 			<b-form @submit.prevent="handleSave">
 				<!-- -------------Title------------- -->
 				<b-form-group label="Lecture Title" label-for="title">
-					<b-form-input id="title" v-model="lecture.title" ref="titleInput"></b-form-input>
+					<b-form-input :disabled="isLoading" id="title" v-model="lecture.title" ref="titleInput"></b-form-input>
 					<input-error :vuelidate="$v.lecture.title" field="title" :namespace="namespace" />
 				</b-form-group>
 
 				<!-- -------------Description------------- -->
 				<b-form-group label="Lecture Description" label-for="description">
-					<b-form-textarea id="description" v-model="lecture.description"></b-form-textarea>
+					<b-form-textarea :disabled="isLoading" id="description" v-model="lecture.description"></b-form-textarea>
 					<input-error :vuelidate="$v.lecture.description" field="description" :namespace="namespace" />
 				</b-form-group>
 
 				<div class="text-right">
-					<b-btn v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
-					<b-btn v-else @click="ok()" variant="outline-primary">Save</b-btn>
+					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
+						<b-btn :disabled="isLoading" v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
+						<b-btn :disabled="isLoading" v-else @click="ok()" variant="outline-primary">Save</b-btn>
+					</b-overlay>
 				</div>
 			</b-form>
 		</template>
@@ -79,6 +90,8 @@
 				let res;
 
 				try {
+					this.toggleLoading();
+
 					if (this.isUpdate) {
 						res = await this.$store.dispatch("Course/updateLecture", this.lecture);
 					} else {
@@ -89,6 +102,8 @@
 				} catch (err) {
 					//
 				}
+
+				this.toggleLoading();
 			},
 
 			modalIsShown() {

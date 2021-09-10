@@ -1,6 +1,11 @@
 import { ADMIN, INSTRUCTOR, OWNER, STUDENT } from "../helpers/constants";
 
 export default {
+	data() {
+		return {
+			isLoading: false
+		};
+	},
 	computed: {
 		me() {
 			return this.$store.state.Auth.user;
@@ -36,6 +41,12 @@ export default {
 
 		userImageURL() {
 			return process.env.VUE_APP_API_URL + "/user-image";
+		}
+	},
+
+	methods: {
+		toggleLoading() {
+			this.isLoading = !this.isLoading;
 		}
 	}
 };

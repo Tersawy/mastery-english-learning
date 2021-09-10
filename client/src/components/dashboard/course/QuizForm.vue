@@ -1,5 +1,14 @@
 <template>
-	<b-modal id="quizForm" @hidden="resetModal" hide-footer @ok="handleSave" size="xl" @show="modalIsShown">
+	<b-modal
+		:no-close-on-backdrop="isLoading"
+		:no-close-on-esc="isLoading"
+		id="quizForm"
+		@hidden="resetModal"
+		hide-footer
+		@ok="handleSave"
+		size="xl"
+		@show="modalIsShown"
+	>
 		<template #modal-header="{ close }">
 			<div class="d-flex align-items-center justify-content-between w-100">
 				<div class="d-flex align-items-center">
@@ -10,27 +19,26 @@
 						<h6 class="mb-0">Create Quiz</h6>
 					</template>
 				</div>
-				<b-button size="sm" variant="outline-danger" @click="close()"> Close </b-button>
+				<b-button :disabled="isLoading" size="sm" variant="outline-danger" @click="close()"> Close </b-button>
 			</div>
 		</template>
 		<template #default="{ ok }">
 			<b-form @submit.prevent="addQuestion">
 				<!-- -------------text------------- -->
 				<b-form-group label="Question" label-for="text">
-					<b-form-input id="text" v-model="question.text" ref="textInput"></b-form-input>
+					<b-form-input :disabled="isLoading" id="text" v-model="question.text" ref="textInput"></b-form-input>
 					<input-error :vuelidate="$v.question.text" field="text" :namespace="namespace" />
 				</b-form-group>
 
 				<!-- -------------Type------------- -->
 				<b-form-group label="Question Type" label-for="type">
-					<b-form-select id="type" v-model="question.type" :options="questionTypes"></b-form-select>
+					<b-form-select :disabled="isLoading" id="type" v-model="question.type" :options="questionTypes"></b-form-select>
 					<input-error :vuelidate="$v.question.type" field="type" :namespace="namespace" />
 				</b-form-group>
 
 				<!-- -------------Choices------------- -->
 				<b-form-group label="Question Choices" label-for="choices" v-if="isQuestionChoises">
-					<b-form-tags input-id="choices" v-model="question.choices" placeholder="" tag-variant="blue"></b-form-tags>
-					<!-- <b-form-select id="choices" v-model="question.choices" :options="questionTypes"></b-form-select> -->
+					<b-form-tags :disabled="isLoading" input-id="choices" v-model="question.choices" placeholder="" tag-variant="blue"></b-form-tags>
 					<input-error :vuelidate="$v.question.choices" field="choices" :namespace="namespace" />
 				</b-form-group>
 
@@ -44,9 +52,6 @@
 						<div class="d-flex align-items-center justify-content-between">
 							<div class="d-flex align-items-center justify-content-between">
 								<span> {{ i + 1 }} )&nbsp;&nbsp;{{ question.text }}</span>
-								<!-- <b-badge variant="outline-success" class="font-weight-700" style="font-size: 11px; letter-spacing: 1px">
-									{{ QUESTION_TYPES_STR[question.type] }}
-								</b-badge> -->
 								<span style="font-size: 11px; letter-spacing: 1px"> &nbsp;&nbsp;(&nbsp;{{ QUESTION_TYPES_STR[question.type] }}&nbsp;)&nbsp;&nbsp; </span>
 							</div>
 							<div class="actions">
@@ -65,8 +70,10 @@
 				<input-error :vuelidate="$v.quiz.questions" field="questions" :namespace="namespace" />
 
 				<div class="text-right">
-					<b-btn v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
-					<b-btn v-else @click="ok()" variant="outline-primary">Save</b-btn>
+					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
+						<b-btn :disabled="isLoading" v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
+						<b-btn :disabled="isLoading" v-else @click="ok()" variant="outline-primary">Save</b-btn>
+					</b-overlay>
 				</div>
 			</b-form>
 		</template>
@@ -146,9 +153,9 @@
 
 		methods: {
 			addQuestion() {
-				this.$v.$touch();
+				this.$v.question.$touch();
 
-				if (this.$v.$invalid) return;
+				if (this.$v.question.$invalid) return;
 
 				if (this.question.type == QUESTION_COMPLETE) {
 					let spacing = this.question.text.match(/\.\.+/g);
@@ -191,6 +198,8 @@
 				let res;
 
 				try {
+					this.toggleLoading();
+
 					if (this.isUpdate) {
 						res = await this.$store.dispatch("Course/updateQuiz", this.quiz);
 					} else {
@@ -201,6 +210,8 @@
 				} catch (err) {
 					//
 				}
+
+				this.toggleLoading();
 			},
 
 			modalIsShown() {

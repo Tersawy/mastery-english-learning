@@ -1,5 +1,14 @@
 <template>
-	<b-modal id="adminForm" @hidden="resetModal" hide-footer @ok="handleSave" size="lg" @show="modalIsShown">
+	<b-modal
+		:no-close-on-backdrop="isLoading"
+		:no-close-on-esc="isLoading"
+		id="adminForm"
+		@hidden="resetModal"
+		hide-footer
+		@ok="handleSave"
+		size="lg"
+		@show="modalIsShown"
+	>
 		<template #modal-header="{ close }">
 			<div class="d-flex align-items-center justify-content-between w-100">
 				<div class="d-flex align-items-center">
@@ -10,38 +19,41 @@
 						<h6 class="mb-0">Create Admin</h6>
 					</template>
 				</div>
-				<b-button size="sm" variant="outline-danger" @click="close()"> Close </b-button>
+				<b-button :disabled="isLoading" size="sm" variant="outline-danger" @click="close()"> Close </b-button>
 			</div>
 		</template>
 		<template #default="{ ok }">
 			<b-form @submit="ok()">
 				<b-form-group label="Fullname" label-for="fullname">
-					<b-form-input type="text" id="fullname" v-model.trim="admin.fullname" />
+					<b-form-input :disabled="isLoading" type="text" id="fullname" v-model.trim="admin.fullname" />
 					<input-error :vuelidate="$v.admin.fullname" field="fullname" :namespace="namespace" />
 				</b-form-group>
 
 				<b-form-group label="Phone" label-for="phone">
-					<b-form-input type="tel" id="phone" v-model.trim="admin.phone" />
+					<b-form-input :disabled="isLoading" type="tel" id="phone" v-model.trim="admin.phone" />
 					<input-error :vuelidate="$v.admin.phone" field="phone" :namespace="namespace" />
 				</b-form-group>
 
 				<b-form-group label="Username" label-for="username">
-					<b-form-input type="text" id="username" v-model.trim="admin.username" />
+					<b-form-input :disabled="isLoading" type="text" id="username" v-model.trim="admin.username" />
 					<input-error :vuelidate="$v.admin.username" field="username" :namespace="namespace" />
 				</b-form-group>
 
 				<b-form-group label="Email address" label-for="email">
-					<b-form-input type="email" id="email" v-model.trim="admin.email" />
+					<b-form-input :disabled="isLoading" type="email" id="email" v-model.trim="admin.email" />
 					<input-error :vuelidate="$v.admin.email" field="email" :namespace="namespace" />
 				</b-form-group>
 
 				<b-form-group label="Password" label-for="password" v-if="!isUpdate">
-					<b-form-input type="password" id="password" v-model.trim="admin.password" />
+					<b-form-input :disabled="isLoading" type="password" id="password" v-model.trim="admin.password" />
 					<input-error :vuelidate="$v.admin.password" field="password" :namespace="namespace" />
 				</b-form-group>
 
 				<div class="text-right">
-					<b-btn variant="outline-primary" class="mt-3" @click="ok()">Save</b-btn>
+					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
+						<b-btn :disabled="isLoading" v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
+						<b-btn :disabled="isLoading" v-else @click="ok()" variant="outline-primary">Save</b-btn>
+					</b-overlay>
 				</div>
 			</b-form>
 		</template>
@@ -94,6 +106,8 @@
 				let res;
 
 				try {
+					this.toggleLoading();
+
 					if (this.isUpdate) {
 						res = await this.$store.dispatch("Admin/update", this.admin);
 					} else {
@@ -108,6 +122,8 @@
 				} catch (err) {
 					//
 				}
+
+				this.toggleLoading();
 			},
 
 			modalIsShown() {

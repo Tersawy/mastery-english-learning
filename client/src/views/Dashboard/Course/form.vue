@@ -20,35 +20,49 @@
 				<b-row cols="1" cols-md="3">
 					<b-col>
 						<b-form-group label="Category" label-for="category">
-							<b-form-select v-model="course.category" text-field="name" value-field="_id" id="category" :options="categoriesOpt"></b-form-select>
+							<b-form-select
+								:disabled="isLoading"
+								v-model="course.category"
+								text-field="name"
+								value-field="_id"
+								id="category"
+								:options="categoriesOpt"
+							></b-form-select>
 							<input-error :vuelidate="$v.course.category" field="category" :namespace="namespace" />
 						</b-form-group>
 					</b-col>
 
 					<b-col>
 						<b-form-group label="Language made in" label-for="langMadeIn">
-							<b-form-select v-model="course.langMadeIn" text-field="name" value-field="_id" id="langMadeIn" :options="langsOpt"></b-form-select>
+							<b-form-select
+								:disabled="isLoading"
+								v-model="course.langMadeIn"
+								text-field="name"
+								value-field="_id"
+								id="langMadeIn"
+								:options="langsOpt"
+							></b-form-select>
 							<input-error :vuelidate="$v.course.langMadeIn" field="langMadeIn" :namespace="namespace" />
 						</b-form-group>
 					</b-col>
 
 					<b-col>
 						<b-form-group label="Course Level" label-for="level">
-							<b-form-select v-model="course.level" text-field="name" value-field="_id" id="level" :options="levelsOpt"></b-form-select>
+							<b-form-select :disabled="isLoading" v-model="course.level" text-field="name" value-field="_id" id="level" :options="levelsOpt"></b-form-select>
 							<input-error :vuelidate="$v.course.level" field="level" :namespace="namespace" />
 						</b-form-group>
 					</b-col>
 
 					<b-col md="12">
 						<b-form-group label="Course Title" label-for="title">
-							<b-form-textarea id="title" v-model="course.title"></b-form-textarea>
+							<b-form-textarea :disabled="isLoading" id="title" v-model="course.title"></b-form-textarea>
 							<input-error :vuelidate="$v.course.title" field="title" :namespace="namespace" />
 						</b-form-group>
 					</b-col>
 
 					<b-col md="12">
 						<b-form-group label="Short description" label-for="short_description">
-							<b-form-textarea id="short_description" v-model="course.short_description"></b-form-textarea>
+							<b-form-textarea :disabled="isLoading" id="short_description" v-model="course.short_description"></b-form-textarea>
 							<input-error :vuelidate="$v.course.short_description" field="short_description" :namespace="namespace" />
 						</b-form-group>
 					</b-col>
@@ -59,6 +73,7 @@
 				<b-col cols="12" md="5" lg="4">
 					<b-card header="Course thumbnail" header-class="font-weight-900 text-muted" body-class="p-0" class="shadow-sm">
 						<VueUploadMultipleImage
+							:disabled="isLoading"
 							class="upload-image"
 							browseText="(or) Select"
 							dragText="Drag & Drop image"
@@ -81,9 +96,9 @@
 						<b-form-tags v-model="course.requirements" no-outer-focus class="mb-2 border-0" tagVariant="success">
 							<template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
 								<b-input-group class="mb-2">
-									<b-form-input v-bind="inputAttrs" v-on="inputHandlers"></b-form-input>
+									<b-form-input :disabled="isLoading" v-bind="inputAttrs" v-on="inputHandlers"></b-form-input>
 									<b-input-group-append>
-										<b-button @click="addTag()" variant="outline-primary">Add</b-button>
+										<b-button :disabled="isLoading" @click="addTag()" variant="outline-primary">Add</b-button>
 									</b-input-group-append>
 								</b-input-group>
 								<ul class="m-0 pl-3 pt-2">
@@ -102,14 +117,16 @@
 
 				<b-col cols="12">
 					<b-card header="Course description" header-class="font-weight-900 text-muted" class="shadow-sm mt-30px" body-class="p-0">
-						<vue-editor style="border: none" v-model="course.description" :editorToolbar="customToolbar"></vue-editor>
+						<vue-editor :disabled="isLoading" style="border: none" v-model="course.description" :editorToolbar="customToolbar"></vue-editor>
 					</b-card>
 					<input-error :vuelidate="$v.course.description" field="description" :namespace="namespace" />
 				</b-col>
 
 				<b-col cols="12" class="mt-4 text-right">
-					<b-btn v-if="!isUpdate" variant="primary" @click="handleSave">Create</b-btn>
-					<b-btn v-else variant="success" @click="handleSave">Update</b-btn>
+					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
+						<b-btn :disabled="isLoading" v-if="isUpdate" @click="handleSave" variant="outline-success">Update</b-btn>
+						<b-btn :disabled="isLoading" v-else @click="handleSave" variant="outline-primary">Create</b-btn>
+					</b-overlay>
 				</b-col>
 			</b-row>
 		</b-form>
@@ -246,6 +263,8 @@
 
 					let data = { course: this.formData, config };
 
+					this.toggleLoading();
+
 					if (this.isUpdate) {
 						data = this.formData ? data : { course: this.course, config: {} };
 						res = await this.update(data);
@@ -261,6 +280,8 @@
 				} catch (err) {
 					//
 				}
+
+				this.toggleLoading();
 			},
 
 			resetForm() {
