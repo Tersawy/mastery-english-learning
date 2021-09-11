@@ -16,22 +16,33 @@
 				<span>There's no quiz to show, </span>
 				<span class="text-blue c-pointer" style="text-decoration: underline" @click="createQuiz">Create quiz</span>
 			</p>
-			<ul class="list-unstyled">
-				<li v-for="(question, i) in quiz.questions" :key="i" class="question-item odd-light px-2 py-3">
-					<!-- <div class="d-flex align-items-center justify-content-between"> -->
-					<div class="d-flex align-items-center justify-content-between">
-						<span> {{ i + 1 }} )&nbsp;&nbsp;{{ question.text }}</span>
-						<span style="font-size: 11px; letter-spacing: 1px"> &nbsp;&nbsp;(&nbsp;{{ QUESTION_TYPES_STR[question.type] }}&nbsp;)&nbsp;&nbsp; </span>
-					</div>
-					<!-- </div> -->
-					<div v-if="question.choices && question.choices.length">
-						<ul class="d-flex align-items-center justify-content-around p-0 mt-2">
-							<li v-for="(choice, i) in question.choices" :key="i">{{ choice }}</li>
-						</ul>
-					</div>
-				</li>
-			</ul>
+			<template v-else>
+				<div class="mb-3 text-center">
+					<b-btn variant="outline-blue" @click="createQuestion">Add a new Question</b-btn>
+				</div>
+				<ul class="list-unstyled">
+					<li v-for="(question, i) in quiz.questions" :key="i" class="question-item odd-light px-2 py-3">
+						<div class="d-flex align-items-center justify-content-between">
+							<div class="d-flex align-items-center justify-content-between">
+								<span> {{ i + 1 }} )&nbsp;&nbsp;{{ question.text }}</span>
+								<span style="font-size: 11px; letter-spacing: 1px"> &nbsp;&nbsp;(&nbsp;{{ QUESTION_TYPES_STR[question.type] }}&nbsp;)&nbsp;&nbsp; </span>
+							</div>
+							<div class="actions">
+								<b-icon icon="pencil-square" scale="1.2" variant="success" class="mr-3 c-pointer" @click="updateQuestion(question)" />
+								<b-icon icon="trash" scale="1.2" variant="danger" class="c-pointer" @click="removeQuestion(question)" />
+							</div>
+						</div>
+						<div v-if="question.choices && question.choices.length">
+							<ul class="d-flex align-items-center justify-content-around p-0 mt-2">
+								<li v-for="(choice, i) in question.choices" :key="i">{{ choice }}</li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</template>
 			<QuizForm />
+			<QuestionForm />
+			<DeleteFieldModal msg="Are you sure to delete this question ?" @done="handleRemoveQuestion" modal-id="removeQuestionModal" />
 		</template>
 	</b-modal>
 </template>
@@ -39,8 +50,10 @@
 <script>
 	import { QUESTION_TYPES_STR } from "@/helpers/constants";
 	import QuizForm from "@/components/dashboard/course/QuizForm.vue";
+	import QuestionForm from "@/components/dashboard/course/QuestionForm.vue";
+	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
 	export default {
-		components: { QuizForm },
+		components: { QuizForm, QuestionForm, DeleteFieldModal },
 		data() {
 			return {
 				namespace: "Course"
@@ -66,6 +79,31 @@
 				this.$store.commit("Course/setQuiz", {});
 
 				this.$bvModal.show("quizForm");
+			},
+
+			createQuestion() {
+				this.$store.commit("Course/setQuestion", {});
+				this.$bvModal.show("questionForm");
+			},
+
+			updateQuestion(question) {
+				this.$store.commit("Course/setQuestion", question);
+				this.$bvModal.show("questionForm");
+			},
+
+			removeQuestion(question) {
+				this.$store.commit("Course/setQuestion", question);
+				this.$bvModal.show("removeQuestionModal");
+			},
+
+			async handleRemoveQuestion() {
+				try {
+					let res = await this.$store.dispatch("Course/removeQuestion");
+					this.setGlobalSuccess(res.msg);
+				} catch (err) {
+					//
+				}
+				this.$bvModal.hide("removeQuestionModal");
 			}
 		}
 	};
