@@ -19,3 +19,11 @@ exports.show = async (req, res) => {
 
 	res.json(quiz || {});
 };
+
+exports.remove = async (req, res) => {
+	let { quizId } = req.params;
+
+	await Quiz.deleteOne({ _id: quizId });
+
+	res.json({ msg: "The quiz has been deleted successfully" });
+};
