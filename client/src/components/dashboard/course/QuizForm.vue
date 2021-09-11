@@ -82,15 +82,7 @@
 
 <script>
 	import { required, minLength, maxLength, numeric, requiredIf } from "vuelidate/lib/validators";
-	import {
-		QUESTION_COMPLETE,
-		QUESTION_CHOICE_ONE,
-		QUESTION_TRUE_OR_FALSE,
-		QUESTION_ESSAY,
-		QUESTION_SPEECH,
-		QUESTION_TYPES_STR,
-		QUESTION_TYPES
-	} from "@/helpers/constants";
+	import { QUESTION_COMPLETE, QUESTION_CHOICE_ONE, QUESTION_TRUE_OR_FALSE, QUESTION_ESSAY, QUESTION_SPEECH, QUESTION_TYPES_STR } from "@/helpers/constants";
 	export default {
 		data() {
 			return {
