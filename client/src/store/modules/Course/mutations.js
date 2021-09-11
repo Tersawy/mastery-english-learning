@@ -76,5 +76,17 @@ export default {
 	removeQuiz: (state) => {
 		state.oneQuiz = {};
 		state.oneLecture = { ...state.oneLecture, quiz: {} };
+	},
+
+	setQuestion: (state, question) => {
+		state.oneQuestion = question;
+	},
+
+	removeQuestion: (state) => {
+		let questions = state.oneQuiz.questions.filter((q) => q._id != state.oneQuestion._id);
+
+		state.oneQuiz = { ...state.oneQuiz, questions };
+
+		state.oneQuestion = {};
 	}
 };

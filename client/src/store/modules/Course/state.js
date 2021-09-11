@@ -5,6 +5,7 @@ export default {
 	options: [],
 	oneSection: {},
 	oneLecture: { quiz: {} },
+	oneQuestion: {},
 	oneQuiz: {},
 	errors: {}
 };

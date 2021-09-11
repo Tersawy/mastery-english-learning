@@ -214,5 +214,38 @@ export default {
 			commit("removeQuiz", item._id);
 			return Promise.resolve(data);
 		});
+	},
+
+	createQuestion({ state, commit, dispatch }, item) {
+		return api("post", `${state.prefix}/sections/lectures/quiz/${state.oneQuiz._id}/questions`, item, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			await dispatch("quiz");
+			return Promise.resolve(data);
+		});
+	},
+
+	updateQuestion({ state, commit, dispatch }, item) {
+		return api("put", `${state.prefix}/sections/lectures/quiz/${state.oneQuiz._id}/questions/${state.oneQuestion._id}`, item, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			await dispatch("quiz");
+			return Promise.resolve(data);
+		});
+	},
+
+	removeQuestion({ state, commit }) {
+		return api("delete", `${state.prefix}/sections/lectures/quiz/${state.oneQuiz._id}/questions/${state.oneQuestion._id}`, {}, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			commit("removeQuestion");
+			return Promise.resolve(data);
+		});
 	}
 };
