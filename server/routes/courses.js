@@ -66,8 +66,20 @@ router.get(quizURL, auth, QuizController.show);
 
 router.post(quizURL, auth, instructorAndAdmin, QuizController.create);
 
-// router.put(`${quizURL}/:quizId`, auth, instructorAndAdmin, update);
+router.delete(`${quizURL}/:quizId`, auth, instructorAndAdmin, QuizController.remove);
 
-// router.delete(`${quizURL}/:quizId`, auth, instructorAndAdmin, remove);
+//====================================================================================================================//
+//---------------------------------------------> Start Questions <-----------------------------------------------------//
+//====================================================================================================================//
+
+const QuestionController = require("../Controllers/QuestionController");
+
+const questionURL = "/sections/lectures/quiz/:quizId/questions";
+
+router.post(questionURL, auth, instructorAndAdmin, QuestionController.create);
+
+router.put(`${questionURL}/:questionId`, auth, instructorAndAdmin, QuestionController.update);
+
+router.delete(`${questionURL}/:questionId`, auth, instructorAndAdmin, QuestionController.remove);
 
 module.exports = router;
