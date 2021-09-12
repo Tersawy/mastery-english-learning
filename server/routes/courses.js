@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const CourseController = require("../Controllers/CourseController");
 
-const { auth, instructorAndAdmin, getAuth } = require("../middlewares/auth");
+const { auth, instructorAndAdmin, admin, getAuth } = require("../middlewares/auth");
 
 router.get("/", auth, instructorAndAdmin, CourseController.all);
 
@@ -14,7 +14,7 @@ router.get("/:courseId/edit", auth, instructorAndAdmin, CourseController.edit);
 
 router.put("/:courseId", auth, instructorAndAdmin, CourseController.update);
 
-router.post("/:courseId/change-status", auth, instructorAndAdmin, CourseController.changeStatus);
+router.post("/:courseId/change-status", auth, admin, CourseController.changeStatus);
 
 router.delete("/:courseId", auth, instructorAndAdmin, CourseController.remove);
 
