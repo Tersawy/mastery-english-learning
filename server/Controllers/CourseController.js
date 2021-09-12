@@ -12,7 +12,7 @@ const { randomChar } = require("../helpers/functions");
 
 const { getVideoDurationInSeconds } = require('get-video-duration')
 
-const { COURSE_APPROVED, COURSE_PENDING } = require( "../helpers/constants" );
+const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS } = require( "../helpers/constants" );
 
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
 
@@ -81,10 +81,12 @@ exports.create = (req, res) => {
 exports.show = async (req, res) => {
 	const { courseId } = req.params;
 
-	const { me } = req.body;
+	const { me, isAdmin, isInstructor, isOwner } = req.body;
+
+	let status = isAdmin || isInstructor || isOwner ? { $in: COURSE_STATUS } : COURSE_APPROVED;
 
 	let course = await Course.aggregate([
-		{ $match: { _id: mongoose.Types.ObjectId(courseId), deleted_at: null } },
+		{ $match: { _id: mongoose.Types.ObjectId(courseId), deleted_at: null, status } },
 		{
 			$lookup: {
 				from: "coursesections",
