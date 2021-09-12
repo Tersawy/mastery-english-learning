@@ -1,6 +1,8 @@
+const { COURSE_APPROVED } = require( "../helpers/constants" );
 const Setting = require("../Models/Setting");
 
 exports.home = async (req, res) => {
+
 	let aggregation = [
 		{ $sort: { createdAt: -1 } },
 		{ $project: { "homePage.categories": 1, _id: 1, name: 1 } },
@@ -12,7 +14,7 @@ exports.home = async (req, res) => {
 				let: { cats: "$homePage.categories" },
 				as: "courses",
 				pipeline: [
-					{ $match: { $expr: { $eq: ["$category", "$$cats"] }, deleted_at: null, parent: null } },
+					{ $match: { $expr: { $eq: ["$category", "$$cats"] }, deleted_at: null, status: COURSE_APPROVED } },
 					{ $sort: { studentsCount: -1 } },
 					{ $project: { _id: 1, title: 1, short_description: 1, thumbnail: 1 } },
 					{ $limit: 3 },
