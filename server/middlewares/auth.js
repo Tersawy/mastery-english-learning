@@ -33,6 +33,12 @@ module.exports = {
 
 			req.body.me = _user;
 
+			req.body.isAuth = true;
+			req.body.isStudent = req.body.me.type == USER_STUDENT;
+			req.body.isInstructor = req.body.me.type == USER_INSTRUCTOR;
+			req.body.isAdmin = req.body.me.type == USER_ADMIN;
+			req.body.isOwner = req.body.me.type == USER_OWNER;
+
 			next();
 		});
 	},
@@ -65,6 +71,12 @@ module.exports = {
 			let _user = { ...user._doc };
 
 			req.body.me = _user;
+
+			req.body.isAuth = true;
+			req.body.isStudent = req.body.me.type == USER_STUDENT;
+			req.body.isInstructor = req.body.me.type == USER_INSTRUCTOR;
+			req.body.isAdmin = req.body.me.type == USER_ADMIN;
+			req.body.isOwner = req.body.me.type == USER_OWNER;
 
 			next();
 		});
