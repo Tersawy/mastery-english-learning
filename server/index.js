@@ -2,6 +2,19 @@ const express = require("express");
 
 const app = express();
 
+const path = require("path");
+
+const fs = require("fs")
+
+const https = require("https")
+
+const options = {
+	key: fs.readFileSync("./file.pem"),
+	cert: fs.readFileSync("./file.crt"),
+}
+
+const server = https.createServer(options, app);
+
 const cors = require("cors");
 
 const fileUpload = require("express-fileupload");
@@ -28,7 +41,7 @@ require("./database/config");
 // 	console.log(req.files);
 // 	return res.json({ msg: "done" });
 // });
-const path = require("path");
+
 app.use(express.static(path.join(__dirname, "./public/main")));
 app.use("/api/v1/lectures", express.static("./public/videos/courses/lectures"));
 app.use("/api/v1/thumbnails", express.static("./public/images/courses/thumbnails"));
@@ -54,7 +67,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
+server.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
 
 // const Category = require("./Models/Category");
 
