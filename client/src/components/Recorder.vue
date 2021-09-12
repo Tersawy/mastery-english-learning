@@ -34,6 +34,7 @@
 
 					this.isRecording = true;
 				} catch (err) {
+					console.log(err);
 					this.isRecording = false;
 				}
 			},
