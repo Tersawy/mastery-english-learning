@@ -4,14 +4,14 @@ const app = express();
 
 const path = require("path");
 
-const fs = require("fs")
+const fs = require("fs");
 
-const https = require("https")
+const https = require("https");
 
 const options = {
 	key: fs.readFileSync("./file.pem"),
 	cert: fs.readFileSync("./file.crt"),
-}
+};
 
 const server = https.createServer(options, app);
 
