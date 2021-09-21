@@ -26,10 +26,6 @@
 			};
 		},
 
-		mounted() {
-			console.log(this.question);
-		},
-
 		methods: {
 			handleAnswer(value) {
 				let index = this.answers.findIndex((answer) => answer.question == this.question._id);
