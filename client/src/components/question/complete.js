@@ -13,7 +13,7 @@ export default {
 			if (!isLast) {
 				if (this.question.isAnswered) {
 					if (this.question.isTrue) {
-						elements.push(h("span", { class: "bg-success-light" }, this.question.answer[i]));
+						elements.push(h("span", { class: "bg-success-light px-1 mx-1 rounded-lg" }, this.question.answer[i]));
 					} else {
 						elements.push(h("span", { class: "bg-danger-light text-line-through px-1 ml-1 rounded-lg text-white" }, this.question.answer[i] || "....."));
 						elements.push(h("span", { class: "bg-success-light px-1 mx-1 rounded-lg" }, this.question.defaultAnswer[i]));
