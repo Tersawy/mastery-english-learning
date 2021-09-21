@@ -103,7 +103,7 @@
 
 	import Question from "@/components/question/index.vue";
 
-	import { QUESTION_COMPLETE, QUESTION_CHOICE_ONE, QUESTION_TRUE_OR_FALSE, QUESTION_ESSAY, QUESTION_SPEECH } from "@/helpers/constants";
+	import { QUESTION_COMPLETE, QUESTION_SPEECH } from "@/helpers/constants";
 
 	export default {
 		components: { Question },
