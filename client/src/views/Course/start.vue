@@ -32,7 +32,9 @@
 										<Question :question="{ ...question, isAnswered: lecture.quiz.isAnswered }" :answers="answers" />
 									</li>
 								</ul>
-								<b-btn variant="primary" @click="saveAnswers" v-if="!lecture.quiz.isAnswered">Save</b-btn>
+								<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
+									<b-btn :disabled="isLoading" variant="primary" @click="saveAnswers" v-if="!lecture.quiz.isAnswered">Save</b-btn>
+								</b-overlay>
 							</div>
 						</div>
 					</div>
@@ -214,7 +216,7 @@
 				return true;
 			},
 
-			saveAnswers() {
+			async saveAnswers() {
 				if (!this.validateAnswers()) return;
 
 				let formData = new FormData();
@@ -233,11 +235,16 @@
 					}
 				});
 
+				this.toggleLoading();
+
 				try {
-					this.$store.dispatch("Course/createAnswers", formData);
+					await this.$store.dispatch("Course/createAnswers", formData);
+					await this.$store.dispatch("Course/quiz");
 				} catch (err) {
 					//
 				}
+
+				this.toggleLoading();
 			}
 		}
 	};
