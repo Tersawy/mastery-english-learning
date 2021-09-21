@@ -20,7 +20,8 @@
 		"express-validator": "^6.12.1",
 		"get-video-duration": "^4.0.0",
 		"jsonwebtoken": "^8.5.1",
-		"mongoose": "^5.13.7"
+		"mongoose": "^5.13.7",
+		"python-shell": "^3.0.0"
 	},
 	"devDependencies": {
 		"dotenv": "^10.0.0"
