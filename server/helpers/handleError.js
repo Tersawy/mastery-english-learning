@@ -23,7 +23,13 @@ module.exports = (err, callback) => {
 
 	if (err.errors && err.name == "ValidationError") {
 		let errors = Object.keys(err.errors).reduce((final, field) => {
-			let msg = err.errors[field].properties.message;
+			let fieldErr = err.errors[field];
+
+			let msg = "Something went wrong !";
+
+			if (fieldErr.properties) {
+				msg = fieldErr.properties.message;
+			}
 
 			final[field] = [msg];
 
