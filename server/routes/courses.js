@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const CourseController = require("../Controllers/CourseController");
 
-const { auth, instructorAndAdmin, admin, getAuth } = require("../middlewares/auth");
+const { auth, instructorAndAdmin, admin, getAuth, student } = require("../middlewares/auth");
 
 router.get("/", auth, instructorAndAdmin, CourseController.all);
 
@@ -81,5 +81,15 @@ router.post(questionURL, auth, instructorAndAdmin, QuestionController.create);
 router.put(`${questionURL}/:questionId`, auth, instructorAndAdmin, QuestionController.update);
 
 router.delete(`${questionURL}/:questionId`, auth, instructorAndAdmin, QuestionController.remove);
+
+//====================================================================================================================//
+//---------------------------------------------> Start Student Answers <----------------------------------------------//
+//====================================================================================================================//
+
+const QuizAnswerController = require("../Controllers/QuizAnswerController");
+
+const quizAnswerURL = "/:courseId/sections/lectures/quiz/:quizId/answer";
+
+router.post(quizAnswerURL, auth, student, QuizAnswerController.answer);
 
 module.exports = router;
