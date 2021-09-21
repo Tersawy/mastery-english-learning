@@ -13,7 +13,7 @@
 				</template>
 			</div>
 		</div>
-		<audio v-if="audioSrc" class="mt-3 w-100" controls :src="audioSrc"></audio>
+		<audio v-if="audioSrc && !question.isAnswered" class="mt-3 w-100" controls :src="audioSrc"></audio>
 	</div>
 </template>
 
