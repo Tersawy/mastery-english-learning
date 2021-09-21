@@ -109,9 +109,30 @@
 		},
 
 		watch: {
-			"question.type"() {
-				if (this.question.answer) {
-					this.question.answer = null;
+			"question.type"(v) {
+				let answer = this.oldQuestion.answer;
+
+				let getAnswerIfType = (type) => (typeof answer === type ? answer : null);
+
+				this.question.choices = [];
+
+				switch (v) {
+					case QUESTION_COMPLETE:
+						this.question.answer = Array.isArray(answer) ? answer : [];
+						break;
+					case QUESTION_CHOICE_ONE:
+						this.question.answer = getAnswerIfType("string");
+						this.question.choices = this.oldQuestion.choices || [];
+						break;
+					case QUESTION_TRUE_OR_FALSE:
+						this.question.answer = getAnswerIfType("boolean");
+						break;
+					case QUESTION_ESSAY:
+						this.question.answer = getAnswerIfType("string");
+						break;
+					case QUESTION_SPEECH:
+						this.question.answer = getAnswerIfType("string");
+						break;
 				}
 			}
 		},
@@ -177,8 +198,12 @@
 					} else {
 						res = await this.$store.dispatch("Course/createQuestion", this.question);
 					}
+
 					this.setGlobalSuccess(res.msg);
+
 					this.$bvModal.hide("questionForm");
+
+					this.resetModal();
 				} catch (err) {
 					//
 				}
@@ -199,7 +224,7 @@
 
 				this.removeAllErrors();
 
-				this.question = { text: null, type: QUESTION_ESSAY, choices: [], answer };
+				this.question = { text: null, type: QUESTION_ESSAY, choices: [], answer: null };
 			}
 		}
 	};
