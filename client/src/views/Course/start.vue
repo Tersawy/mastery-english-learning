@@ -32,8 +32,17 @@
 										<Question :question="{ ...question, isAnswered: lecture.quiz.isAnswered }" :answers="answers" />
 									</li>
 								</ul>
-								<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
-									<b-btn :disabled="isLoading" variant="primary" @click="saveAnswers" v-if="!lecture.quiz.isAnswered">Save</b-btn>
+								<b-overlay
+									v-if="!lecture.quiz.isAnswered"
+									:show="isLoading"
+									rounded
+									opacity="0.6"
+									spinner-small
+									spinner-variant="primary"
+									class="d-inline-block"
+									@hidden="toggleLoading"
+								>
+									<b-btn :disabled="isLoading" variant="primary" @click="saveAnswers">Save</b-btn>
 								</b-overlay>
 							</div>
 						</div>
