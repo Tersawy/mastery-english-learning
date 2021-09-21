@@ -247,5 +247,16 @@ export default {
 			commit("removeQuestion");
 			return Promise.resolve(data);
 		});
+	},
+
+	createAnswers({ state, commit /* dispatch */ }, item) {
+		return api("post", `${state.prefix}/${state.one._id}/sections/lectures/quiz/${state.oneQuiz._id}/answer`, item, async (err, data) => {
+			if (err) {
+				commit("setErrors", err);
+				return Promise.reject(err);
+			}
+			// await dispatch("quiz");
+			return Promise.resolve(data);
+		});
 	}
 };
