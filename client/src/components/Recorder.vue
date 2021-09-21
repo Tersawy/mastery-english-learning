@@ -1,7 +1,7 @@
 <template>
-	<div class="text-right">
-		<b-btn size="sm" class="w-auto" variant="success" v-if="!isRecording" @click="startRecording">Record</b-btn>
-		<b-btn size="sm" class="w-auto" variant="danger" v-else @click="stopRecording">Stop</b-btn>
+	<div class="text-right" style="font-size: 2rem">
+		<b-icon icon="mic" scale="1.5" variant="success" class="bg-transparent rounded-circle p-2 c-pointer" v-if="!isRecording" @click="startRecording"></b-icon>
+		<b-icon icon="mic-fill" scale="1.5" variant="white" class="bg-danger rounded-circle p-2 c-pointer" v-else @click="stopRecording">Stop</b-icon>
 	</div>
 </template>
 
@@ -34,7 +34,6 @@
 
 					this.isRecording = true;
 				} catch (err) {
-					console.log(err);
 					this.isRecording = false;
 				}
 			},
