@@ -3,9 +3,9 @@ const Quiz = require("../Models/Quiz");
 exports.create = async (req, res) => {
 	let { quizId } = req.params;
 
-	let { text, type, choices } = req.body;
+	let { text, type, choices, answer } = req.body;
 
-	let quiz = { text, type, choices };
+	let quiz = { text, type, choices, answer };
 
 	await Quiz.updateOne({ _id: quizId }, { $push: { questions: quiz } });
 
@@ -15,11 +15,11 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
 	let { quizId, questionId } = req.params;
 
-	let { text, type, choices } = req.body;
+	let { text, type, choices, answer } = req.body;
 
 	let queryCondition = { _id: quizId, "questions._id": questionId };
 
-	let data = { $set: { "questions.$.text": text, "questions.$.type": type, "questions.$.choices": choices } }
+	let data = { $set: { "questions.$.text": text, "questions.$.type": type, "questions.$.choices": choices, "questions.$.answer": answer } }
 	
 	await Quiz.updateOne(queryCondition, data);
 
