@@ -141,6 +141,26 @@ $fontWeightSizes: 100, 200, 300, 400, 500, 600, 700, 800, 900;
 	color: var(--teal);
 }
 
+.text-line-through {
+	text-decoration: line-through;
+}
+
+.w-fit-content {
+	width: fit-content;
+}
+
+.bg-success-light {
+	background-color: #81f66fd7;
+}
+
+.bg-warning-light {
+	background-color: #fbffd0ab;
+}
+
+.bg-danger-light {
+	background-color: #ff3737bd;
+}
+
 .table {
 	tr.border-0 {
 		th {
