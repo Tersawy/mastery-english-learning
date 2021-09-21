@@ -42,6 +42,20 @@
 					<input-error :vuelidate="$v.question.choices" field="choices" :namespace="namespace" />
 				</b-form-group>
 
+				<!-- -------------Answer------------- -->
+				<b-form-group label="Question Answer" label-for="answer" v-if="!isQuestionEssay && !$v.question.text.$invalid">
+					<b-form-tags :disabled="isLoading" v-if="isQuestionComplete" input-id="answer" v-model="question.answer" placeholder="" tag-variant="blue"></b-form-tags>
+					<b-form-radio-group
+						v-else-if="isQuestionTrueOrFalse"
+						v-model="question.answer"
+						:options="[true, false]"
+						class="d-flex"
+						:disabled="isLoading"
+					></b-form-radio-group>
+					<b-form-input :disabled="isLoading" v-else id="answer" v-model="question.answer"></b-form-input>
+					<input-error :vuelidate="$v.question.answer" field="answer" :namespace="namespace" />
+				</b-form-group>
+
 				<div class="text-center py-4">
 					<b-btn @click="addQuestion" v-if="!isQuestionUpdate" variant="outline-blue">Add The Question</b-btn>
 					<b-btn @click="addQuestion" v-else variant="outline-success">Update The Question</b-btn>
@@ -100,7 +114,8 @@
 				question: {
 					text: null,
 					type: QUESTION_ESSAY,
-					choices: []
+					choices: [],
+					answer: null
 				},
 				isQuestionUpdate: false
 			};
@@ -115,10 +130,23 @@
 						return nestedModel.type == QUESTION_CHOICE_ONE;
 					}),
 					minLength: minLength(2)
+				},
+				answer: {
+					required: requiredIf(function (nestedModel) {
+						return nestedModel.type != QUESTION_ESSAY;
+					})
 				}
 			},
 			quiz: {
 				questions: { required, minLength: minLength(1), maxLength: maxLength(100) }
+			}
+		},
+
+		watch: {
+			"question.type"() {
+				if (this.question.answer) {
+					this.question.answer = null;
+				}
 			}
 		},
 
@@ -138,6 +166,19 @@
 			isQuestionChoises() {
 				return this.question.type == QUESTION_CHOICE_ONE;
 			},
+
+			isQuestionComplete() {
+				return this.question.type == QUESTION_COMPLETE;
+			},
+
+			isQuestionEssay() {
+				return this.question.type == QUESTION_ESSAY;
+			},
+
+			isQuestionTrueOrFalse() {
+				return this.question.type == QUESTION_TRUE_OR_FALSE;
+			},
+
 			QUESTION_TYPES_STR() {
 				return QUESTION_TYPES_STR;
 			}
@@ -154,6 +195,11 @@
 
 					if (!spacing) {
 						return this.setGlobalError(`The question complete must contain at least two dots(..). like as "How .. you ?"`);
+					}
+
+					if (this.question.answer.length != spacing.length) {
+						let pronoun = spacing.length > 1 ? "are" : "is";
+						return this.setGlobalError(`Question has ${this.question.answer.length} answers, but ${spacing.length} ${pronoun} required`);
 					}
 				}
 
@@ -207,7 +253,7 @@
 			},
 
 			modalIsShown() {
-				setTimeout(() => this.$refs.textInput.focus(), 400);
+				setTimeout(() => this.$refs.textInput?.focus(), 400);
 
 				if (this.isUpdate) {
 					this.quiz = { ...this.oldQuiz };
