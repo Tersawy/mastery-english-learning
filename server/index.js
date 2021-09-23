@@ -42,7 +42,7 @@ require("./database/config");
 // 	return res.json({ msg: "done" });
 // });
 
-app.use(express.static(path.join(__dirname, "./public/main")));
+app.use(express.static(path.join(__dirname, "./public/dist")));
 app.use("/api/v1/lectures", express.static("./public/videos/courses/lectures"));
 app.use("/api/v1/thumbnails", express.static("./public/images/courses/thumbnails"));
 app.use("/api/v1/user-image", express.static("./public/images/users"));
@@ -58,7 +58,7 @@ app.use("/api/v1/admins", require("./routes/admins"));
 app.use("/api/v1/pages", require("./routes/pages"));
 
 app.get(/.*/, (req, res) => {
-	res.sendFile(__dirname + "/public/main/index.html");
+	res.sendFile(__dirname + "/public/dist/index.html");
 });
 
 app.use((err, req, res, next) => {
@@ -67,7 +67,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
+app.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
 
 // const Category = require("./Models/Category");
 
