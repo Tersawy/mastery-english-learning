@@ -2,8 +2,8 @@
 	<div>
 		<div class="header overflow-hidden">
 			<b-row class="h-100" align-v="center">
-				<b-col cols="4" offset="1">
-					<div class="home-banner-wrap text-white">
+				<b-col cols="12" md="7" offset-md="1">
+					<div class="home-banner-wrap px-3 text-white">
 						<h2>Learn on your schedule</h2>
 						<p>Study any topic, anytime. Explore thousands of courses for the lowest price ever!</p>
 						<b-form>
@@ -22,8 +22,8 @@
 		</div>
 		<div class="home-fact-area text-white py-3">
 			<b-container fluid class="px-xl-5">
-				<b-row>
-					<b-col cols="4">
+				<b-row cols="1" cols-md="2" cols-lg="3">
+					<b-col>
 						<div class="d-flex align-items-center">
 							<div class="display-4 mr-3">
 								<i class="fas fa-bullseye"></i>
@@ -34,8 +34,8 @@
 							</div>
 						</div>
 					</b-col>
-					<b-col cols="4">
-						<div class="d-flex align-items-center">
+					<b-col>
+						<div class="d-flex align-items-center mt-4 mt-md-0">
 							<div class="display-4 mr-3">
 								<i class="fas fa-check"></i>
 							</div>
@@ -45,8 +45,8 @@
 							</div>
 						</div>
 					</b-col>
-					<b-col cols="4">
-						<div class="d-flex align-items-center">
+					<b-col md="12">
+						<div class="d-flex align-items-center mt-4 mt-lg-0">
 							<div class="display-4 mr-3">
 								<i class="fas fa-clock"></i>
 							</div>
