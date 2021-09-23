@@ -4,12 +4,10 @@
 			<b-navbar-brand to="/">
 				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
 			</b-navbar-brand>
-			<div class="toggle d-flex d-lg-none" @click="toggleMenu">
-				<b-icon icon="menu-button-wide" scale="1.3"></b-icon>
-			</div>
 		</div>
-		<div class="content">
-			<b-dropdown variant="link" toggle-class="text-decoration-none" no-caret right size="lg" lazy menu-class="py-0">
+
+		<div class="d-flex content">
+			<b-dropdown variant="link" toggle-class="text-decoration-none px-0" no-caret right size="lg" lazy menu-class="py-0">
 				<template #button-content>
 					<div class="user">
 						<img :src="require('@/assets/images/user6.jpg')" alt="" />
@@ -25,6 +23,10 @@
 					Logout
 				</b-dropdown-item-btn>
 			</b-dropdown>
+
+			<div class="toggle d-flex d-lg-none" @click="toggleMenu">
+				<b-icon icon="menu-button-wide" scale="1.8"></b-icon>
+			</div>
 		</div>
 	</div>
 </template>
