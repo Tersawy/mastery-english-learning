@@ -6,8 +6,8 @@
 				<h3>{{ category.name }} :-</h3>
 				<b-row>
 					<b-col cols="10" offset="1" class="mt-3">
-						<b-row cols="3" class="justify-content-center">
-							<b-col v-for="(course, i) in category.courses" :key="i">
+						<b-row cols="1" cols-md="2" cols-lg="3" class="justify-content-center">
+							<b-col v-for="(course, i) in category.courses" :key="i" :class="{ 'mt-3 mt-md-0': i != 0, 'mt-md-3 mt-lg-0': !(i % 2) && i != 0 }">
 								<CourseCard :course="course" />
 							</b-col>
 						</b-row>
