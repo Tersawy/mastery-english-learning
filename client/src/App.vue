@@ -15,9 +15,9 @@
 					</b-row>
 				</div>
 			</b-container>
-			<b-sidebar v-model="sidebar" bg-variant="light" backdrop-variant="dark" backdrop shadow>
+			<b-sidebar v-model="sidebar" bg-variant="light" backdrop-variant="dark" backdrop shadow header-class="border-bottom">
 				<template #header="{ hide }">
-					<div class="p-2 d-flex align-items-center justify-content-between w-100">
+					<div class="d-flex align-items-center justify-content-between w-100">
 						<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
 						<span @click="hide" class="p-2 c-pointer">&times;</span>
 					</div>
