@@ -1,14 +1,15 @@
 <template>
-	<div class="login-page d-flex flex-column align-items-center justify-content-center bg-white">
-		<b-img :src="require('@/assets/images/logo-dark.png')" height="35"></b-img>
+	<div class="login-page d-flex flex-column align-items-center bg-white py-5">
+		<b-navbar-brand to="/">
+			<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
+		</b-navbar-brand>
 		<h2 class="font-weight-900 my-3">Sign in to your account</h2>
 		<div>
 			Or
 			<router-link to="/register" class="text-primary text-decoration-none"> create a new account </router-link>
-			<!-- <a href="" class="text-primary text-decoration-none">create a new account</a> -->
 		</div>
 		<b-row class="mt-4 w-100 justify-content-center">
-			<b-col cols="7">
+			<b-col cols="12" sm="8" lg="6" xl="4">
 				<b-card class="shadow">
 					<b-form @submit.prevent="handleLogin">
 						<b-form-group label="Email address" label-for="email">
@@ -17,7 +18,6 @@
 						<b-form-group label="Password" label-for="password">
 							<b-form-input type="password" id="password" v-model="login.password" />
 						</b-form-group>
-						<!-- <b-form-checkbox id="remember" v-model="login.remember" name="remember"> Remember </b-form-checkbox> -->
 						<b-btn block variant="primary" class="mt-3" @click="handleLogin">Sign in</b-btn>
 					</b-form>
 				</b-card>
@@ -71,6 +71,5 @@
 <style scoped lang="scss">
 	.login-page {
 		height: 100vh;
-		padding: 60px;
 	}
 </style>
