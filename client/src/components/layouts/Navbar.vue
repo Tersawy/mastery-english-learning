@@ -5,10 +5,27 @@
 				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
 			</b-navbar-brand>
 
-			<b-navbar-toggle target="nav-collapse" v-b-toggle.sidebar-backdrop class="d-block d-xl-none"></b-navbar-toggle>
+			<div class="d-flex d-xl-none">
+				<b-dropdown v-if="isAuth" variant="link" toggle-class="text-decoration-none p-0 mr-3" no-caret right size="lg" lazy menu-class="py-0">
+					<template #button-content>
+						<b-avatar variant="white" :src="require('@/assets/images/user6.jpg')" class="border border-primary" style="padding: 2px"></b-avatar>
+					</template>
+					<b-dd-header> {{ me.username }} </b-dd-header>
+					<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
+					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
+					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
+					<hr class="m-0" />
+					<b-dropdown-item-btn variant="danger" @click="$store.commit('Auth/logout')" button-class="py-2">
+						<span class="pr-2">
+							<b-icon icon="box-arrow-in-left" scale="1.5" />
+						</span>
+						Logout
+					</b-dropdown-item-btn>
+				</b-dropdown>
+				<b-navbar-toggle target="nav-collapse" v-b-toggle.sidebar-backdrop></b-navbar-toggle>
+			</div>
 
-			<b-sidebar id="sidebar-backdrop" backdrop-variant="dark" backdrop shadow footer-class="d-flex justify-content-center p-2" body-class="p-3">
-				<!-- Right aligned nav items -->
+			<b-sidebar id="sidebar-backdrop" backdrop-variant="dark" backdrop shadow footer-class="d-flex justify-content-center p-2" body-class="px-3 pb-3">
 				<template #header="{ hide }">
 					<div class="w-100 d-flex justify-content-between align-items-center border-bottom pb-1">
 						<b-navbar-brand to="/">
@@ -17,7 +34,8 @@
 						<span @click="hide">&times;</span>
 					</div>
 				</template>
-				<b-form class="w-100">
+
+				<b-form class="w-100 pt-3">
 					<b-input-group>
 						<b-form-input placeholder="Search for courses" class="py-4"></b-form-input>
 						<b-input-group-append>
@@ -43,27 +61,6 @@
 					<b-btn variant="outline-dark" to="/login" class="mr-2">Sign In</b-btn>
 					<b-btn variant="danger" to="/register">Sign Up</b-btn>
 				</div>
-
-				<template v-if="isAuth">
-					<b-dropdown variant="link" toggle-class="text-decoration-none" no-caret right size="lg" lazy menu-class="py-0">
-						<template #button-content>
-							<div class="user">
-								<img :src="require('@/assets/images/user6.jpg')" alt="" />
-							</div>
-						</template>
-						<b-dd-header> {{ me.username }} </b-dd-header>
-						<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
-						<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
-						<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
-						<hr class="m-0" />
-						<b-dropdown-item-btn variant="danger" @click="$store.commit('Auth/logout')" button-class="py-2">
-							<span class="pr-2">
-								<b-icon icon="box-arrow-in-left" scale="1.5" />
-							</span>
-							Logout
-						</b-dropdown-item-btn>
-					</b-dropdown>
-				</template>
 			</b-sidebar>
 
 			<div class="w-100 d-none d-xl-flex">
