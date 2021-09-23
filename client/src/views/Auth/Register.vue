@@ -43,7 +43,9 @@
 						</b-form-group>
 
 						<b-form-checkbox id="type" v-model="register.type" name="type"> Instructor ? </b-form-checkbox>
-						<b-btn block variant="primary" class="mt-3" @click="handleRegister">Sign up</b-btn>
+						<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" @hidden="toggleLoading">
+							<b-btn :disabled="isLoading" block variant="primary" class="mt-3" @click="handleRegister">Sign up</b-btn>
+						</b-overlay>
 					</b-form>
 				</b-card>
 			</b-col>
@@ -88,6 +90,8 @@
 
 				if (this.$v.$invalid) return;
 
+				this.toggleLoading();
+
 				try {
 					let data = await this.$store.dispatch("Auth/register", this.register);
 
@@ -99,6 +103,8 @@
 				} catch (err) {
 					//
 				}
+
+				this.toggleLoading();
 			},
 
 			resetForm() {

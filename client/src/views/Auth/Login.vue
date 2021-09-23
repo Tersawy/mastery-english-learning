@@ -18,7 +18,9 @@
 						<b-form-group label="Password" label-for="password">
 							<b-form-input type="password" id="password" v-model="login.password" />
 						</b-form-group>
-						<b-btn block variant="primary" class="mt-3" @click="handleLogin">Sign in</b-btn>
+						<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" @hidden="toggleLoading">
+							<b-btn type="submit" :disabled="isLoading" block variant="primary" class="mt-3" @click="handleLogin">Sign in</b-btn>
+						</b-overlay>
 					</b-form>
 				</b-card>
 			</b-col>
@@ -58,11 +60,15 @@
 					return this.setGlobalError("Email or password are not valid");
 				}
 
+				this.toggleLoading();
+
 				try {
 					await this.$store.dispatch("Auth/login", this.login);
 				} catch (err) {
 					//
 				}
+
+				this.toggleLoading();
 			}
 		}
 	};
