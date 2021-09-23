@@ -5,9 +5,68 @@
 				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
 			</b-navbar-brand>
 
-			<b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+			<b-navbar-toggle target="nav-collapse" v-b-toggle.sidebar-backdrop class="d-block d-xl-none"></b-navbar-toggle>
 
-			<b-collapse id="nav-collapse" is-nav>
+			<b-sidebar id="sidebar-backdrop" backdrop-variant="dark" backdrop shadow footer-class="d-flex justify-content-center p-2" body-class="p-3">
+				<!-- Right aligned nav items -->
+				<template #header="{ hide }">
+					<div class="w-100 d-flex justify-content-between align-items-center border-bottom pb-1">
+						<b-navbar-brand to="/">
+							<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
+						</b-navbar-brand>
+						<span @click="hide">&times;</span>
+					</div>
+				</template>
+				<b-form class="w-100">
+					<b-input-group>
+						<b-form-input placeholder="Search for courses" class="py-4"></b-form-input>
+						<b-input-group-append>
+							<b-button variant="danger">
+								<b-icon icon="search" scale="0.8"></b-icon>
+							</b-button>
+						</b-input-group-append>
+					</b-input-group>
+				</b-form>
+
+				<b-dropdown no-caret toggle-class="text-muted bg-transparent border-0 font-md px-0 py-3">
+					<template #button-content>
+						<i class="fas fa-th d-inline"></i>
+						Courses
+					</template>
+					<b-dropdown-item href="#">EN</b-dropdown-item>
+					<b-dropdown-item href="#">ES</b-dropdown-item>
+					<b-dropdown-item href="#">RU</b-dropdown-item>
+					<b-dropdown-item href="#">FA</b-dropdown-item>
+				</b-dropdown>
+
+				<div class="text-center" v-if="!isAuth">
+					<b-btn variant="outline-dark" to="/login" class="mr-2">Sign In</b-btn>
+					<b-btn variant="danger" to="/register">Sign Up</b-btn>
+				</div>
+
+				<template v-if="isAuth">
+					<b-dropdown variant="link" toggle-class="text-decoration-none" no-caret right size="lg" lazy menu-class="py-0">
+						<template #button-content>
+							<div class="user">
+								<img :src="require('@/assets/images/user6.jpg')" alt="" />
+							</div>
+						</template>
+						<b-dd-header> {{ me.username }} </b-dd-header>
+						<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
+						<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
+						<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
+						<hr class="m-0" />
+						<b-dropdown-item-btn variant="danger" @click="$store.commit('Auth/logout')" button-class="py-2">
+							<span class="pr-2">
+								<b-icon icon="box-arrow-in-left" scale="1.5" />
+							</span>
+							Logout
+						</b-dropdown-item-btn>
+					</b-dropdown>
+				</template>
+			</b-sidebar>
+
+			<div class="w-100 d-none d-xl-flex">
 				<b-dropdown no-caret toggle-class="text-muted bg-transparent border-0 font-md ml-5">
 					<template #button-content>
 						<i class="fas fa-th d-inline"></i>
@@ -59,9 +118,16 @@
 						</template>
 					</div>
 				</div>
-			</b-collapse>
+			</div>
 		</b-container>
 	</b-navbar>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+	// .form-search {
+	// 	width: 60%;
+	// 	@media (min-width: var(--breakpoint-xl)) {
+	// 		width: 100% !important;
+	// 	}
+	// }
+</style>
