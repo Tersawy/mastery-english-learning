@@ -203,6 +203,12 @@
 					}
 				}
 
+				if (this.question.type == QUESTION_CHOICE_ONE) {
+					if (!this.question.choices.includes(this.question.answer)) {
+						return this.setGlobalError(`The Question answer must be exits in choices`);
+					}
+				}
+
 				this.isQuestionUpdate = false;
 
 				this.quiz.questions.push(this.question);

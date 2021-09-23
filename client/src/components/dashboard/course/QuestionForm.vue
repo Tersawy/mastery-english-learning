@@ -188,6 +188,12 @@
 					}
 				}
 
+				if (this.question.type == QUESTION_CHOICE_ONE) {
+					if (!this.question.choices.includes(this.question.answer)) {
+						return this.setGlobalError(`The Question answer must be exits in choices`);
+					}
+				}
+
 				let res;
 
 				try {
