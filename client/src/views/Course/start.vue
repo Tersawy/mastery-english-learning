@@ -1,33 +1,38 @@
 <template>
 	<div class="start-learning" v-if="course">
 		<b-container fluid class="px-lg-4">
-			<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 my-30px">
+			<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 my-30px d-none d-sm-flex">
 				<b-breadcrumb-item to="/dashboard">
 					<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
 					My Courses
 				</b-breadcrumb-item>
 				<b-breadcrumb-item active> {{ course.title }} </b-breadcrumb-item>
 			</b-breadcrumb>
-			<b-row>
-				<b-col cols="8">
-					<div style="" v-if="lecture.video">
-						<video :src="`${lecturesURL}/${lecture.video}`" class="w-100" style="background-color: #000" controls ref="video"></video>
+			<b-row class="mt-3 mt-sm-0">
+				<b-col cols="12" xl="8">
+					<div v-if="lecture.video">
+						<video
+							:src="`${lecturesURL}/${lecture.video}`"
+							class="w-100"
+							style="background-color: #000; min-height: 40vh; object-fit: fill"
+							controls
+							ref="video"
+						></video>
 					</div>
-					<div class="course-details my-30px">
+					<div class="course-details my-3 my-xl-30px">
 						<div class="user-details d-flex align-items-center">
 							<b-avatar v-if="course.createdBy" :src="`${userImageURL}/${course.createdBy.image}`"></b-avatar>
 							<span class="font-weight-700 mx-3">{{ course.createdBy | relation("username") }}</span>
+							<div class="ml-auto text-muted">{{ lecture.createdAt | date }}</div>
 						</div>
-						<div class="lecture-details ml-40px mt-2">
-							<div class="mx-3 text-muted">{{ lecture.createdAt | date }}</div>
-							<div class="mx-3 mt-3">
-								{{ lecture.description }}
-							</div>
+						<div class="mx-md-50px pl-2 mt-3">
+							{{ lecture.description }}
 						</div>
+						<SectionsContent class="d-xl-none mt-5" />
 						<div class="lecture-quiz pt-3" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
 							<h3 class="mb-3" style="text-decoration: underline">Quiz :-</h3>
 							<div class="questions ml-3">
-								<ul class="questions-list" style="list-style: upper-latin">
+								<ul class="questions-list pl-0 pl-xl-3" style="list-style: upper-latin">
 									<li v-for="(question, i) in lecture.quiz.questions" :key="i" class="questions-item px-2 py-4">
 										<Question :question="{ ...question, isAnswered: lecture.quiz.isAnswered }" :answers="answers" />
 									</li>
@@ -48,61 +53,8 @@
 						</div>
 					</div>
 				</b-col>
-				<b-col cols="4">
-					<div class="d-flex align-items-center justify-content-between mb-2">
-						<p class="mb-0 font-md">
-							{{ +course.sections.length }} sections • {{ lecturesCount }} lectures •
-							{{ lecturesTime(course.time).timeStr }}
-							total length
-						</p>
-						<b-btn size="sm" variant="teal" @click="expandAll">
-							<span v-if="allExpanded"> Collapse All </span>
-							<span v-else> Expand All </span>
-						</b-btn>
-					</div>
-					<div class="course-content-sections">
-						<b-card no-body v-for="(section, i) in course.sections" :key="i">
-							<b-card-body @click="section.lecturesVisible = !section.lecturesVisible" class="p-3 d-flex justify-content-between c-pointer">
-								<div class="d-flex align-items-center">
-									<b-icon :icon="`chevron-${section.lecturesVisible ? 'up' : 'down'}`" />
-									<span class="mx-2 font-weight-600">{{ section.title }}</span>
-								</div>
-								<span class="font-md"> {{ section.lectures.length }} lectures • {{ lecturesTime(section.time).timeStr }} </span>
-							</b-card-body>
-							<b-collapse v-model="section.lecturesVisible">
-								<b-card-footer class="p-0 border-0">
-									<div class="d-flex align-items-center justify-content-between p-3 font-md" v-for="(lecture, i) in section.lectures" :key="i">
-										<div>
-											<span style="font-size: 18px" class="">
-												<b-icon
-													icon="caret-right-fill"
-													variant="white"
-													class="rounded-circle bg-dark p-1 c-pointer"
-													v-if="lecture.video"
-													@click="showLectureVideo(lecture)"
-												/>
-												<b-icon icon="dash-circle" scale="2" variant="white" class="rounded-circle bg-dark p-1" v-else />
-											</span>
-											<span class="mx-2 text-primary c-pointer" style="text-decoration: underline" @click="showLectureVideo(lecture)" v-if="lecture.video">
-												{{ lecture.title }}
-											</span>
-											<span class="mx-2" v-else>{{ lecture.title }}</span>
-											<b-icon
-												:icon="`chevron-${lecture.descriptionVisible ? 'up' : 'down'}`"
-												variant="dark"
-												class="c-pointer"
-												@click="lecture.descriptionVisible = !lecture.descriptionVisible"
-											/>
-											<b-collapse v-model="lecture.descriptionVisible">
-												<p class="text-muted pl-4 mt-1 mb-0 font-md">{{ lecture.description }}</p>
-											</b-collapse>
-										</div>
-										<div>{{ lecturesTime(lecture.time).timeNum }}</div>
-									</div>
-								</b-card-footer>
-							</b-collapse>
-						</b-card>
-					</div>
+				<b-col cols="4" class="d-none d-xl-block">
+					<SectionsContent />
 				</b-col>
 			</b-row>
 		</b-container>
@@ -110,19 +62,17 @@
 </template>
 
 <script>
-	import { secondsToHms } from "@/helpers/functions";
-
 	import Question from "@/components/question/index.vue";
 
 	import { QUESTION_COMPLETE, QUESTION_SPEECH } from "@/helpers/constants";
+	import SectionsContent from "@/components/course/SectionsContent";
 
 	export default {
-		components: { Question },
+		components: { Question, SectionsContent },
 
 		data() {
 			return {
 				allExpanded: false,
-				isListen: false,
 				answers: []
 			};
 		},
@@ -149,42 +99,14 @@
 				return this.$store.state.Course.one;
 			},
 
-			lecturesCount() {
-				return this.course?.sections?.reduce((total, section) => {
-					total += section.lectures.length;
-					return total;
-				}, 0);
-			},
-
 			lecture() {
 				return this.$store.state.Course.oneLecture;
-			}
-		},
-
-		watch: {
-			allExpanded(v) {
-				this.course?.sections?.forEach((section) => {
-					section.lecturesVisible = v;
-					if (!v) {
-						section.lectures.forEach((lecture) => {
-							lecture.descriptionVisible = v;
-						});
-					}
-				});
 			}
 		},
 
 		methods: {
 			getCourse() {
 				return this.$store.dispatch("Course/show", this.$route.params.courseId);
-			},
-
-			expandAll() {
-				this.allExpanded = !this.allExpanded;
-			},
-
-			lecturesTime(time) {
-				return secondsToHms(time);
 			},
 
 			async showLectureVideo(lecture) {
@@ -283,6 +205,9 @@
 							border: none;
 							outline: none;
 						}
+					}
+					&.question-true-or-false {
+						line-height: 2 !important;
 					}
 					&.question-speech {
 						.ar-icon {
