@@ -2,5 +2,5 @@ const path = require("path");
 
 module.exports = {
 	lintOnSave: false,
-	outputDir: path.resolve(__dirname, "../server/public/main")
+	outputDir: path.resolve(path.join(__dirname, "../", "server", "public", "dist"))
 };
