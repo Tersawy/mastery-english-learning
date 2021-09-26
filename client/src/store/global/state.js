@@ -7,6 +7,7 @@ const state = {
 		{ text: COURSE_STATUS_STR[COURSE_PENDING], value: COURSE_PENDING }
 	],
 	uploads: [],
+	isLoader: true,
 	pages: {
 		home: {}
 	}

@@ -13,6 +13,8 @@ export const setErrors = (state, { message, errors }) => {
 
 export const setError = (_state, message) => showToast(message, "danger");
 
+export const setLoader = (_state, value) => (state.isLoader = value);
+
 export const setBreads = (state, breads) => (state.breads = breads);
 
 export const setUpload = (state, newUpload) => (state.uploads = [...state.uploads, newUpload]);

@@ -29,6 +29,7 @@
 			<Navbar v-if="showNavbar" />
 			<router-view />
 		</div>
+		<Loader />
 	</div>
 </template>
 
@@ -38,8 +39,9 @@
 	import SidebarDashboard from "@/components/layouts/SidebarDashboard";
 	import DashboardLinks from "@/components/DashboardLinks";
 	import UploadList from "@/components/UploadList";
+	import Loader from "@/components/Loader";
 	export default {
-		components: { Navbar, NavbarDashboard, SidebarDashboard, DashboardLinks, UploadList },
+		components: { Navbar, NavbarDashboard, SidebarDashboard, DashboardLinks, UploadList, Loader },
 
 		data() {
 			return {
