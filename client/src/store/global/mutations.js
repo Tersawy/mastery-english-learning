@@ -13,7 +13,14 @@ export const setErrors = (state, { message, errors }) => {
 
 export const setError = (_state, message) => showToast(message, "danger");
 
-export const setLoader = (_state, value) => (state.isLoader = value);
+export const setLoader = (state, value) => {
+	state.isLoader = value;
+	if (value) {
+		document.body.style.overflowY = "hidden";
+	} else {
+		document.body.style.overflowY = "auto";
+	}
+};
 
 export const setBreads = (state, breads) => (state.breads = breads);
 
