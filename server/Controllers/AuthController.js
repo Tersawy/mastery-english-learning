@@ -41,6 +41,7 @@ exports.login = async (req, res) => {
 			phone: user.phone,
 			email: user.email,
 			type: user.type,
+			image: user.image
 		};
 
 		res.json({ status: 200, token, user });
