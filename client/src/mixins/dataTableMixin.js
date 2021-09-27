@@ -15,8 +15,10 @@ export default {
 		search: ""
 	}),
 
-	mounted() {
-		this.getItems(this.queries);
+	async mounted() {
+		await this.getItems(this.queries);
+
+		this.$store.commit("setLoader", false);
 	},
 
 	computed: {

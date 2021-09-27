@@ -137,8 +137,10 @@
 			};
 		},
 
-		mounted() {
-			this.getCourse();
+		async mounted() {
+			await this.getCourse();
+
+			this.$store.commit("setLoader", false);
 		},
 
 		computed: {

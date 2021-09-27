@@ -1,17 +1,12 @@
 <template>
 	<div class="dashboard">
-		<!-- <b-card class="shadow-sm"> -->
-		<!-- <h5 class="d-flex align-items-center mb-0 font-weight-600 text-muted">
-				<b-icon icon="command" scale="1.3"></b-icon>
-				<span class="mx-2"> Dashboard </span>
-			</h5> -->
 		<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 mb-30px">
 			<b-breadcrumb-item href="/dashboard" active>
 				<b-icon icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
 				<span class="mx-2">Dashboard</span>
 			</b-breadcrumb-item>
 		</b-breadcrumb>
-		<!-- </b-card> -->
+
 		<b-row cols="1" cols-md="3">
 			<b-col class="mb-4 mb-lg-0">
 				<report-card name="Number of Courses" icon="collection" number="17" />
@@ -96,6 +91,10 @@
 					{ title: "Python", status: 1, studentsCount: 120 }
 				]
 			};
+		},
+
+		mounted() {
+			this.$store.commit("setLoader", false);
 		}
 	};
 </script>

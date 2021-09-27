@@ -50,6 +50,10 @@
 			return { login };
 		},
 
+		mounted() {
+			this.$store.commit("setLoader", false);
+		},
+
 		methods: {
 			async handleLogin() {
 				this.$v.$touch();
@@ -76,6 +80,6 @@
 
 <style scoped lang="scss">
 	.login-page {
-		height: 100vh;
+		min-height: 100vh;
 	}
 </style>

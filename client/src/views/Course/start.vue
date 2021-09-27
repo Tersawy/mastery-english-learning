@@ -80,6 +80,8 @@
 		async mounted() {
 			await this.getCourse();
 
+			this.$store.commit("setLoader", false);
+
 			for (let i = 0; i < this.course.sections.length; i++) {
 				if (!this.course.sections[i].lectures.length) continue;
 

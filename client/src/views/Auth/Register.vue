@@ -84,6 +84,10 @@
 			return { register };
 		},
 
+		mounted() {
+			this.$store.commit("setLoader", false);
+		},
+
 		methods: {
 			async handleRegister() {
 				this.$v.$touch();
@@ -123,3 +127,9 @@
 		}
 	};
 </script>
+
+<style scoped lang="scss">
+	.register-page {
+		min-height: 100vh;
+	}
+</style>

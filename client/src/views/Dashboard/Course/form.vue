@@ -192,11 +192,16 @@
 			}
 
 			this.getCategorisOptions();
+
 			this.getLevelsOptions();
+
 			await this.getLangsOptions();
+
 			if (!this.isUpdate && this.langsOpt.length) {
 				this.course.langMadeIn = this.langsOpt[0]?._id;
 			}
+
+			this.$store.commit("setLoader", false);
 		},
 
 		computed: {

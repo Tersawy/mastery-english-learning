@@ -25,8 +25,10 @@
 		name: "Home",
 		components: { Header, CourseCard },
 
-		mounted() {
-			this.$store.dispatch("getHomePage");
+		async mounted() {
+			await this.$store.dispatch("getHomePage");
+
+			this.$store.commit("setLoader", false);
 		},
 		computed: {
 			homePage() {

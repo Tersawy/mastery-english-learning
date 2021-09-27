@@ -26,6 +26,7 @@ Vue.use(uploader);
 const DEFAULT_TITLE = "Mastery-english-learning";
 
 router.beforeEach((to, from, next) => {
+	store.commit("setLoader", true);
 	let user = store.state.Auth.user || {};
 
 	let isAuth = Object.keys(user).length > 1;
