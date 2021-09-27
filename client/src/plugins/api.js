@@ -38,20 +38,15 @@ let api = async (method, route, data, config, callback) => {
 	} catch (err) {
 		if (!err.response) return;
 
-		const {
-			response: { status, data }
-		} = err;
+		const { response } = err;
 
-		if (status === 401) {
-			store.commit("Auth/logout");
-			if (router.history.current.name != "Login") router.push("/login");
-		}
+		let error = { data: response.data, status: response.status };
 
 		if (isCallback) {
-			return callback(data);
+			return callback(error);
 		}
 
-		return Promise.reject(data);
+		return Promise.reject(error);
 	}
 };
 
