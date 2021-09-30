@@ -123,17 +123,24 @@
 			</b-container>
 		</div>
 		<LectureVideo />
+		<LoginModal @signedIn="signedIn" />
+		<RegisterModal />
+		<Congrats v-if="isCongrate" />
 	</div>
 </template>
 
 <script>
+	import Congrats from "@/components/Congrats.vue";
 	import { secondsToHms } from "@/helpers/functions";
 	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
+	import LoginModal from "@/components/auth/LoginModal.vue";
+	import RegisterModal from "@/components/auth/RegisterModal.vue";
 	export default {
-		components: { LectureVideo },
+		components: { LectureVideo, LoginModal, RegisterModal, Congrats },
 		data() {
 			return {
-				allExpanded: false
+				allExpanded: false,
+				isCongrate: false
 			};
 		},
 
@@ -188,13 +195,37 @@
 			},
 
 			async enroll() {
-				try {
-					let res = await this.$store.dispatch("Student/enroll", this.course);
+				if (!this.isAuth) return this.$bvModal.show("loginModal");
 
-					if (res.msg) this.setGlobalSuccess(res.msg);
+				try {
+					await this.$store.dispatch("Student/enroll", this.course);
+
+					this.$store.commit("Course/setOne", { ...this.course, isEnrolled: true });
+
+					this.$swal
+						.fire({
+							title: "Congratulations on the new course",
+							icon: "success",
+							confirmButtonText: "Start to learning"
+						})
+						.then((result) => {
+							if (result.isConfirmed) {
+								this.$router.push({ name: "StartCourse", params: { courseId: this.$route.params.courseId } });
+							}
+						});
+
+					this.isCongrate = true;
+
+					setTimeout(() => (this.isCongrate = false), 5000);
 				} catch (err) {
 					//
 				}
+			},
+
+			async signedIn() {
+				this.$store.commit("setLoader", true);
+				await this.getCourse();
+				this.$store.commit("setLoader", false);
 			}
 		}
 	};
