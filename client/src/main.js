@@ -11,6 +11,11 @@ Vue.use(BootstrapVueIcons);
 
 import "@/assets/scss/main.scss";
 
+import VueSweetalert2 from "vue-sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
+
+Vue.use(VueSweetalert2);
+
 import vuelidate from "vuelidate";
 Vue.use(vuelidate);
 
@@ -27,17 +32,21 @@ const DEFAULT_TITLE = "Mastery-english-learning";
 
 router.beforeEach((to, from, next) => {
 	store.commit("setLoader", true);
+
+	window.scrollTo(0, 0);
+	console.log(to);
+
 	let user = store.state.Auth.user || {};
 
 	let isAuth = Object.keys(user).length > 1;
 
-	if (to.meta.auth && !isAuth) return next("/login");
+	if (to.meta.auth && !isAuth) return next("/");
 
 	let routeHasExcept = Array.isArray(to.meta.only);
 
 	let userIsNotAllowed = routeHasExcept && !to.meta.only.includes(user.type);
 
-	if (isAuth && userIsNotAllowed) return next("/dashboard");
+	if (isAuth && userIsNotAllowed && to.name != "Dashboard") return next("/dashboard");
 
 	next();
 });
@@ -68,8 +77,7 @@ new Vue({
 	render: (h) => h(App)
 }).$mount("#app");
 
-let meta = router.history.current.meta;
+store.dispatch("Auth/me");
 
-if (meta.auth) {
-	store.dispatch("Auth/me");
-}
+//https://www.facebook.com/Gam3aBookStore/
+//https://www.facebook.com/printige/
