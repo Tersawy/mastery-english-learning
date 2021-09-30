@@ -101,7 +101,7 @@
 									</div>
 								</template>
 								<b-dd-header> {{ me.username }} </b-dd-header>
-								<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
+								<b-dropdown-item link-class="py-2" v-b-toggle.userProfile>Profile</b-dropdown-item>
 								<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
 								<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
 								<hr class="m-0" />
