@@ -50,7 +50,7 @@
 				</b-form-group>
 
 				<div class="text-right">
-					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
+					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
 						<b-btn :disabled="isLoading" v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
 						<b-btn :disabled="isLoading" v-else @click="ok()" variant="outline-primary">Save</b-btn>
 					</b-overlay>
@@ -104,7 +104,7 @@
 				let res;
 
 				try {
-					this.toggleLoading();
+					this.setLoading(true);
 
 					if (this.isUpdate) {
 						res = await this.$store.dispatch("Instructor/update", this.instructor);
@@ -122,7 +122,7 @@
 					//
 				}
 
-				this.toggleLoading();
+				this.setLoading(false);
 			},
 
 			modalIsShown() {
