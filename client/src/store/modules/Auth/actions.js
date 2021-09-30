@@ -1,9 +1,9 @@
 import api from "@/plugins/api";
 
 export const me = async ({ commit }) => {
-	return api("post", "me", (err, res) => {
+	return api("post", "me", (err, data) => {
 		if (err) return;
-		commit("me", res.data);
+		commit("me", data);
 	});
 };
 
@@ -35,39 +35,63 @@ export const register = async ({ commit }, payload) => {
 };
 
 export const logout = ({ commit }) => {
-	return api("post", "logout", {}, (err, res) => {
+	return api("post", "logout", {}, (err) => {
 		if (err) return;
-		commit("logout", res.data);
+		commit("logout");
 	});
 };
 
 export const resetPassword = ({ commit }, payload) => {
 	commit("removeErrors");
-	return api("post", "reset-password", payload, (err, res) => {
+	return api("post", "reset-password", payload, (err) => {
 		if (err) return;
-		commit("resetPassword", res.data);
+		commit("resetPassword", data);
 	});
 };
 
 export const verifyToken = ({ commit }, payload) => {
-	return api("post", "verify", payload, (err, res) => {
+	return api("post", "verify", payload, (err, data) => {
 		if (err) return;
-		commit("verifyToken", res.data);
+		commit("verifyToken", data);
 	});
 };
 
 export const newPassword = ({ commit }, payload) => {
 	commit("removeErrors");
-	return api("post", "reset-password", payload, (err, res) => {
+	return api("post", "reset-password", payload, (err, data) => {
 		if (err) return;
-		commit("newPassword", res.data);
+		commit("newPassword", data);
 	});
 };
 
-export const updateProfile = ({ commit }, payload) => {
+export const updateProfile = ({ commit, dispatch }, payload) => {
 	commit("removeErrors");
-	return api("post", "update-profile", payload, (err, res) => {
-		if (err) return;
-		commit("updateProfile", res.data);
+	return api("post", "update-profile", payload, async (err, data) => {
+		if (err) {
+			if (err.status != 401) {
+				commit("setErrors", err.data);
+			}
+			return Promise.reject(err.data);
+		}
+
+		await dispatch("me");
+
+		return Promise.resolve(data);
+	});
+};
+
+export const updateProfileImage = ({ commit, dispatch }, { formData, config }) => {
+	commit("removeErrors");
+	return api("post", "update-profile-image", formData, config, async (err, data) => {
+		if (err) {
+			if (err.status != 401) {
+				commit("setErrors", err.data);
+			}
+			return Promise.reject(err.data);
+		}
+
+		await dispatch("me");
+
+		return Promise.resolve(data);
 	});
 };
