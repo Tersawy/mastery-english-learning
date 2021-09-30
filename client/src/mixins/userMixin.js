@@ -1,4 +1,4 @@
-import { ADMIN, INSTRUCTOR, OWNER, STUDENT } from "../helpers/constants";
+import { ADMIN, INSTRUCTOR, OWNER, STUDENT } from "@/helpers/constants";
 
 export default {
 	data() {
@@ -45,8 +45,8 @@ export default {
 	},
 
 	methods: {
-		toggleLoading() {
-			this.isLoading = !this.isLoading;
+		setLoading(value) {
+			this.isLoading = value;
 		}
 	}
 };
