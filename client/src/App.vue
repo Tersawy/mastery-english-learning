@@ -30,6 +30,7 @@
 			<router-view />
 		</div>
 		<Loader />
+		<UserProfile />
 	</div>
 </template>
 
@@ -40,8 +41,9 @@
 	import DashboardLinks from "@/components/DashboardLinks";
 	import UploadList from "@/components/UploadList";
 	import Loader from "@/components/Loader";
+	import UserProfile from "@/components/UserProfile";
 	export default {
-		components: { Navbar, NavbarDashboard, SidebarDashboard, DashboardLinks, UploadList, Loader },
+		components: { Navbar, NavbarDashboard, SidebarDashboard, DashboardLinks, UploadList, Loader, UserProfile },
 
 		data() {
 			return {
