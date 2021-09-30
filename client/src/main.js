@@ -34,7 +34,6 @@ router.beforeEach((to, from, next) => {
 	store.commit("setLoader", true);
 
 	window.scrollTo(0, 0);
-	console.log(to);
 
 	let user = store.state.Auth.user || {};
 
