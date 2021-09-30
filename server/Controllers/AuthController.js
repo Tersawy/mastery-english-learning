@@ -7,11 +7,18 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
 const fs = require("fs");
+
+const path = require("path");
+
+const { randomChar } = require("../helpers/functions");
+
 // const nodemailer = require("nodemailer");
 
 // const sgMail = require("@sendgrid/mail");
 
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const imagesDir = path.resolve(__dirname, "../public/images/users");
 
 const privateKey = fs.readFileSync("jwtRS256.key", "utf8");
 const publicKey = fs.readFileSync("jwtRS256.key.pub", "utf8");
@@ -87,6 +94,56 @@ exports.me = (req, res) => {
 		return res.json({ status: 200, user: _user });
 	});
 };
+
+exports.updateProfile = async (req, res) => {
+
+	const { me, username, fullname, phone, email, password } = req.body;
+
+	let updateData = { username, fullname, phone, email };
+
+	if (password) {
+		updateData.password = await bcrypt.hash(password, 10);
+	}
+	
+	await User.updateOne({ _id: me._id }, updateData);
+
+	res.json({ msg: "Your Profile has been updated successfully" });
+}
+
+exports.changeImage = (req, res) => {
+	const { me } = req.body;
+
+	const image = req.files && req.files.image ? req.files.image : null;
+
+	if (!image) res.status(422).json({ msg: "image is required" });
+
+	let extensionsAvailable = ["jpg", "jpeg", "png"];
+
+	let imageNameSplited = image.name.split(".");
+
+	let imageExtension = imageNameSplited[imageNameSplited.length - 1];
+
+	if (!imageExtension || !extensionsAvailable.includes(imageExtension)) {
+		return res.status(422).json({ msg: "Image is not valid" });
+	}
+
+	if (image.size > 2000000) return res.status(422).json({ thumbnail: "Image cannot be greater than 2 MB" });
+
+	let imageName = `${randomChar(8)}_${Date.now()}.${imageExtension}`;
+
+	if (!fs.existsSync(imagesDir)) return res.status(500).json({ msg: "Something went wrong" });
+	
+	let imageDir = path.resolve(imagesDir, imageName);
+
+	image.mv(imageDir, async (err) => {
+		if (err) return res.status(500).json({ msg: "Something went wrong" });
+
+		await User.updateOne({ _id: me._id }, { image: imageName });
+
+		res.json({ msg: "Your image has been updated successfully" });
+		
+	});
+}
 
 exports.reset = (req, res) => {
 	const { email } = req.body;
