@@ -10,7 +10,7 @@
 			<b-dropdown variant="link" toggle-class="text-decoration-none px-0" no-caret right size="lg" lazy menu-class="py-0">
 				<template #button-content>
 					<div class="user">
-						<img :src="require('@/assets/images/user6.jpg')" alt="" />
+						<img :src="`${userImageURL}/${me.image}`" alt="" />
 					</div>
 				</template>
 				<b-dd-header> {{ me.username }} </b-dd-header>

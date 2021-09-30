@@ -8,7 +8,7 @@
 			<div class="d-flex d-xl-none">
 				<b-dropdown v-if="isAuth" variant="link" toggle-class="text-decoration-none p-0 mr-3" no-caret right size="lg" lazy menu-class="py-0">
 					<template #button-content>
-						<b-avatar variant="white" :src="require('@/assets/images/user6.jpg')" class="border border-primary" style="padding: 2px"></b-avatar>
+						<b-avatar variant="white" :src="`${userImageURL}/${me.image}`" class="border border-primary" style="padding: 2px"></b-avatar>
 					</template>
 					<b-dd-header> {{ me.username }} </b-dd-header>
 					<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
@@ -97,7 +97,7 @@
 							<b-dropdown variant="link" toggle-class="text-decoration-none" no-caret right size="lg" lazy menu-class="py-0">
 								<template #button-content>
 									<div class="user">
-										<img :src="require('@/assets/images/user6.jpg')" alt="" />
+										<img :src="`${userImageURL}/${me.image}`" alt="" />
 									</div>
 								</template>
 								<b-dd-header> {{ me.username }} </b-dd-header>

@@ -3,7 +3,7 @@
 		<div class="sidebar-dashboard">
 			<b-card class="shadow-sm d-none d-lg-flex">
 				<div class="d-flex flex-column align-items-center">
-					<b-avatar :src="require('@/assets/images/user6.jpg')" size="6rem"></b-avatar>
+					<b-avatar :src="`${userImageURL}/${me.image}`" size="6rem"></b-avatar>
 					<span class="mt-3 font-weight-600 text-muted">{{ me.username }}</span>
 				</div>
 			</b-card>
