@@ -6,15 +6,11 @@ export const login = (state, data) => {
 	state.token = data.token;
 	sessionStorage.setItem("user", JSON.stringify(data.user));
 	sessionStorage.setItem("token", data.token);
-
-	return router.push("/");
 };
 
 export const me = (state, data) => {
 	state.user = data.user;
-	state.token = data.token;
 	sessionStorage.setItem("user", JSON.stringify(data.user));
-	sessionStorage.setItem("token", data.token);
 };
 
 export const logout = (state) => {
@@ -36,10 +32,6 @@ export const verifyToken = (state, data) => {
 };
 
 export const newPassword = (state, data) => {
-	console.log(data);
-};
-
-export const updateProfile = (state, data) => {
 	console.log(data);
 };
 
