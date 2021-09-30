@@ -123,7 +123,7 @@
 				</b-col>
 
 				<b-col cols="12" class="mt-4 text-right">
-					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block" @hidden="toggleLoading">
+					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
 						<b-btn :disabled="isLoading" v-if="isUpdate" @click="handleSave" variant="outline-success">Update</b-btn>
 						<b-btn :disabled="isLoading" v-else @click="handleSave" variant="outline-primary">Create</b-btn>
 					</b-overlay>
@@ -268,7 +268,7 @@
 
 					let data = { course: this.formData, config };
 
-					this.toggleLoading();
+					this.setLoading(true);
 
 					if (this.isUpdate) {
 						data = this.formData ? data : { course: this.course, config: {} };
@@ -286,7 +286,7 @@
 					//
 				}
 
-				this.toggleLoading();
+				this.setLoading(false);
 			},
 
 			resetForm() {
