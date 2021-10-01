@@ -67,6 +67,13 @@
 									v-if="lecture.video"
 								/>
 								<b-icon icon="plus-circle" variant="blue" @click="createLectureVideo(lecture, section)" v-else />
+								<b-form-checkbox
+									v-b-tooltip="(lecture.videoReview ? 'Disable' : 'Enable') + ' Video Review'"
+									v-model="lecture.videoReview"
+									@change="changeVideoReview(lecture, section)"
+									class="ml-2"
+									switch
+								></b-form-checkbox>
 								<b-icon icon="pencil-square" v-b-tooltip="`Update Lecture`" scale="1.2" variant="success" class="mx-3" @click="updateLecture(lecture, section)" />
 								<b-icon icon="trash" v-b-tooltip="`Delete Lecture`" scale="1.2" variant="danger" class="mr-3" @click="removeLecture(lecture, section)" />
 							</div>
@@ -186,6 +193,15 @@
 					//
 				}
 				this.$bvModal.hide("removeLectureModal");
+			},
+			async changeVideoReview(lecture, section) {
+				this.$store.commit("Course/setSection", section);
+				this.$store.commit("Course/setLecture", lecture);
+				try {
+					await this.$store.dispatch("Course/changeLectureVideoReview", { videoReview: lecture.videoReview });
+				} catch (err) {
+					//
+				}
 			}
 		}
 	};
