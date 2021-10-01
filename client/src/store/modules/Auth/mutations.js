@@ -18,8 +18,13 @@ export const logout = (state) => {
 	state.token = null;
 	sessionStorage.removeItem("user");
 	sessionStorage.removeItem("token");
-	if (router.history.current.name != "Login") {
-		router.push("/login");
+
+	let isHomePage = router.history.current.name == "Home";
+
+	let isRouteNeedAuth = router.history.current.meta.auth;
+
+	if (!isHomePage && isRouteNeedAuth) {
+		router.push({ name: "Home" });
 	}
 };
 

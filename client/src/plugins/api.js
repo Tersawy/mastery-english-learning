@@ -1,5 +1,4 @@
 import axios from "axios";
-import router from "@/router";
 import store from "@/store";
 
 let api = async (method, route, data, config, callback) => {
@@ -39,6 +38,10 @@ let api = async (method, route, data, config, callback) => {
 		if (!err.response) return;
 
 		const { response } = err;
+
+		if (response.status == 401) {
+			store.commit("Auth/logout");
+		}
 
 		let error = { data: response.data, status: response.status };
 
