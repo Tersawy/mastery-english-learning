@@ -45,6 +45,19 @@ exports.remove = async (req, res) => {
 	res.status(200).json({ msg: "Lecture has been deleted successfully" });
 };
 
+exports.changeReview = async (req, res) => {
+	const { videoReview } = req.body;
+
+	const { sectionId, lectureId } = req.params;
+
+	await CourseSections.updateOne(
+		{ _id: sectionId, "lectures._id": lectureId },
+		{ $set: { "lectures.$.videoReview": videoReview } }
+	);
+
+	res.status(200).json({ msg: "Video review has been changed successfully" });
+};
+
 exports.uploadVideo = async (req, res) => {
 	const { sectionId, lectureId } = req.params;
 
