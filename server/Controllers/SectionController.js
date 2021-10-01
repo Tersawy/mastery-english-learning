@@ -1,9 +1,24 @@
-const CourseSections = require("../Models/CourseSections");
+const mongoose= require("mongoose");
+
+const Section = require("../Models/Section");
 
 exports.all = async (req, res) => {
-	let query = { course: req.params.courseId };
-	let sections = CourseSections.find(query);
-	let sectionsCount = CourseSections.countDocuments(query);
+	let query = { course: mongoose.Types.ObjectId(req.params.courseId) };
+
+	let aggregate = [
+		{ $match: query },
+		{
+			$lookup: {
+				localField: "_id",
+				foreignField: "section",
+				from: "lectures",
+				as: "lectures"
+			}
+		}
+	]
+
+	let sections = Section.aggregate(aggregate);
+	let sectionsCount = Section.countDocuments(query);
 
 	Promise.all([sections, sectionsCount]).then(([sections, total]) => {
 		return res.json({ docs: sections, total });
@@ -11,17 +26,29 @@ exports.all = async (req, res) => {
 };
 
 exports.show = async (req, res) => {
-	let { sectionId: _id } = req.params;
+	let { sectionId } = req.params;
 
-	let section = await CourseSections.findById(_id);
+	let aggregate = [
+		{ $match: { _id: mongoose.Types.ObjectId(sectionId) } },
+		{
+			$lookup: {
+				localField: "_id",
+				foreignField: "section",
+				from: "lectures",
+				as: "lectures"
+			}
+		}
+	]
 
-	return res.json(section);
+	let sections = await Section.aggregate(aggregate);
+
+	return res.json(sections[0] || {});
 };
 
 exports.create = async (req, res) => {
 	const { title } = req.body;
 
-	let section = new CourseSections({ title, course: req.params.courseId });
+	let section = new Section({ title, course: req.params.courseId });
 
 	await section.save();
 
@@ -31,12 +58,12 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
 	const { title } = req.body;
 
-	await CourseSections.updateOne({ _id: req.params.sectionId, deleted_at: null }, { title });
+	await Section.updateOne({ _id: req.params.sectionId, deleted_at: null }, { title });
 
 	res.status(200).json({ msg: "Section has been updated successfully" });
 };
 
 exports.remove = async (req, res) => {
-	await CourseSections.deleteOne({ _id: req.params.sectionId });
+	await Section.deleteOne({ _id: req.params.sectionId });
 	res.status(200).json({ msg: "Section has been deleted successfully" });
 };

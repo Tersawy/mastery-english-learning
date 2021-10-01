@@ -1,5 +1,3 @@
-const CourseSections = require("../Models/CourseSections");
-
 const fs = require("fs");
 
 const path = require("path");
@@ -8,18 +6,20 @@ const handleError = require("../helpers/handleError");
 
 const { randomChar } = require("../helpers/functions");
 
+const Lecture = require( "../Models/Lecture" );
+
 const videosDir = path.resolve(__dirname, "../public/videos/courses/lectures");
 
 exports.create = async (req, res) => {
 	const { title, description } = req.body;
 
-	const { sectionId } = req.params;
+	const { sectionId: section } = req.params;
 
-	if (!sectionId) throw { status: 422, msg: "Section Id is required" };
+	if (!section) throw { status: 422, msg: "Section Id is required" };
 
-	let lecture = { title, description };
-
-	await CourseSections.updateOne({ _id: sectionId }, { $push: { lectures: lecture } });
+	let lecture = new Lecture({ title, description, section });
+	
+	await lecture.save();
 
 	res.status(200).json({ msg: "Lecture has been created successfully" });
 };
@@ -27,20 +27,21 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
 	const { title, description } = req.body;
 
-	const { sectionId, lectureId } = req.params;
+	const { lectureId: _id } = req.params;
 
-	await CourseSections.updateOne(
-		{ _id: sectionId, "lectures._id": lectureId },
-		{ $set: { "lectures.$.title": title, "lectures.$.description": description } }
-	);
+	if (!_id) throw { status: 422, msg: "Lecture Id is required" };
 
+	await Lecture.updateOne({ _id }, { title, description });
+	
 	res.status(200).json({ msg: "Lecture has been created successfully" });
 };
 
 exports.remove = async (req, res) => {
-	const { sectionId, lectureId } = req.params;
+	const { lectureId: _id } = req.params;
 
-	await CourseSections.updateOne({ _id: sectionId }, { $pull: { lectures: { _id: lectureId } } });
+	if (!_id) throw { status: 422, msg: "Lecture Id is required" };
+
+	await Lecture.deleteOne({ _id });
 
 	res.status(200).json({ msg: "Lecture has been deleted successfully" });
 };
@@ -48,22 +49,19 @@ exports.remove = async (req, res) => {
 exports.changeReview = async (req, res) => {
 	const { videoReview } = req.body;
 
-	const { sectionId, lectureId } = req.params;
+	const { lectureId: _id } = req.params;
 
-	await CourseSections.updateOne(
-		{ _id: sectionId, "lectures._id": lectureId },
-		{ $set: { "lectures.$.videoReview": videoReview } }
-	);
+	if (!_id) throw { status: 422, msg: "Lecture Id is required" };
+
+	await Lecture.updateOne({ _id }, { videoReview });
 
 	res.status(200).json({ msg: "Video review has been changed successfully" });
 };
 
 exports.uploadVideo = async (req, res) => {
-	const { sectionId, lectureId } = req.params;
+	const { lectureId: _id } = req.params;
 
-	if (!sectionId) throw { status: 422, msg: "Section Id is required" };
-
-	if (!lectureId) throw { status: 422, msg: "Lecture Id is required" };
+	if (!_id) throw { status: 422, msg: "Lecture Id is required" };
 
 	if (!req.files) throw { status: 422, msg: "No video uploaded" };
 
@@ -92,26 +90,18 @@ exports.uploadVideo = async (req, res) => {
 	video.mv(videoDir, (err) => {
 		if (err) return res.status(500).json({ msg: "Something went wrong" });
 
-		CourseSections.updateOne({ _id: sectionId, "lectures._id": lectureId }, { $set: { "lectures.$.video": videoName } })
-			.then(() => {
-				res.status(200).json({ status: 200, msg: "Lecture video has been uploaded successfully" });
-			})
-			.catch((err) => {
-				handleError(err, (error) => {
-					// let firstErrorMsg = error.errors[Object.keys(error.errors)[0]];
-					// firstErrorMsg = Array.isArray(firstErrorMsg) ? firstErrorMsg[0] : firstErrorMsg;
-					res.status(error.status).json(error /* { ...error, msg: firstErrorMsg } */);
-				});
-			});
+		Lecture.updateOne({ _id }, { video: videoName }, (err) => {
+			if (err) return handleError(err, (error) => res.status(error.status).json(error));
+
+			res.status(200).json({ status: 200, msg: "Lecture video has been uploaded successfully" });
+		})
 	});
 };
 
 exports.changeVideo = async (req, res) => {
-	const { sectionId, lectureId } = req.params;
+	const { lectureId: _id } = req.params;
 
-	if (!sectionId) throw { status: 422, msg: "Section Id is required" };
-
-	if (!lectureId) throw { status: 422, msg: "Lecture Id is required" };
+	if (!_id) throw { status: 422, msg: "Lecture Id is required" };
 
 	if (!req.files) throw { status: 422, msg: "No video uploaded" };
 
@@ -140,15 +130,11 @@ exports.changeVideo = async (req, res) => {
 	video.mv(videoDir, (err) => {
 		if (err) return res.status(500).json({ msg: "Something went wrong" });
 
-		CourseSections.findOneAndUpdate(
-			{ _id: sectionId, "lectures._id": lectureId },
-			{ $set: { "lectures.$.video": videoName } },
-			{ _id: 0, lectures: { $elemMatch: { _id: lectureId } } },
-			(err, section) => {
+		Lecture.findOneAndUpdate({ _id }, { video: videoName }, { _id: 0, video: 1 }, (err, lecture) => {
 				if (err) return handleError(err, (error) => res.status(error.status).json(error));
 
-				if (section && Array.isArray(section.lectures) && section.lectures[0].video) {
-					let oldVideo = path.resolve(videosDir, section.lectures[0].video);
+				if (lecture.video) {
+					let oldVideo = path.resolve(videosDir, lecture.video);
 
 					if (fs.existsSync(oldVideo)) fs.unlinkSync(oldVideo);
 				}
