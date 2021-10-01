@@ -16,6 +16,7 @@ const lectureSchema = new Schema(
 			maxLength: [255, "Lecture Description Must be less than or equal 255 characters"],
 		},
 		video: { type: String, default: null },
+		videoReview: { type: Boolean, default: false }
 	},
 	{ timestamps: true }
 );
