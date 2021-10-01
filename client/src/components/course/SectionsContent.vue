@@ -20,7 +20,7 @@
 					</div>
 					<span class="font-sm d-flex flex-column text-right d-sm-inline-block">
 						<span class="text-nowrap"> {{ section.lectures.length }} lectures </span>
-						<span class="d-none d-sm-inline-block"> • </span>
+						<span class="d-none d-sm-inline-block" v-if="lecturesTime(section.time).timeStr"> • </span>
 						<span> {{ lecturesTime(section.time).timeStr }} </span>
 					</span>
 				</b-card-body>
