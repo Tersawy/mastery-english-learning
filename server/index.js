@@ -1,8 +1,22 @@
+const moduleAlias = require("module-alias");
+
+const path = require("path");
+
+let mergeDirs = (dir) => path.resolve(__dirname, dir);
+
+moduleAlias.addAliases({
+	"@dashboardRoutes": mergeDirs("routes/dashboard"),
+	"@frontRoutes": mergeDirs("routes/front"),
+	"@controllers": mergeDirs("Controllers"),
+	"@models": mergeDirs("Models"),
+	"@helpers": mergeDirs("helpers"),
+	"@middlewares": mergeDirs("middlewares"),
+	"@scripts": mergeDirs("scripts"),
+});
+
 const express = require("express");
 
 const app = express();
-
-const path = require("path");
 
 const fs = require("fs");
 
