@@ -183,6 +183,19 @@ export default {
 		});
 	},
 
+	changeLectureVideoReview({ state, commit, dispatch }, item) {
+		return api("post", `${state.prefix}/sections/${state.oneSection._id}/lectures/${state.oneLecture._id}/change-review`, item, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			return Promise.resolve(data);
+		});
+	},
+
 	uploadLectureVideo({ state, commit, dispatch }, { formData, config }) {
 		return api("post", `${state.prefix}/sections/${state.oneSection._id}/lectures/${state.oneLecture._id}/upload-video`, formData, config, async (err, data) => {
 			if (err) {
