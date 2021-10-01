@@ -30,7 +30,7 @@
 					<b-col lg="8">
 						<div class="course-content pb-4">
 							<h4 class="mb-3 font-weight-700">Course content</h4>
-							<div class="d-flex align-items-center justify-content-between mb-2">
+							<!-- <div class="d-flex align-items-center justify-content-between mb-2">
 								<p class="mb-0 font-md">
 									{{ +course.sections.length }} sections • {{ lecturesCount }} lectures •
 									{{ lecturesTime(course.time).timeStr }}
@@ -83,7 +83,8 @@
 										</b-card-footer>
 									</b-collapse>
 								</b-card>
-							</div>
+							</div> -->
+							<SectionsContent />
 						</div>
 						<div class="course-requirments py-4">
 							<h4 class="mb-3 font-weight-700">Requirements</h4>
@@ -135,8 +136,9 @@
 	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
 	import LoginModal from "@/components/auth/LoginModal.vue";
 	import RegisterModal from "@/components/auth/RegisterModal.vue";
+	import SectionsContent from "@/components/course/SectionsContent.vue";
 	export default {
-		components: { LectureVideo, LoginModal, RegisterModal, Congrats },
+		components: { LectureVideo, LoginModal, RegisterModal, Congrats, SectionsContent },
 		data() {
 			return {
 				allExpanded: false,
