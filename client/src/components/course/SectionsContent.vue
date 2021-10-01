@@ -38,7 +38,12 @@
 									/>
 									<b-icon icon="dash-circle" scale="2" variant="white" class="rounded-circle bg-dark p-1" v-else />
 								</span>
-								<span class="mx-2 text-primary c-pointer" style="text-decoration: underline" @click="showLectureVideo(lecture)" v-if="lecture.video">
+								<span
+									class="mx-2 text-primary c-pointer"
+									style="text-decoration: underline"
+									@click="showLectureVideo(lecture)"
+									v-if="lecture.video && lecture.videoReview"
+								>
 									{{ lecture.title }}
 								</span>
 								<span class="mx-2" v-else>{{ lecture.title }}</span>
@@ -108,6 +113,9 @@
 
 			async showLectureVideo(lecture) {
 				this.$store.commit("Course/setLecture", lecture);
+
+				if (!this.isAuth) return this.$bvModal.show("lectureVideo");
+
 				try {
 					await this.$store.dispatch("Course/quiz");
 				} catch (err) {
