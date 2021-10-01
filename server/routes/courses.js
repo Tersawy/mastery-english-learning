@@ -54,6 +54,8 @@ router.post(`${lecturesURL}/:lectureId/upload-video`, auth, instructorAndAdmin, 
 
 router.post(`${lecturesURL}/:lectureId/change-video`, auth, instructorAndAdmin, LectureController.changeVideo);
 
+router.post(`${lecturesURL}/:lectureId/change-review`, auth, instructorAndAdmin, LectureController.changeReview);
+
 //====================================================================================================================//
 //---------------------------------------------> Start Quizzes <-----------------------------------------------------//
 //====================================================================================================================//
