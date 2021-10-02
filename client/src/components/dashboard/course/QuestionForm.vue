@@ -71,6 +71,7 @@
 	import { required, minLength, maxLength, numeric, requiredIf } from "vuelidate/lib/validators";
 	import { QUESTION_COMPLETE, QUESTION_CHOICE_ONE, QUESTION_TRUE_OR_FALSE, QUESTION_ESSAY, QUESTION_SPEECH, QUESTION_TYPES_STR } from "@/helpers/constants";
 	export default {
+		props: ["lectureQuiz"],
 		data() {
 			return {
 				namespace: "Course",
@@ -200,9 +201,13 @@
 					this.setLoading(true);
 
 					if (this.isUpdate) {
-						res = await this.$store.dispatch("Course/updateQuestion", this.question);
+						let actionName = this.lectureQuiz ? "Course/updateQuestion" : "Course/updateSectionQuestion";
+
+						res = await this.$store.dispatch(actionName, this.question);
 					} else {
-						res = await this.$store.dispatch("Course/createQuestion", this.question);
+						let actionName = this.lectureQuiz ? "Course/createQuestion" : "Course/createSectionQuestion";
+
+						res = await this.$store.dispatch(actionName, this.question);
 					}
 
 					this.setGlobalSuccess(res.msg);

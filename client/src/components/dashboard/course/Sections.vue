@@ -28,6 +28,11 @@
 								<b-icon @click="showSectionActions(section)" icon="three-dots-vertical" scale="1.3" class="c-pointer"></b-icon>
 							</template>
 
+							<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="showSectionQuiz">
+								<b-icon icon="file-earmark-spreadsheet" scale="0.8"></b-icon>
+								<span class="mx-2 text-muted">Show Quiz</span>
+							</b-dropdown-item>
+
 							<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="createLecture(section)">
 								<b-icon icon="folder-check" scale="0.8"></b-icon>
 								<span class="mx-2 text-muted">Add Lecture</span>
@@ -131,7 +136,7 @@
 		<LectureForm />
 		<LectureVideoForm :is-change="isChangeVideo" @closed="isChangeVideo = false" />
 		<LectureVideo />
-		<Quiz />
+		<Quiz :lectureQuiz="lectureQuiz" />
 		<DeleteFieldModal msg="Are you sure to delete this section ?" @done="handleRemoveSection" modal-id="removeSectionModal" />
 		<DeleteFieldModal msg="Are you sure to delete this lecture ?" @done="handleRemoveLecture" modal-id="removeLectureModal" />
 	</b-modal>
@@ -148,7 +153,8 @@
 
 		data() {
 			return {
-				isChangeVideo: false
+				isChangeVideo: false,
+				lectureQuiz: true
 			};
 		},
 
@@ -191,12 +197,31 @@
 					this.$bvModal.show("lectureVideoForm");
 				});
 			},
+			async showSectionQuiz() {
+				this.$store.commit("Course/setQuiz", {});
+
+				try {
+					await this.$store.dispatch("Course/sectionQuiz");
+				} catch (err) {
+					//
+				}
+
+				this.lectureQuiz = false;
+
+				this.$nextTick(() => {
+					this.$bvModal.show("quiz");
+				});
+			},
 			async showQuiz() {
+				this.$store.commit("Course/setQuiz", {});
+
 				try {
 					await this.$store.dispatch("Course/quiz");
 				} catch (err) {
 					//
 				}
+
+				this.lectureQuiz = true;
 
 				this.$nextTick(() => {
 					this.$bvModal.show("quiz");
@@ -236,13 +261,3 @@
 		}
 	};
 </script>
-
-<style lang="scss">
-	.custom-control.custom-switch {
-		label,
-		label:before,
-		label:after {
-			cursor: pointer;
-		}
-	}
-</style>

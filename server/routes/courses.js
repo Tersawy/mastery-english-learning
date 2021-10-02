@@ -10,6 +10,8 @@ router.post("/", auth, instructorAndAdmin, CourseController.create);
 
 router.get("/:courseId", getAuth, CourseController.show);
 
+router.get("/:courseId/start", auth, student, CourseController.start);
+
 router.get("/:courseId/edit", auth, instructorAndAdmin, CourseController.edit);
 
 router.put("/:courseId", auth, instructorAndAdmin, CourseController.update);
@@ -35,6 +37,34 @@ router.post(sectionsURL, auth, instructorAndAdmin, SectionController.create);
 router.put(`${sectionsURL}/:sectionId`, auth, instructorAndAdmin, SectionController.update);
 
 router.delete(`${sectionsURL}/:sectionId`, auth, instructorAndAdmin, SectionController.remove);
+
+//====================================================================================================================//
+//---------------------------------------------> Start Section Quiz <-----------------------------------------------------//
+//====================================================================================================================//
+
+const SectionQuizController = require("../Controllers/SectionQuizController");
+
+const sectionQuizURL = "/sections/:sectionId/quiz";
+
+router.get(sectionQuizURL, auth, SectionQuizController.show);
+
+router.post(sectionQuizURL, auth, instructorAndAdmin, SectionQuizController.create);
+
+router.delete(`${sectionQuizURL}/:quizId`, auth, instructorAndAdmin, SectionQuizController.remove);
+
+//====================================================================================================================//
+//---------------------------------------------> Start Section Quiz Questions <-----------------------------------------------------//
+//====================================================================================================================//
+
+const SectionQuestionController = require("../Controllers/SectionQuestionController");
+
+const sectionQuestionURL = "/sections/quiz/:quizId/questions";
+
+router.post(sectionQuestionURL, auth, instructorAndAdmin, SectionQuestionController.create);
+
+router.put(`${sectionQuestionURL}/:questionId`, auth, instructorAndAdmin, SectionQuestionController.update);
+
+router.delete(`${sectionQuestionURL}/:questionId`, auth, instructorAndAdmin, SectionQuestionController.remove);
 
 //====================================================================================================================//
 //---------------------------------------------> Start Lectures <-----------------------------------------------------//

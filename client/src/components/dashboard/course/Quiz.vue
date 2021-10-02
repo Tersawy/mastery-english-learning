@@ -4,8 +4,8 @@
 			<div class="d-flex align-items-center justify-content-between w-100">
 				<div class="d-flex align-items-center">
 					<h6 class="mb-0">
-						<span class="font-weight-700">Quiz: </span>
-						<span>{{ lecture.title }}</span>
+						<span class="font-weight-700">{{ lectureQuiz ? "Lecture" : "Section" }} Quiz: </span>
+						<span>{{ lectureQuiz ? lecture.title : section.title }}</span>
 					</h6>
 				</div>
 				<b-button size="sm" variant="outline-danger" @click="close()"> Close </b-button>
@@ -40,8 +40,8 @@
 					</li>
 				</ul>
 			</template>
-			<QuizForm />
-			<QuestionForm />
+			<QuizForm :lectureQuiz="lectureQuiz" />
+			<QuestionForm :lectureQuiz="lectureQuiz" />
 			<DeleteFieldModal msg="Are you sure to delete this question ?" @done="handleRemoveQuestion" modal-id="removeQuestionModal" />
 		</template>
 	</b-modal>
@@ -54,6 +54,7 @@
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
 	export default {
 		components: { QuizForm, QuestionForm, DeleteFieldModal },
+		props: ["lectureQuiz"],
 		data() {
 			return {
 				namespace: "Course"
@@ -67,6 +68,10 @@
 
 			lecture() {
 				return this.$store.state.Course.oneLecture;
+			},
+
+			section() {
+				return this.$store.state.Course.oneSection;
 			},
 
 			QUESTION_TYPES_STR() {
@@ -98,7 +103,10 @@
 
 			async handleRemoveQuestion() {
 				try {
-					let res = await this.$store.dispatch("Course/removeQuestion");
+					let actionName = this.lectureQuiz ? "Course/removeQuestion" : "Course/removeSectionQuestion";
+
+					let res = await this.$store.dispatch(actionName);
+
 					this.setGlobalSuccess(res.msg);
 				} catch (err) {
 					//

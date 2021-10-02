@@ -150,6 +150,106 @@ exports.show = async (req, res) => {
 	res.status(200).json(course);
 };
 
+exports.start = async (req, res) => {
+	const { courseId } = req.params;
+
+	const { me } = req.body;
+
+	if (!me.courses.includes(courseId)) return res.status(403).json({ msg: "Please enroll to course first" })
+	
+	let status = COURSE_APPROVED;
+
+	let aggregation = [
+		{ $match: { _id: mongoose.Types.ObjectId(courseId), deleted_at: null, status } },
+		{
+			$lookup: {
+				from: "sections",
+				let: { courseId: "$_id" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
+					{
+						$lookup: {
+							from: "lectures",
+							let: { sectionId: "$_id" },
+							as: "lectures",
+							pipeline: [
+								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
+								{
+									$lookup: {
+										from: "quizzes",
+										let: { lectureId: "$_id" },
+										as: "quiz",
+										pipeline: [
+											{ $match: { $expr: { $eq: ["$lecture", "$$lectureId"] } } },
+											{ $project: { _id: 1 } },
+											{
+												$lookup: {
+													from: "quizanswers",
+													let: { quizId: "$_id" },
+													as: "answer",
+													pipeline: [
+														{ $match: { $expr: { $eq: ["$quiz", "$$quizId"] } } },
+														{ $project: { _id: 1 } }
+													]
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				as: "sections",
+			},
+		},
+		{
+			$lookup: {
+				from: "users",
+				let: { createdBy: "$createdBy" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$_id", "$$createdBy"] } } },
+					{ $project: { username: 1, _id: 1, image: 1 } },
+				],
+				as: "createdBy",
+			},
+		},
+		{ $unwind: "$createdBy" }
+	];
+	
+	let course = await Course.aggregate(aggregation);
+
+	course = course[0];
+
+	if (!course) return res.status(404).json({ msg: "Course is not found" });
+
+	course.requirements = course.requirements.map((r) => r.text);
+
+	course.time = 0;
+
+	for (let i = 0; i < course.sections.length; i++) {
+		course.sections[i].time = 0;
+
+		for (let l = 0; l < course.sections[i].lectures.length; l++) {
+			let videoExist =
+				course.sections[i].lectures[l].video &&
+				fs.existsSync(path.join(__dirname, lecturePath, course.sections[i].lectures[l].video));
+
+			course.sections[i].lectures[l].time = videoExist
+				? await getVideoDurationInSeconds(path.join(__dirname, lecturePath, course.sections[i].lectures[l].video))
+				: 0;
+
+			course.sections[i].time += course.sections[i].lectures[l].time;
+		}
+
+		course.time += course.sections[i].time;
+	}
+
+	course.isEnrolled = me && me.courses.includes(courseId);
+
+	res.status(200).json(course);
+};
+
 exports.edit = async (req, res) => {
 	const { courseId } = req.params;
 

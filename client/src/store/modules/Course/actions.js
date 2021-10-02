@@ -245,6 +245,125 @@ export default {
 		});
 	},
 
+	sectionQuiz({ state, commit }) {
+		return api("get", `${state.prefix}/sections/${state.oneSection._id}/quiz`, (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			commit("setQuiz", data);
+
+			return Promise.resolve(data);
+		});
+	},
+
+	createSectionQuiz({ state, commit, dispatch }, item) {
+		return api("post", `${state.prefix}/sections/${state.oneSection._id}/quiz`, item, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			await dispatch("sectionQuiz");
+
+			return Promise.resolve(data);
+		});
+	},
+
+	updateSectionQuiz({ state, commit, dispatch }, item) {
+		return api("put", `${state.prefix}/sections/${state.oneSection._id}/quiz/${state.oneQuiz._id}`, item, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			await dispatch("sectionQuiz");
+
+			return Promise.resolve(data);
+		});
+	},
+
+	removeSectionQuiz({ state, commit }, item) {
+		return api("delete", `${state.prefix}/sections/${state.oneSection._id}/quiz/${state.oneQuiz._id}`, item, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			commit("removeQuiz", item._id);
+
+			return Promise.resolve(data);
+		});
+	},
+
+	createSectionQuestion({ state, commit, dispatch }, item) {
+		return api("post", `${state.prefix}/sections/quiz/${state.oneQuiz._id}/questions`, item, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			await dispatch("sectionQuiz");
+
+			return Promise.resolve(data);
+		});
+	},
+
+	updateSectionQuestion({ state, commit, dispatch }, item) {
+		return api("put", `${state.prefix}/sections/quiz/${state.oneQuiz._id}/questions/${state.oneQuestion._id}`, item, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			await dispatch("sectionQuiz");
+
+			return Promise.resolve(data);
+		});
+	},
+
+	removeSectionQuestion({ state, commit }) {
+		return api("delete", `${state.prefix}/sections/quiz/${state.oneQuiz._id}/questions/${state.oneQuestion._id}`, {}, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			commit("removeQuestion");
+
+			return Promise.resolve(data);
+		});
+	},
+
+	createSectionAnswers({ state, commit /* dispatch */ }, item) {
+		return api("post", `${state.prefix}/${state.one._id}/sections/quiz/${state.oneQuiz._id}/answer`, item, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			// await dispatch("quiz");
+			return Promise.resolve(data);
+		});
+	},
+
 	quiz({ state, commit }) {
 		return api("get", `${state.prefix}/sections/lectures/${state.oneLecture._id}/quiz`, (err, data) => {
 			if (err) {
