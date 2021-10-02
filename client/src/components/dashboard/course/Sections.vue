@@ -53,10 +53,10 @@
 									@click="lecture.descriptionVisible = !lecture.descriptionVisible"
 								/>
 								<b-collapse v-model="lecture.descriptionVisible">
-									<p class="text-muted pl-4 mt-1 mb-0 font-md">{{ lecture.description }}</p>
+									<p class="text-muted pl-4 mt-1 mb-0 font-md" v-html="lecture.description"></p>
 								</b-collapse>
 							</div>
-							<div class="c-pointer">
+							<div class="c-pointer align-self-baseline">
 								<b-icon icon="file-earmark-spreadsheet" v-b-tooltip="`Quiz`" scale="1.2" variant="primary" class="mr-3" @click="showQuiz(lecture)"></b-icon>
 								<b-icon
 									icon="arrow-repeat"

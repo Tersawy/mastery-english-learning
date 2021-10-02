@@ -54,10 +54,10 @@
 									@click="lecture.descriptionVisible = !lecture.descriptionVisible"
 								/>
 								<b-collapse v-model="lecture.descriptionVisible">
-									<p class="text-muted pl-4 mt-1 mb-0">{{ lecture.description }}</p>
+									<p class="text-muted pl-4 mt-1 mb-0" v-html="lecture.description"></p>
 								</b-collapse>
 							</div>
-							<div>{{ lecturesTime(lecture.time).timeNum }}</div>
+							<div class="align-self-baseline">{{ lecturesTime(lecture.time).timeNum }}</div>
 						</div>
 					</b-card-footer>
 				</b-collapse>

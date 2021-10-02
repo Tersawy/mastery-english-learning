@@ -32,7 +32,7 @@
 
 				<!-- -------------Description------------- -->
 				<b-form-group label="Lecture Description" label-for="description">
-					<b-form-textarea :disabled="isLoading" id="description" v-model="lecture.description"></b-form-textarea>
+					<vue-editor :disabled="isLoading" style="border: none" v-model="lecture.description" :editorToolbar="customToolbar"></vue-editor>
 					<input-error :vuelidate="$v.lecture.description" field="description" :namespace="namespace" />
 				</b-form-group>
 
@@ -48,20 +48,33 @@
 </template>
 
 <script>
+	import { VueEditor } from "vue2-editor";
 	import { required, minLength, maxLength } from "vuelidate/lib/validators";
 
 	export default {
+		components: { VueEditor },
 		data() {
 			return {
 				namespace: "Course",
-				lecture: { title: null, description: null }
+				lecture: { title: null, description: null },
+				customToolbar: [
+					[{ header: [false, 1, 2, 3, 4, 5, 6] }],
+					["bold", "italic", "underline", "strike"],
+					[{ align: "" }, { align: "center" }, { align: "right" }, { align: "justify" }],
+					["blockquote", "code-block"],
+					[{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+					[{ indent: "-1" }, { indent: "+1" }],
+					[{ color: [] }, { background: [] }],
+					// ["link", "image", "video"],
+					["clean"]
+				]
 			};
 		},
 
 		validations: {
 			lecture: {
 				title: { required, minLength: minLength(3), maxLength: maxLength(54) },
-				description: { maxLength: maxLength(255) }
+				description: { maxLength: maxLength(5120) }
 			}
 		},
 
