@@ -25,9 +25,7 @@
 							<span class="font-weight-700 mx-3">{{ course.createdBy | relation("username") }}</span>
 							<div class="ml-auto text-muted">{{ lecture.createdAt | date }}</div>
 						</div>
-						<div class="mx-md-50px pl-2 mt-3">
-							{{ lecture.description }}
-						</div>
+						<div class="mx-md-50px pl-2 mt-3" v-html="lecture.description"></div>
 						<SectionsContent class="d-xl-none mt-5" />
 						<div class="lecture-quiz pt-3" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
 							<h3 class="mb-3" style="text-decoration: underline">Quiz :-</h3>
