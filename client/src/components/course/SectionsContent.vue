@@ -33,7 +33,7 @@
 										icon="caret-right-fill"
 										variant="white"
 										class="rounded-circle bg-dark p-1 c-pointer"
-										v-if="lecture.video"
+										v-if="lecture.video && lecture.videoReview"
 										@click="showLectureVideo(lecture)"
 									/>
 									<b-icon icon="dash-circle" scale="2" variant="white" class="rounded-circle bg-dark p-1" v-else />
@@ -114,7 +114,7 @@
 			async showLectureVideo(lecture) {
 				this.$store.commit("Course/setLecture", lecture);
 
-				if (!this.isAuth) return this.$bvModal.show("lectureVideo");
+				if (!this.isAuth || lecture.videoReview) return this.$bvModal.show("lectureVideo");
 
 				try {
 					await this.$store.dispatch("Course/quiz");
