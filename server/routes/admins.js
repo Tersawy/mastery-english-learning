@@ -8,6 +8,8 @@ router.get("/", auth, owner, AdminController.admins);
 
 router.post("/", auth, owner, AdminController.create);
 
+router.post("/:adminId", auth, owner, AdminController.changeActivation);
+
 router.put("/:adminId", auth, owner, AdminController.update);
 
 router.delete("/:adminId", auth, owner, AdminController.remove);

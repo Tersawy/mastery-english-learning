@@ -29,6 +29,22 @@
 			</b-col>
 		</b-row>
 
+		<b-modal id="dropdownActionModal" hide-header hide-footer body-class="p-0" centered size="sm">
+			<ul class="m-0 p-0 list-unstyled">
+				<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="editAdmin">
+					<b-icon icon="pencil-square" scale="0.8"></b-icon>
+					<span class="mx-2 text-muted">Edit Admin</span>
+				</b-dropdown-item>
+
+				<hr class="m-0" />
+
+				<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" @click="admin = row.item" v-b-modal.deleteAdminModal>
+					<b-icon icon="trash" scale="0.8"></b-icon>
+					<span class="mx-2 text-muted">Delete Admin</span>
+				</b-dropdown-item>
+			</ul>
+		</b-modal>
+
 		<b-table
 			show-empty
 			stacked="lg"
@@ -48,8 +64,16 @@
 			class="bg-white shadow-sm mt-3 mb-0"
 		>
 			<template #cell(actions)="row">
-				<b-icon icon="trash" v-b-tooltip="`Delete`" scale="1.2" variant="danger" @click="admin = row.item" v-b-modal.deleteAdminModal></b-icon>
-				<b-icon icon="pencil-square" v-b-tooltip="`Update`" scale="1.2" variant="success" class="mx-3" @click="editAdmin(row.item)"></b-icon>
+				<div class="d-flex align-items-center">
+					<b-form-checkbox
+						v-b-tooltip="row.item.isActive ? 'Deactivate' : 'Activate'"
+						v-model="row.item.isActive"
+						@change="changeStatus(row.item)"
+						class="ml-2 c-pointer"
+						switch
+					></b-form-checkbox>
+					<b-icon @click="showActions(row.item)" icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+				</div>
 			</template>
 
 			<template #cell(image)="row">
@@ -104,13 +128,18 @@
 		computed: {},
 
 		methods: {
+			showActions(admin) {
+				this.admin = admin;
+				this.$bvModal.show("dropdownActionModal");
+			},
+
 			createAdmin() {
 				this.$store.commit("Admin/setOne", {});
 				this.$bvModal.show("adminForm");
 			},
 
-			editAdmin(admin) {
-				this.$store.commit("Admin/setOne", admin);
+			editAdmin() {
+				this.$store.commit("Admin/setOne", this.admin);
 				this.$bvModal.show("adminForm");
 			},
 
@@ -123,6 +152,18 @@
 					this.$nextTick(() => {
 						this.$bvModal.hide("deleteAdminModal");
 					});
+				} catch (err) {
+					//
+				}
+			},
+
+			async changeStatus(user) {
+				try {
+					await this.$store.dispatch("Admin/changeStatus", user);
+
+					let msg = `${user.username} has been ${user.isActive ? "activated" : "deactivated"} sucessfully.`;
+
+					this.setGlobalSuccess(msg);
 				} catch (err) {
 					//
 				}

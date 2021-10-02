@@ -46,6 +46,18 @@ exports.update = async (req, res) => {
 	res.status(200).json({ msg: "Admin has been updated successfully" });
 };
 
+exports.changeActivation = async (req, res) => {
+	const { isActive } = req.body;
+
+	const { adminId } = req.params;
+
+	let query = { _id: adminId, type: USER_ADMIN };
+
+	await User.updateOne(query, { isActive });
+
+	res.status(200).json({ msg: `Admin has been ${isActive ? "activated" : "deactivated"} successfully` });
+};
+
 exports.remove = async (req, res) => {
 	const { adminId } = req.params;
 

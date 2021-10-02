@@ -69,7 +69,16 @@
 			class="bg-white shadow-sm mt-3 mb-0"
 		>
 			<template #cell(actions)="row">
-				<b-icon @click="showActions(row.item)" icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+				<div class="d-flex align-items-center">
+					<b-form-checkbox
+						v-b-tooltip="row.item.isActive ? 'Deactivate' : 'Activate'"
+						v-model="row.item.isActive"
+						@change="changeStatus(row.item)"
+						class="ml-2 c-pointer"
+						switch
+					></b-form-checkbox>
+					<b-icon @click="showActions(row.item)" icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+				</div>
 			</template>
 
 			<template #cell(image)="row">
@@ -166,9 +175,19 @@
 				} catch (err) {
 					//
 				}
+			},
+
+			async changeStatus(user) {
+				try {
+					await this.$store.dispatch("Instructor/changeStatus", user);
+
+					let msg = `${user.username} has been ${user.isActive ? "activated" : "deactivated"} sucessfully.`;
+
+					this.setGlobalSuccess(msg);
+				} catch (err) {
+					//
+				}
 			}
 		}
 	};
 </script>
-
-<style lang="scss" scoped></style>

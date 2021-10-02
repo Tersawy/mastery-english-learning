@@ -44,6 +44,18 @@ exports.update = async (req, res) => {
 	res.status(200).json({ msg: "Instructor has been updated successfully" });
 };
 
+exports.changeActivation = async (req, res) => {
+	const { isActive } = req.body;
+
+	const { instructorId } = req.params;
+
+	let query = { _id: instructorId, type: USER_INSTRUCTOR };
+
+	await User.updateOne(query, { isActive });
+
+	res.status(200).json({ msg: `Instructor has been ${isActive ? "activated" : "deactivated"} successfully` });
+};
+
 exports.remove = async (req, res) => {
 	const { instructorId } = req.params;
 
