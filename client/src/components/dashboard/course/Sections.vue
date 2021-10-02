@@ -19,15 +19,35 @@
 						<b-icon :icon="`chevron-${section.lecturesVisible ? 'up' : 'down'}`" />
 						<span class="mx-2 font-weight-500">{{ section.title }}</span>
 					</div>
+
 					<div class="d-flex justify-content-center align-items-center">
-						<div class="c-pointer">
-							<b-icon icon="folder-check" v-b-tooltip="`Add Lecture`" scale="1.2" variant="orange" @click="createLecture(section)"></b-icon>
-							<b-icon icon="pencil-square" v-b-tooltip="`Update Section`" scale="1.2" variant="success" class="mx-3" @click="updateSection(section)"></b-icon>
-							<b-icon icon="trash" v-b-tooltip="`Delete Section`" scale="1.2" variant="danger" class="mr-3" @click="removeSection(section)"></b-icon>
-						</div>
-						<span class="font-sm text-nowrap"> {{ section.lectures.length }} lectures </span>
+						<span class="font-sm text-nowrap mr-2"> {{ section.lectures.length }} lectures </span>
+
+						<b-dropdown variant="link" toggle-class="text-decoration-none p-0 text-dark" no-caret>
+							<template #button-content>
+								<b-icon @click="showSectionActions(section)" icon="three-dots-vertical" scale="1.3" class="c-pointer"></b-icon>
+							</template>
+
+							<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="createLecture(section)">
+								<b-icon icon="folder-check" scale="0.8"></b-icon>
+								<span class="mx-2 text-muted">Add Lecture</span>
+							</b-dropdown-item>
+
+							<b-dropdown-item link-class="py-2 d-flex align-items-center" v-b-modal.sectionForm>
+								<b-icon icon="pencil-square" scale="0.8"></b-icon>
+								<span class="mx-2 text-muted">Update Section</span>
+							</b-dropdown-item>
+
+							<hr class="m-0" />
+
+							<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" v-b-modal.removeSectionModal>
+								<b-icon icon="trash" scale="0.8"></b-icon>
+								<span class="mx-2 text-muted">Delete Section</span>
+							</b-dropdown-item>
+						</b-dropdown>
 					</div>
 				</b-card-body>
+
 				<b-collapse v-model="section.lecturesVisible">
 					<b-card-footer class="p-0 border-0">
 						<div class="d-flex align-items-baseline justify-content-between p-3 font-md" v-for="(lecture, i) in section.lectures" :key="i">
@@ -42,40 +62,66 @@
 									/>
 									<b-icon icon="dash-circle" scale="2" variant="white" class="rounded-circle bg-dark p-1" v-else />
 								</span>
+
 								<span class="mx-2 text-primary c-pointer" style="text-decoration: underline" @click="showLectureVideo(lecture)" v-if="lecture.video">
 									{{ lecture.title }}
 								</span>
+
 								<span class="mx-2" v-else>{{ lecture.title }}</span>
+
 								<b-icon
 									:icon="`chevron-${lecture.descriptionVisible ? 'up' : 'down'}`"
 									variant="dark"
 									class="c-pointer"
 									@click="lecture.descriptionVisible = !lecture.descriptionVisible"
 								/>
+
 								<b-collapse v-model="lecture.descriptionVisible">
 									<p class="text-muted pl-4 mt-1 mb-0 font-md" v-html="lecture.description"></p>
 								</b-collapse>
 							</div>
-							<div class="c-pointer">
-								<b-icon icon="file-earmark-spreadsheet" v-b-tooltip="`Quiz`" scale="1.2" variant="primary" class="mr-3" @click="showQuiz(lecture)"></b-icon>
-								<b-icon
-									icon="arrow-repeat"
-									v-b-tooltip="`Change Video`"
-									scale="1.2"
-									variant="blue"
-									@click="changeLectureVideo(lecture, section)"
-									v-if="lecture.video"
-								/>
-								<b-icon icon="plus-circle" variant="blue" @click="createLectureVideo(lecture, section)" v-else />
+
+							<div class="c-pointer d-flex align-items-center">
 								<b-form-checkbox
 									v-b-tooltip="(lecture.videoReview ? 'Disable' : 'Enable') + ' Video Review'"
 									v-model="lecture.videoReview"
 									@change="changeVideoReview(lecture, section)"
-									class="ml-2"
+									class="ml-2 c-pointer"
 									switch
 								></b-form-checkbox>
-								<b-icon icon="pencil-square" v-b-tooltip="`Update Lecture`" scale="1.2" variant="success" class="mx-3" @click="updateLecture(lecture, section)" />
-								<b-icon icon="trash" v-b-tooltip="`Delete Lecture`" scale="1.2" variant="danger" class="mr-3" @click="removeLecture(lecture, section)" />
+
+								<b-dropdown variant="link" toggle-class="text-decoration-none p-0 text-dark" no-caret>
+									<template #button-content>
+										<b-icon @click="showLectureActions(lecture, section)" icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+									</template>
+
+									<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="showQuiz">
+										<b-icon icon="file-earmark-spreadsheet" scale="0.8"></b-icon>
+										<span class="mx-2 text-muted">Show Quiz</span>
+									</b-dropdown-item>
+
+									<b-dropdown-item link-class="py-2 d-flex align-items-center" v-if="lecture.video" @click="changeLectureVideo">
+										<b-icon icon="arrow-repeat" scale="0.8"></b-icon>
+										<span class="mx-2 text-muted">Change Lecture Video</span>
+									</b-dropdown-item>
+
+									<b-dropdown-item link-class="py-2 d-flex align-items-center" v-else v-b-modal.lectureVideoForm>
+										<b-icon icon="plus-circle" scale="0.8"></b-icon>
+										<span class="mx-2 text-muted">Create Lecture Video</span>
+									</b-dropdown-item>
+
+									<b-dropdown-item link-class="py-2 d-flex align-items-center" v-b-modal.lectureForm>
+										<b-icon icon="pencil-square" scale="0.8"></b-icon>
+										<span class="mx-2 text-muted">Update Lecture</span>
+									</b-dropdown-item>
+
+									<hr class="m-0" />
+
+									<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" v-b-modal.removeLectureModal>
+										<b-icon icon="trash" scale="0.8"></b-icon>
+										<span class="mx-2 text-muted">Delete Lecture</span>
+									</b-dropdown-item>
+								</b-dropdown>
 							</div>
 						</div>
 					</b-card-footer>
@@ -119,54 +165,34 @@
 		},
 
 		methods: {
+			showLectureActions(lecture, section) {
+				this.$store.commit("Course/setLecture", lecture);
+				this.$store.commit("Course/setSection", section);
+			},
+			showSectionActions(section) {
+				this.$store.commit("Course/setSection", section);
+			},
 			createSection() {
 				this.$store.commit("Course/setSection", {});
 				this.$bvModal.show("sectionForm");
-			},
-			updateSection(section) {
-				this.$store.commit("Course/setSection", section);
-				this.$bvModal.show("sectionForm");
-			},
-			removeSection(section) {
-				this.$store.commit("Course/setSection", section);
-				this.$bvModal.show("removeSectionModal");
 			},
 			createLecture(section) {
 				this.$store.commit("Course/setSection", section);
 				this.$store.commit("Course/setLecture", {});
 				this.$bvModal.show("lectureForm");
 			},
-			updateLecture(lecture, section) {
-				this.$store.commit("Course/setSection", section);
-				this.$store.commit("Course/setLecture", lecture);
-				this.$bvModal.show("lectureForm");
-			},
-			removeLecture(lecture, section) {
-				this.$store.commit("Course/setSection", section);
-				this.$store.commit("Course/setLecture", lecture);
-				this.$bvModal.show("removeLectureModal");
-			},
 			showLectureVideo(lecture) {
 				this.$store.commit("Course/setLecture", lecture);
 				this.$bvModal.show("lectureVideo");
 			},
-			createLectureVideo(lecture, section) {
-				this.$store.commit("Course/setSection", section);
-				this.$store.commit("Course/setLecture", lecture);
-				this.$bvModal.show("lectureVideoForm");
-			},
-			changeLectureVideo(lecture, section) {
+			changeLectureVideo() {
 				this.isChangeVideo = true;
-				this.$store.commit("Course/setSection", section);
-				this.$store.commit("Course/setLecture", lecture);
 				this.$nextTick(() => {
 					this.$bvModal.show("lectureVideoForm");
 				});
 			},
-			async showQuiz(lecture) {
+			async showQuiz() {
 				try {
-					this.$store.commit("Course/setLecture", lecture);
-
 					await this.$store.dispatch("Course/quiz");
 				} catch (err) {
 					//
@@ -199,6 +225,10 @@
 				this.$store.commit("Course/setLecture", lecture);
 				try {
 					await this.$store.dispatch("Course/changeLectureVideoReview", { videoReview: lecture.videoReview });
+
+					let msg = `Lecture video has been ${lecture.videoReview ? "enabled" : "disabled"} sucessfully.`;
+
+					this.setGlobalSuccess(msg);
 				} catch (err) {
 					//
 				}
@@ -206,3 +236,13 @@
 		}
 	};
 </script>
+
+<style lang="scss">
+	.custom-control.custom-switch {
+		label,
+		label:before,
+		label:after {
+			cursor: pointer;
+		}
+	}
+</style>
