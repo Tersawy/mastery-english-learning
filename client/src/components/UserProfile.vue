@@ -1,5 +1,14 @@
 <template>
-	<b-sidebar id="userProfile" v-model="isShown" bg-variant="light" backdrop-variant="dark" backdrop shadow header-class="border-bottom px-3 py-1">
+	<b-sidebar
+		id="userProfile"
+		@shown="sidebarIsShown"
+		v-model="isShown"
+		bg-variant="light"
+		backdrop-variant="dark"
+		backdrop
+		shadow
+		header-class="border-bottom px-3 py-1"
+	>
 		<template #header="{ hide }">
 			<div class="d-flex align-items-center justify-content-between w-100">
 				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
@@ -169,6 +178,9 @@
 				this.image = null;
 
 				this.setLoading(false);
+			},
+			sidebarIsShown() {
+				this.user = { ...this.me };
 			}
 		}
 	};
