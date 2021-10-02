@@ -38,6 +38,7 @@ const userSchema = new Schema(
 		type: { type: Number, default: USER_STUDENT },
 		image: { type: String, default: "empty.jpg" },
 		courses: [{ type: "ObjectId", ref: "Course" }], // for students only
+		isActive: { type: Boolean , default: false},
 		remmemberToken: { type: String, default: null },
 		expiresToken: { type: Date, default: Date.now },
 	},
