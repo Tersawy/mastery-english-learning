@@ -97,7 +97,7 @@
 
 		methods: {
 			getCourse() {
-				return this.$store.dispatch("Course/show", this.$route.params.courseId);
+				return this.$store.dispatch("Course/start", this.$route.params.courseId);
 			},
 
 			async showLectureVideo(lecture) {
