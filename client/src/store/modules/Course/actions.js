@@ -14,6 +14,21 @@ export default {
 		});
 	},
 
+	start({ commit, state }, courseId) {
+		return api("get", `${state.prefix}/${courseId}/start`, (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			commit("setOne", data);
+
+			return Promise.resolve(data);
+		});
+	},
+
 	update({ state, commit }, { course, config }) {
 		return api("put", `${state.prefix}/${state.one._id}`, course, config, (err, data) => {
 			if (err) {
