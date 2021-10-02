@@ -27,7 +27,9 @@ module.exports = {
 
 			let user = await User.findOne(userQuery, { password: 0 });
 
-			if (!user) throw { status: 401, msg: "Unauthentication" };
+			if (!user) return res.status(401).json({ msg: "Unauthentication" });
+
+			if (!user.isActive) return res.status(403).json( {msg: "Wait for activation" });
 
 			let _user = { ...user._doc };
 
@@ -59,7 +61,7 @@ module.exports = {
 				return next();
 			}
 
-			let userQuery = { _id: decoded.userId, deleted_at: null };
+			let userQuery = { _id: decoded.userId, isActive: true, deleted_at: null };
 
 			let user = await User.findOne(userQuery, { password: 0 });
 
