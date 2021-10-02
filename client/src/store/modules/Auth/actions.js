@@ -11,9 +11,7 @@ export const login = async ({ commit }, payload) => {
 	commit("removeErrors");
 	return api("post", "login", payload, (err, data) => {
 		if (err) {
-			if (err.status != 401) {
-				commit("setErrors", err.data);
-			}
+			commit("setErrors", err.data);
 			return Promise.reject(err.data);
 		}
 		commit("login", data);

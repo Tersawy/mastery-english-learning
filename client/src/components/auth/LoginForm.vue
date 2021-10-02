@@ -51,7 +51,7 @@
 
 					this.$emit("signedIn");
 				} catch (err) {
-					this.setGlobalError("Email or password are not valid");
+					//
 				}
 
 				this.setLoading(false);
