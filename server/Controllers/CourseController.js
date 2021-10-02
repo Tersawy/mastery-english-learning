@@ -91,7 +91,17 @@ exports.show = async (req, res) => {
 			$lookup: {
 				from: "coursesections",
 				let: { courseId: "$_id" },
-				pipeline: [{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } }],
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
+					{
+						$lookup: {
+							localField: "_id",
+							foreignField: "section",
+							from: "lectures",
+							as: "lectures"
+						}
+					}
+				],
 				as: "sections",
 			},
 		},
