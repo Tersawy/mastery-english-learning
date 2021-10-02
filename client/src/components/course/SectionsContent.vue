@@ -26,7 +26,7 @@
 				</b-card-body>
 				<b-collapse v-model="section.lecturesVisible">
 					<b-card-footer class="p-0 border-0">
-						<div class="d-flex align-items-center justify-content-between px-3 py-2" v-for="(lecture, i) in section.lectures" :key="i">
+						<div class="d-flex align-items-baseline justify-content-between px-3 py-2" v-for="(lecture, i) in section.lectures" :key="i">
 							<div style="font-size: 12px">
 								<span style="font-size: 18px" class="">
 									<b-icon
@@ -57,7 +57,7 @@
 									<p class="text-muted pl-4 mt-1 mb-0" v-html="lecture.description"></p>
 								</b-collapse>
 							</div>
-							<div class="align-self-baseline">{{ lecturesTime(lecture.time).timeNum }}</div>
+							<div>{{ lecturesTime(lecture.time).timeNum }}</div>
 						</div>
 					</b-card-footer>
 				</b-collapse>

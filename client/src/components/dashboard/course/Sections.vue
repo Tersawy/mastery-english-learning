@@ -30,7 +30,7 @@
 				</b-card-body>
 				<b-collapse v-model="section.lecturesVisible">
 					<b-card-footer class="p-0 border-0">
-						<div class="d-flex align-items-center justify-content-between p-3 font-md" v-for="(lecture, i) in section.lectures" :key="i">
+						<div class="d-flex align-items-baseline justify-content-between p-3 font-md" v-for="(lecture, i) in section.lectures" :key="i">
 							<div>
 								<span style="font-size: 18px" class="">
 									<b-icon
@@ -56,7 +56,7 @@
 									<p class="text-muted pl-4 mt-1 mb-0 font-md" v-html="lecture.description"></p>
 								</b-collapse>
 							</div>
-							<div class="c-pointer align-self-baseline">
+							<div class="c-pointer">
 								<b-icon icon="file-earmark-spreadsheet" v-b-tooltip="`Quiz`" scale="1.2" variant="primary" class="mr-3" @click="showQuiz(lecture)"></b-icon>
 								<b-icon
 									icon="arrow-repeat"
