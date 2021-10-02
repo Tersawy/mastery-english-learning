@@ -32,7 +32,9 @@ exports.login = async (req, res) => {
 
 	let same = await bcrypt.compare(password, user.password);
 
-	if (!same) throw { status: 401, msg: "Email or password are not valid" };
+	if (!same) return res.status(401).json({ msg: "Email or password are not valid" });
+
+	if (!user.isActive) return res.status(403).json({ msg: "Wait for activation" });
 
 	const JWTPayload = { userId: user._id, type: user.type };
 
@@ -83,11 +85,11 @@ exports.me = (req, res) => {
 	jwt.verify(token, publicKey, JWTVerifyOptions, async (err, decoded) => {
 		if (err) return res.status(401).json({ msg: "Unauthentication" });
 
-		let userQuery = { _id: decoded.userId };
+		let userQuery = { _id: decoded.userId, isActive: true };
 
 		let user = await User.findOne(userQuery, { password: 0 });
 
-		if (!user) throw { status: 401, msg: "Unauthentication" };
+		if (!user) return res.status(401).json({ msg: "Unauthentication" });
 
 		let _user = { ...user._doc };
 
