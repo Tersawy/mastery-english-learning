@@ -179,3 +179,11 @@ $fontWeightSizes: 100, 200, 300, 400, 500, 600, 700, 800, 900;
 		user-select: none;
 	}
 }
+
+.custom-control.custom-switch {
+	label,
+	label:before,
+	label:after {
+		cursor: pointer;
+	}
+}
