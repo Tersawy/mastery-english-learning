@@ -30,14 +30,10 @@
 		</b-row>
 
 		<b-modal id="dropdownActionModal" hide-header hide-footer body-class="p-0" centered size="sm">
-			<!-- <b-dropdown size="sm" variant="link" class="dropdown-row.item-options" menu-class="py-0" no-caret ref="dropdown" right v-if="course"> -->
-			<!-- <template #button-content> </template> -->
 			<ul class="m-0 p-0 list-unstyled">
 				<b-dropdown-item link-class="py-2 d-flex align-items-center" :to="{ name: `DashboardShowCourse`, params: { courseId: course._id } }">
-					<!-- <router-link > -->
 					<b-icon icon="eye" scale="0.8"></b-icon>
 					<span class="mx-2 text-muted">Show Details</span>
-					<!-- </router-link> -->
 				</b-dropdown-item>
 
 				<b-dropdown-item link-class="py-2 d-flex align-items-center" :to="{ name: `UpdateCourse`, params: { courseId: course._id } }">
@@ -73,7 +69,6 @@
 					<span class="mx-2 text-muted">Delete Course</span>
 				</b-dropdown-item>
 			</ul>
-			<!-- </b-dropdown> -->
 		</b-modal>
 
 		<b-table
@@ -99,7 +94,7 @@
 			</template>
 
 			<template #cell(thumbnail)="row">
-				<b-avatar :src="require('@/assets/images/course.jpg')" :alt="row.value" class="shadow-sm" rounded="lg"></b-avatar>
+				<b-avatar :src="`${thumbnailsURL}/${row.value}`" :alt="row.value" class="shadow-sm" rounded="lg"></b-avatar>
 			</template>
 
 			<template #cell(title)="row">
