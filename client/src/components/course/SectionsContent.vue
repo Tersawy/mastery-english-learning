@@ -33,17 +33,12 @@
 										icon="caret-right-fill"
 										variant="white"
 										class="rounded-circle bg-dark p-1 c-pointer"
-										v-if="lecture.video && lecture.videoReview"
+										v-if="lecture.video"
 										@click="showLectureVideo(lecture)"
 									/>
 									<b-icon icon="dash-circle" scale="2" variant="white" class="rounded-circle bg-dark p-1" v-else />
 								</span>
-								<span
-									class="mx-2 text-primary c-pointer"
-									style="text-decoration: underline"
-									@click="showLectureVideo(lecture)"
-									v-if="lecture.video && lecture.videoReview"
-								>
+								<span class="mx-2 text-primary c-pointer" style="text-decoration: underline" @click="showLectureVideo(lecture)" v-if="lecture.video">
 									{{ lecture.title }}
 								</span>
 								<span class="mx-2" v-else>{{ lecture.title }}</span>
@@ -70,6 +65,7 @@
 	import { secondsToHms } from "@/helpers/functions";
 
 	export default {
+		props: ["showVideoInModal"],
 		data() {
 			return {
 				allExpanded: false
@@ -114,7 +110,7 @@
 			async showLectureVideo(lecture) {
 				this.$store.commit("Course/setLecture", lecture);
 
-				if (!this.isAuth || lecture.videoReview) return this.$bvModal.show("lectureVideo");
+				if (this.showVideoInModal) return this.$bvModal.show("lectureVideo");
 
 				try {
 					await this.$store.dispatch("Course/quiz");

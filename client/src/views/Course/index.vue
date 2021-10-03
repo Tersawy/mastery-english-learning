@@ -30,7 +30,7 @@
 					<b-col lg="8">
 						<div class="course-content pb-4">
 							<h4 class="mb-3 font-weight-700">Course content</h4>
-							<SectionsContent />
+							<SectionsContent :showVideoInModal="true" />
 						</div>
 						<div class="course-requirments py-4">
 							<h4 class="mb-3 font-weight-700">Requirements</h4>
