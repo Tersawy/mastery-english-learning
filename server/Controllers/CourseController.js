@@ -88,7 +88,7 @@ exports.show = async (req, res) => {
 	let course = await Course.aggregate([
 		{ $match: { _id: mongoose.Types.ObjectId(courseId), deleted_at: null, status } },
 		{ $lookup: {
-				from: "coursesections",
+				from: "sections",
 				let: { courseId: "$_id" },
 				as: "sections",
 				pipeline: [
