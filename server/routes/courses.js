@@ -16,7 +16,7 @@ router.get("/:courseId/edit", auth, instructorAndAdmin, CourseController.edit);
 
 router.put("/:courseId", auth, instructorAndAdmin, CourseController.update);
 
-router.post("/:courseId/change-status", auth, admin, CourseController.changeStatus);
+router.post("/:courseId/change-status", auth, instructorAndAdmin, CourseController.changeStatus);
 
 router.delete("/:courseId", auth, instructorAndAdmin, CourseController.remove);
 
