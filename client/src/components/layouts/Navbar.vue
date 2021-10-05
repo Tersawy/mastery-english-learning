@@ -15,7 +15,7 @@
 					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
 					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
 					<hr class="m-0" />
-					<b-dropdown-item-btn variant="danger" @click="$store.commit('Auth/logout')" button-class="py-2">
+					<b-dropdown-item-btn variant="danger" @click="logout" button-class="py-2">
 						<span class="pr-2">
 							<b-icon icon="box-arrow-in-left" scale="1.5" />
 						</span>
@@ -58,8 +58,8 @@
 				</b-dropdown>
 
 				<div class="text-center" v-if="!isAuth">
-					<b-btn variant="outline-dark" to="/login" class="mr-2">Sign In</b-btn>
-					<b-btn variant="danger" to="/register">Sign Up</b-btn>
+					<b-btn variant="outline-dark" v-b-modal.loginModal class="mr-2">Sign In</b-btn>
+					<b-btn variant="danger" v-b-modal.registerModal>Sign Up</b-btn>
 				</div>
 			</b-sidebar>
 
@@ -90,8 +90,8 @@
 
 					<div class="ml-4 d-flex">
 						<template v-if="!isAuth">
-							<b-btn variant="outline-dark" class="mx-3 text-nowrap d-flex align-items-center" to="/login">Sign In</b-btn>
-							<b-btn variant="danger" class="text-nowrap d-flex align-items-center" to="/register">Sign Up</b-btn>
+							<b-btn variant="outline-dark" class="mx-3 text-nowrap d-flex align-items-center" v-b-modal.loginModal>Sign In</b-btn>
+							<b-btn variant="danger" class="text-nowrap d-flex align-items-center" v-b-modal.registerModal>Sign Up</b-btn>
 						</template>
 						<template v-else>
 							<b-dropdown variant="link" toggle-class="text-decoration-none" no-caret right size="lg" lazy menu-class="py-0">
@@ -105,7 +105,7 @@
 								<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
 								<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
 								<hr class="m-0" />
-								<b-dropdown-item-btn variant="danger" @click="$store.commit('Auth/logout')" button-class="py-2">
+								<b-dropdown-item-btn variant="danger" @click="logout" button-class="py-2">
 									<span class="pr-2">
 										<b-icon icon="box-arrow-in-left" scale="1.5" />
 									</span>
@@ -119,6 +119,17 @@
 		</b-container>
 	</b-navbar>
 </template>
+
+<script>
+	export default {
+		methods: {
+			logout() {
+				this.$store.commit("Auth/logout");
+				this.$router.go(0);
+			}
+		}
+	};
+</script>
 
 <style scoped lang="scss">
 	// .form-search {

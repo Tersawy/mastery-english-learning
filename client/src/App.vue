@@ -31,6 +31,8 @@
 		</div>
 		<Loader />
 		<UserProfile />
+		<RegisterModal @signedUp="signed" />
+		<LoginModal @signedIn="signed" />
 	</div>
 </template>
 
@@ -42,8 +44,12 @@
 	import UploadList from "@/components/UploadList";
 	import Loader from "@/components/Loader";
 	import UserProfile from "@/components/UserProfile";
+
+	const RegisterModal = () => import("@/components/auth/RegisterModal.vue");
+	const LoginModal = () => import("@/components/auth/LoginModal.vue");
+
 	export default {
-		components: { Navbar, NavbarDashboard, SidebarDashboard, DashboardLinks, UploadList, Loader, UserProfile },
+		components: { Navbar, NavbarDashboard, SidebarDashboard, DashboardLinks, UploadList, Loader, UserProfile, RegisterModal, LoginModal },
 
 		data() {
 			return {
@@ -63,6 +69,12 @@
 			},
 			showNavbar() {
 				return !this.isLoginPage && !this.isDashboard && !this.isRegisterPage;
+			}
+		},
+
+		methods: {
+			signed() {
+				setTimeout(() => this.$router.go(0), 300);
 			}
 		}
 	};

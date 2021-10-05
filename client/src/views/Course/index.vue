@@ -70,8 +70,6 @@
 			</b-container>
 		</div>
 		<LectureVideo />
-		<LoginModal @signedIn="signedIn" />
-		<RegisterModal />
 		<Congrats v-if="isCongrate" />
 	</div>
 </template>
@@ -79,11 +77,9 @@
 <script>
 	import Congrats from "@/components/Congrats.vue";
 	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
-	import LoginModal from "@/components/auth/LoginModal.vue";
-	import RegisterModal from "@/components/auth/RegisterModal.vue";
 	import SectionsContent from "@/components/course/SectionsContent.vue";
 	export default {
-		components: { LectureVideo, LoginModal, RegisterModal, Congrats, SectionsContent },
+		components: { LectureVideo, Congrats, SectionsContent },
 		data() {
 			return {
 				isCongrate: false
@@ -133,12 +129,6 @@
 				} catch (err) {
 					//
 				}
-			},
-
-			async signedIn() {
-				this.$store.commit("setLoader", true);
-				await this.getCourse();
-				this.$store.commit("setLoader", false);
 			}
 		}
 	};
