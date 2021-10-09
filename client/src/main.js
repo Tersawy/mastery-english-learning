@@ -45,7 +45,13 @@ router.beforeEach((to, from, next) => {
 
 	let userIsNotAllowed = routeHasExcept && !to.meta.only.includes(user.type);
 
-	if (isAuth && userIsNotAllowed && to.name != "Dashboard") return next("/dashboard");
+	if (isAuth && userIsNotAllowed) {
+		if (to.name != "Dashboard") {
+			return next("/dashboard");
+		} else {
+			return next("/");
+		}
+	}
 
 	next();
 });
