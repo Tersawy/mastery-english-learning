@@ -40,11 +40,11 @@ exports.show = async (req, res) => {
 	];
 
 	let quiz = await Quiz.aggregate(aggregate)
-	
+
 	quiz = quiz[0]
-	
+
 	if (!quiz) return res.json({});
-	
+
 	quiz.questions = quiz.questions.map(question => {
 		let q = {};
 
@@ -53,8 +53,8 @@ exports.show = async (req, res) => {
 		q.text = question.text;
 		q.type = question.type;
 
-		if (!Array.isArray(quiz.quizAnswer.answers)) return q;
-		
+		if (!quiz.quizAnswer && !Array.isArray(quiz.quizAnswer.answers)) return q;
+
 		let answer = quiz.quizAnswer.answers.find(a => String(a.question) == String(question._id));
 
 		if (answer) {
@@ -66,14 +66,14 @@ exports.show = async (req, res) => {
 
 		return q;
 	})
-	
+
 	quiz = {
 		_id: quiz._id,
 		isAnswered: !!quiz.quizAnswer,
 		lecture: quiz.lecture,
 		questions: quiz.questions
 	}
-	
+
 	res.json(quiz);
 };
 
