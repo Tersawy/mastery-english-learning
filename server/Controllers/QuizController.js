@@ -32,7 +32,7 @@ exports.show = async (req, res) => {
 				let: { quizId: "$_id" },
 				as: "quizAnswer",
 				pipeline: [
-					{ $match: { $expr: { $eq: ["$quiz", "$$quizId"], $eq: ["$student", me._id] } } }
+					{ $match: { $expr: { $and: [{ $eq: ["$quiz", "$$quizId"] }, { $eq: ["$student", me._id] }] } } }
 				]
 			}
 		},
