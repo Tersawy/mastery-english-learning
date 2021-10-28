@@ -53,7 +53,7 @@ exports.show = async (req, res) => {
 		q.text = question.text;
 		q.type = question.type;
 
-		if (!quiz.quizAnswer && !Array.isArray(quiz.quizAnswer.answers)) return q;
+		if (!quiz.quizAnswer || !Array.isArray(quiz.quizAnswer.answers)) return q;
 
 		let answer = quiz.quizAnswer.answers.find(a => String(a.question) == String(question._id));
 
