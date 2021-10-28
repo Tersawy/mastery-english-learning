@@ -469,17 +469,22 @@ export default {
 		});
 	},
 
-	createAnswers({ state, commit /* dispatch */ }, item) {
-		return api("post", `${state.prefix}/${state.one._id}/sections/lectures/quiz/${state.oneQuiz._id}/answer`, item, async (err, data) => {
-			if (err) {
-				if (err.status != 401) {
-					commit("setErrors", err.data);
+	createAnswer({ state, commit /* dispatch */ }, payload) {
+		return api(
+			"post",
+			`${state.prefix}/${state.one._id}/sections/lectures/quiz/${state.oneQuiz._id}/question/${payload.questionId}/answer`,
+			payload.answer,
+			async (err, data) => {
+				if (err) {
+					if (err.status != 401) {
+						commit("setErrors", err.data);
+					}
+					return Promise.reject(err.data);
 				}
-				return Promise.reject(err.data);
-			}
 
-			// await dispatch("quiz");
-			return Promise.resolve(data);
-		});
+				// await dispatch("quiz");
+				return Promise.resolve(data);
+			}
+		);
 	}
 };

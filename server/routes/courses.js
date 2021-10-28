@@ -120,7 +120,7 @@ router.delete(`${questionURL}/:questionId`, auth, instructorAndAdmin, QuestionCo
 
 const QuizAnswerController = require("../Controllers/QuizAnswerController");
 
-const quizAnswerURL = "/:courseId/sections/lectures/quiz/:quizId/answer";
+const quizAnswerURL = "/:courseId/sections/lectures/quiz/:quizId/question/:questionId/answer";
 
 router.post(quizAnswerURL, auth, student, QuizAnswerController.answer);
 

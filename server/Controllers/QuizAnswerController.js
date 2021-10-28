@@ -1,6 +1,9 @@
 const { QUESTION_ESSAY, QUESTION_TRUE_OR_FALSE } = require("../helpers/constants");
+
 const QuizAnswer = require("../Models/QuizAnswer");
+
 const Quiz = require("../Models/Quiz");
+
 const Answer = require("../Models/QuizAnswer");
 
 const path = require("path");
@@ -14,11 +17,17 @@ const { unlinkSync, existsSync } = require( "fs" );
 const audiosDir = path.resolve(__dirname, "../public/audios");
 
 exports.answer = async (req, res) => {
-	const { courseId, quizId } = req.params;
+	const { courseId, quizId, questionId } = req.params;
 
-	const { me, answers } = req.body;
+	let { me, value } = req.body;
 
-	let audiosAnswers = req.files.answers;
+	let answer = { question: questionId, value };
+
+	let audioAnswer = req.files && req.files.value ? req.files.value : null;
+
+	if (audioAnswer) {
+		answer.value = await handleAudioAnswer(audioAnswer)
+	}
 
 	if (!me.courses.includes(courseId)) {
 		return res.status(403).json({ msg: "Please enroll for this course first" });
@@ -30,45 +39,41 @@ exports.answer = async (req, res) => {
 
 	let [quizAnswer, quiz] = await Promise.all([getQuizAnswer, getQuiz]);
 
-	if (quizAnswer) return res.status(422).json({ msg: "You have already answered" });
+	if (!quiz) return res.status(404).json({ msg: "Quiz is not found !" });
+
+	let question = quiz.questions.find(question => question._id.toString() == questionId.toString());
+
+	if (!question) return res.status(404).json({ msg: "This question doesn't exist in this quiz, Maybe removed by instructor" })
 
 	quizAnswer = quizAnswer || new QuizAnswer({ quiz: quizId, student: me._id });
 
-	if (audiosAnswers) {
-		let newAnswer = await handleAudioAnswer(audiosAnswers)
+	let isEssay = question.type == QUESTION_ESSAY;
 
-		answers.push(newAnswer)
+	let isRightAnswer = JSON.stringify(question.answer).toString().toLocaleLowerCase() == JSON.stringify(answer.value).toString().toLocaleLowerCase();
+
+	let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
+
+	if (isTrueOrFalse) {
+		isRightAnswer = String(question.answer).toLocaleLowerCase() == String(answer.value).toLocaleLowerCase();
+
+		answer.value = String(answer.value) === "true" ? true : false;
 	}
-	
-	let quizQuestionsIds = quiz.questions.map((q) => q._id);
 
-	quizAnswer.answers = answers.filter((a) => quizQuestionsIds.includes(a.question));
+	answer.isTrue = !isEssay && isRightAnswer;
 
-	quizAnswer.answers = quizAnswer.answers.map((answer) => {
-		let question = quiz.questions.find((q) => q._id.toString() == answer.question.toString());
+	answer.isCorrected = !isEssay;
 
-		let isEssay = question.type == QUESTION_ESSAY;
+	let oldAnswerIndex = quizAnswer.answers.findIndex(answer => answer.question.toString() == questionId.toString());
 
-		let isRightAnswer = JSON.stringify(question.answer).toString().toLocaleLowerCase() == JSON.stringify(answer.value).toString().toLocaleLowerCase();
-
-		let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
-
-		if (isTrueOrFalse) {
-			isRightAnswer = String(question.answer).toLocaleLowerCase() == String(answer.value).toLocaleLowerCase();
-
-			answer.value = String(answer.value) === "true" ? true : false;
-		}
-
-		answer.isTrue = !isEssay && isRightAnswer;
-
-		answer.isCorrected = !isEssay;
-
-		return answer;
-	});
+	if (oldAnswerIndex > -1) {
+		quizAnswer.answers[oldAnswerIndex] = answer;
+	} else {
+		quizAnswer.answers.push(answer);
+	}
 
 	await quizAnswer.save();
 
-	res.json("Your answers has been saved successfully");
+	res.json({ msg: "Your answers has been saved successfully" });
 };
 
 exports.show = async (req, res) => {
@@ -83,40 +88,33 @@ exports.show = async (req, res) => {
 	res.json(answer);
 };
 
-let handleAudioAnswer = (audiosAnswers) => {
+let handleAudioAnswer = (audio) => {
 	return new Promise((resolve, reject) => {
-		for (let answer of audiosAnswers) {
-			if (!answer) continue;
-	
-			let questionId = Object.keys(answer)[0];
-	
-			let audio = answer[questionId];
-	
-			let tempFilePath = path.resolve(audio.tempFilePath);
-			
-			let audioExtension = "wav";
-	
-			let audioName = `${randomChar(8)}_${Date.now()}.${audioExtension}`;
-	
-			let audioDir = path.resolve(audiosDir, audioName);
-	
-			audio.mv(audioDir, (err) => {
-				if (err) return reject(err);
-		
-				var option = { scriptPath: "scripts", args: [audioDir] };
-		
-				PythonShell.run("recognition.py", option, function (err, results) {
-					if (err) return reject(err);
-	
-					if (existsSync(tempFilePath)) unlinkSync(tempFilePath);
-	
-					if (existsSync(audioDir)) unlinkSync(audioDir);
-	
-					let audioAnswer = { question: questionId, value: results[0] };
-	
-					resolve(audioAnswer);
-				});
+		let tempFilePath = path.resolve(audio.tempFilePath);
+
+		let audioExtension = "wav";
+
+		let audioName = `${randomChar(8)}_${Date.now()}.${audioExtension}`;
+
+		let audioDir = path.resolve(audiosDir, audioName);
+
+		audio.mv(audioDir, (err) => {
+			if (err) return reject(err);
+
+			var option = { scriptPath: "scripts", args: [audioDir] };
+
+			PythonShell.run("recognition.py", option, function (err, results) {
+				if (err) {
+					console.log(err)
+					return reject({ status: 422, msg: "please check your microphone and try again" });
+				}
+
+				if (existsSync(tempFilePath)) unlinkSync(tempFilePath);
+
+				if (existsSync(audioDir)) unlinkSync(audioDir);
+
+				resolve(results[0]);
 			});
-		}
+		});
 	})
 }

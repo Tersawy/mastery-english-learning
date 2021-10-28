@@ -27,17 +27,14 @@
 						</div>
 						<div class="mx-md-50px pl-2 mt-3" v-html="lecture.description"></div>
 						<SectionsContent class="d-xl-none mt-5" />
-						<div class="lecture-quiz pt-3" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
+						<div class="lecture-quiz mt-5" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
 							<h3 class="mb-3" style="text-decoration: underline">Quiz :-</h3>
 							<div class="questions ml-3">
-								<ul class="questions-list pl-0 pl-xl-3" style="list-style: upper-latin">
-									<li v-for="(question, i) in lecture.quiz.questions" :key="i" class="questions-item px-2 py-4">
-										<Question :question="{ ...question, isAnswered: lecture.quiz.isAnswered }" :answers="answers" />
+								<ul class="questions-list pl-0 pl-xl-3">
+									<li v-for="(question, i) in lecture.quiz.questions" :key="i" class="questions-item">
+										<Question :question="{ ...question }" :quiz="lecture.quiz" class="px-2 py-4 question-overlay" />
 									</li>
 								</ul>
-								<b-overlay v-if="!lecture.quiz.isAnswered" :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
-									<b-btn :disabled="isLoading" variant="primary" @click="saveAnswers">Save</b-btn>
-								</b-overlay>
 							</div>
 						</div>
 					</div>
@@ -53,7 +50,6 @@
 <script>
 	import Question from "@/components/question/index.vue";
 
-	import { QUESTION_COMPLETE, QUESTION_SPEECH } from "@/helpers/constants";
 	import SectionsContent from "@/components/course/SectionsContent";
 
 	export default {
@@ -107,66 +103,6 @@
 				} catch (err) {
 					//
 				}
-			},
-
-			validateAnswers() {
-				const answers = this.answers,
-					questions = this.lecture.quiz.questions;
-
-				for (let i = 0; i < questions.length; i++) {
-					let question = questions[i];
-
-					let answer = answers.find((a) => a.question == question._id);
-
-					if (!answer) {
-						this.setGlobalError(`Question No. ${i + 1} is required`);
-						return false;
-					}
-
-					if (question.type == QUESTION_COMPLETE) {
-						let defaultAnswerCount = question.text.match(/\.\.+/gi).length;
-
-						if (defaultAnswerCount != answer.value.length) {
-							let pronoun = defaultAnswerCount > 1 ? "are" : "is";
-
-							this.setGlobalError(`Question No. ${i + 1} has ${answer.value.length} answers, but ${defaultAnswerCount} ${pronoun} required`);
-							return false;
-						}
-					}
-				}
-
-				return true;
-			},
-
-			async saveAnswers() {
-				if (!this.validateAnswers()) return;
-
-				let formData = new FormData();
-
-				this.answers.forEach((answer, i) => {
-					if (answer.type == QUESTION_COMPLETE) {
-						formData.set(`answers[${i}].question`, answer.question);
-						answer.value.forEach((value, idx) => {
-							formData.set(`answers[${i}].value[${idx}]`, value);
-						});
-					} else if (answer.type == QUESTION_SPEECH) {
-						formData.set(`answers[${i}].${answer.question}`, answer.value);
-					} else {
-						formData.set(`answers[${i}].question`, answer.question);
-						formData.set(`answers[${i}].value`, answer.value);
-					}
-				});
-
-				this.setLoading(true);
-
-				try {
-					await this.$store.dispatch("Course/createAnswers", formData);
-					await this.$store.dispatch("Course/quiz");
-				} catch (err) {
-					//
-				}
-
-				this.setLoading(false);
 			}
 		}
 	};
@@ -175,15 +111,30 @@
 <style lang="scss">
 	.questions {
 		.questions-list {
-			.questions-item {
+			list-style: decimal;
+			li.questions-item {
 				&:nth-child(even) {
-					background: rgb(237, 237, 237);
+					.question-overlay {
+						background: rgb(237, 237, 237);
+					}
 				}
 				.question {
 					display: flex;
 					align-items: center;
 					flex-wrap: wrap;
 					line-height: 2;
+					.question-text {
+						color: var(--primary);
+						letter-spacing: 0.7px;
+						&.right {
+							color: var(--success);
+							font-weight: 600;
+						}
+						&.wrong {
+							color: var(--danger);
+							font-weight: 600;
+						}
+					}
 					input.input-complete {
 						height: 18px;
 						width: 64px;
