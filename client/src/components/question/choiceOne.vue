@@ -17,22 +17,6 @@
 
 <script>
 	export default {
-		props: ["question", "text-class"],
-		computed: {
-			choices() {
-				return this.question.choices;
-			}
-		},
-		methods: {
-			answerBg(choice) {
-				if ((this.question.isTrue && this.question.answer == choice) || this.question.defaultAnswer == choice) {
-					return "bg-success-light";
-				}
-
-				if (choice == this.question.answer) {
-					return "bg-danger-light text-white text-line-through";
-				}
-			}
-		}
+		props: ["question", "text-class"]
 	};
 </script>
