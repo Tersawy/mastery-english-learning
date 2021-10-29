@@ -10,7 +10,7 @@
 				</span>
 				<recorder @input="handleRecorder" v-if="!question.isAnswered" />
 			</div>
-			<div>
+			<div v-if="question.isCorrected">
 				<strong class="text-muted">Your answer is: </strong>
 				<span v-if="question.isTrue" class="bg-success-light w-fit-content px-2 rounded-lg">{{ question.answer }}</span>
 				<span v-else class="bg-danger-light w-fit-content text-white px-2 rounded-lg">{{ question.answer }}</span>
