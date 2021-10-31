@@ -93,6 +93,7 @@
 		top: 0;
 		left: 0;
 		position: fixed;
+		z-index: 10000;
 	}
 
 	.confetti-container {
