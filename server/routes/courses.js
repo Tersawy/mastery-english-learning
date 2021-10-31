@@ -118,6 +118,12 @@ router.delete(`${questionURL}/:questionId`, auth, instructorAndAdmin, QuestionCo
 //---------------------------------------------> Start Student Answers <----------------------------------------------//
 //====================================================================================================================//
 
+const SectionQuizAnswerController = require("../Controllers/SectionQuizAnswerController");
+
+const sectionQuizAnswerURL = "/:courseId/sections/quiz/:quizId/answer";
+
+router.post(sectionQuizAnswerURL, auth, student, SectionQuizAnswerController.answer);
+
 const QuizAnswerController = require("../Controllers/QuizAnswerController");
 
 const quizAnswerURL = "/:courseId/sections/lectures/quiz/:quizId/question/:questionId/answer";

@@ -9,7 +9,7 @@ const { randomChar } = require("../helpers/functions");
 
 const PythonShell = require("python-shell").PythonShell;
 
-const { unlinkSync, existsSync } = require( "fs" );
+const { unlinkSync, existsSync } = require("fs");
 
 const audiosDir = path.resolve(__dirname, "../public/audios");
 
@@ -30,26 +30,44 @@ exports.answer = async (req, res) => {
 
 	let [quizAnswer, quiz] = await Promise.all([getSectionQuizAnswer, getSectionQuiz]);
 
-	if (quizAnswer) return res.status(422).json({ msg: "You have already answered" });
+	if (!quiz) return res.status(404).json({ msg: "Quiz is not found !" });
+
+	if (quizAnswer) {
+		if (quizAnswer.passRate >= 50) {
+			return res.status(422).json({ msg: "You have already answered" });
+		}
+
+		quizAnswer.attempts += 1;
+
+		quizAnswer.answers = [];
+	}
 
 	quizAnswer = quizAnswer || new SectionQuizAnswer({ quiz: quizId, student: me._id });
 
 	if (audiosAnswers) {
-		let newAnswer = await handleAudioAnswer(audiosAnswers)
+		let newAnswer = await handleAudioAnswer(audiosAnswers);
 
-		answers.push(newAnswer)
+		answers.push(newAnswer);
 	}
-	
+
 	let quizQuestionsIds = quiz.questions.map((q) => q._id);
 
 	quizAnswer.answers = answers.filter((a) => quizQuestionsIds.includes(a.question));
+
+	let questionsExcludeEssay = quiz.questions.filter((question) => question.type != QUESTION_ESSAY);
+
+	let totalQuestionsCount = questionsExcludeEssay.length;
+
+	let rightAnswersCount = 0;
 
 	quizAnswer.answers = quizAnswer.answers.map((answer) => {
 		let question = quiz.questions.find((q) => q._id.toString() == answer.question.toString());
 
 		let isEssay = question.type == QUESTION_ESSAY;
 
-		let isRightAnswer = JSON.stringify(question.answer).toString().toLocaleLowerCase() == JSON.stringify(answer.value).toString().toLocaleLowerCase();
+		let isRightAnswer =
+			JSON.stringify(question.answer).toString().toLocaleLowerCase() ==
+			JSON.stringify(answer.value).toString().toLocaleLowerCase();
 
 		let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
 
@@ -61,14 +79,28 @@ exports.answer = async (req, res) => {
 
 		answer.isTrue = !isEssay && isRightAnswer;
 
+		if (answer.isTrue) {
+			rightAnswersCount += 1;
+		}
+
 		answer.isCorrected = !isEssay;
 
 		return answer;
 	});
 
+	let essayQuestions = quiz.questions.filter((question) => question.type == QUESTION_ESSAY);
+
+	let isAllQuestionsAreEssay = essayQuestions.length == quiz.questions.length;
+
+	if (isAllQuestionsAreEssay) {
+		quizAnswer.passRate = 100;
+	} else {
+		quizAnswer.passRate = (rightAnswersCount * 100) / totalQuestionsCount;
+	}
+
 	await quizAnswer.save();
 
-	res.json("Your answers has been saved successfully");
+	res.json({ msg: "Your answers has been saved successfully", passRate: quizAnswer.passRate });
 };
 
 exports.show = async (req, res) => {
@@ -87,36 +119,39 @@ let handleAudioAnswer = (audiosAnswers) => {
 	return new Promise((resolve, reject) => {
 		for (let answer of audiosAnswers) {
 			if (!answer) continue;
-	
+
 			let questionId = Object.keys(answer)[0];
-	
+
 			let audio = answer[questionId];
-	
+
 			let tempFilePath = path.resolve(audio.tempFilePath);
-			
+
 			let audioExtension = "wav";
-	
+
 			let audioName = `${randomChar(8)}_${Date.now()}.${audioExtension}`;
-	
+
 			let audioDir = path.resolve(audiosDir, audioName);
-	
+
 			audio.mv(audioDir, (err) => {
 				if (err) return reject(err);
-		
+
 				var option = { scriptPath: "scripts", args: [audioDir] };
-		
+
 				PythonShell.run("recognition.py", option, function (err, results) {
-					if (err) return reject(err);
-	
+					if (err) {
+						console.log(err);
+						return reject({ status: 422, msg: "please check your microphone and try again" });
+					}
+
 					if (existsSync(tempFilePath)) unlinkSync(tempFilePath);
-	
+
 					if (existsSync(audioDir)) unlinkSync(audioDir);
-	
+
 					let audioAnswer = { question: questionId, value: results[0] };
-	
+
 					resolve(audioAnswer);
 				});
 			});
 		}
-	})
-}
+	});
+};

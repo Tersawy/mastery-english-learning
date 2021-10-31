@@ -1,4 +1,4 @@
-const mongoose = require( "mongoose" );
+const mongoose = require("mongoose");
 const SectionQuiz = require("../Models/SectionQuiz");
 
 exports.create = async (req, res) => {
@@ -6,7 +6,11 @@ exports.create = async (req, res) => {
 
 	let { questions } = req.body;
 
-	let quiz = new SectionQuiz({ section, questions });
+	let quiz = await SectionQuiz.findOne({ section });
+
+	if (quiz) return res.status(422).json({ msg: "This section already has a quiz!" });
+
+	quiz = new SectionQuiz({ section, questions });
 
 	await quiz.save();
 
@@ -28,24 +32,22 @@ exports.show = async (req, res) => {
 		{ $match: { section: mongoose.Types.ObjectId(section) } },
 		{
 			$lookup: {
-				from: "quizanswers",
+				from: "sectionquizanswers",
 				let: { quizId: "$_id" },
 				as: "quizAnswer",
-				pipeline: [
-					{ $match: { $expr: { $eq: ["$quiz", "$$quizId"], $eq: ["$student", me._id] } } }
-				]
-			}
+				pipeline: [{ $match: { $expr: { $and: [{ $eq: ["$quiz", "$$quizId"] }, { $eq: ["$student", me._id] }] } } }],
+			},
 		},
-		{ $unwind: { path: "$quizAnswer", preserveNullAndEmptyArrays: true} }
+		{ $unwind: { path: "$quizAnswer", preserveNullAndEmptyArrays: true } },
 	];
 
-	let quiz = await SectionQuiz.aggregate(aggregate)
-	
-	quiz = quiz[0]
-	
+	let quiz = await SectionQuiz.aggregate(aggregate);
+
+	quiz = quiz[0];
+
 	if (!quiz) return res.json({});
-	
-	quiz.questions = quiz.questions.map(question => {
+
+	quiz.questions = quiz.questions.map((question) => {
 		let q = {};
 
 		q._id = question._id;
@@ -53,27 +55,26 @@ exports.show = async (req, res) => {
 		q.text = question.text;
 		q.type = question.type;
 
-		if (!quiz.quizAnswer) return q;
+		if (!quiz.quizAnswer || !Array.isArray(quiz.quizAnswer.answers)) return q;
 
-		let answer = quiz.quizAnswer.answers.find(a => String(a.question) == String(question._id));
+		let answer = quiz.quizAnswer.answers.find((a) => String(a.question) == String(question._id));
 
 		if (answer) {
-			q.isCorrected = answer.isCorrected;
+			q.isCorrected = answer.isCorrected; // used for question speech to display text
 			q.isTrue = answer.isTrue;
 			q.answer = answer.value;
-			q.defaultAnswer = question.answer;
 		}
 
 		return q;
-	})
-	
+	});
+
 	quiz = {
 		_id: quiz._id,
-		isAnswered: !!quiz.quizAnswer,
+		passRate: quiz.quizAnswer ? quiz.quizAnswer.passRate : undefined,
 		section: quiz.section,
-		questions: quiz.questions
-	}
-	
+		questions: quiz.questions,
+	};
+
 	res.json(quiz);
 };
 

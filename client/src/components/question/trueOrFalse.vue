@@ -6,13 +6,19 @@
 				<slot name="iconStatus"></slot>
 			</span>
 		</span>
-		<b-form-radio-group :checked="question.answer" :options="[true, false]" class="d-flex" @change="(value) => $emit('input', value)"></b-form-radio-group>
+		<b-form-radio-group
+			:disabled="disabled"
+			:checked="question.answer"
+			:options="[true, false]"
+			class="d-flex"
+			@change="(value) => $emit('input', value)"
+		></b-form-radio-group>
 	</div>
 </template>
 
 <script>
 	export default {
-		props: ["question", "text-class"],
+		props: ["question", "text-class", "disabled"],
 		data() {
 			return {
 				value: null

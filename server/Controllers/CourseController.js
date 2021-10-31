@@ -10,9 +10,9 @@ const handleError = require("../helpers/handleError");
 
 const { randomChar } = require("../helpers/functions");
 
-const { getVideoDurationInSeconds } = require('get-video-duration')
+const { getVideoDurationInSeconds } = require("get-video-duration");
 
-const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS } = require( "../helpers/constants" );
+const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS } = require("../helpers/constants");
 
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
 
@@ -27,7 +27,7 @@ exports.all = async (req, res) => {
 
 	let coursesCount = Course.countDocuments();
 
-	let [docs, total] = await Promise.all([courses, coursesCount])
+	let [docs, total] = await Promise.all([courses, coursesCount]);
 
 	docs = docs.map((course) => ({
 		_id: course._id,
@@ -87,34 +87,40 @@ exports.show = async (req, res) => {
 
 	let course = await Course.aggregate([
 		{ $match: { _id: mongoose.Types.ObjectId(courseId), deleted_at: null, status } },
-		{ $lookup: {
+		{
+			$lookup: {
 				from: "sections",
 				let: { courseId: "$_id" },
 				as: "sections",
 				pipeline: [
 					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
-					{ $lookup: {
+					{
+						$lookup: {
 							from: "lectures",
 							let: { sectionId: "$_id" },
 							as: "lectures",
 							pipeline: [
 								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
-								{ $project: { description: 1, title: 1, createdAt: 1, video: 1, videoReview: 1 } }
-							]
-					} },
-					{ $project: { title: 1, lectures: 1 } }
-				]
-		} },
-		{ $lookup: {
+								{ $project: { description: 1, title: 1, createdAt: 1, video: 1, videoReview: 1 } },
+							],
+						},
+					},
+					{ $project: { title: 1, lectures: 1 } },
+				],
+			},
+		},
+		{
+			$lookup: {
 				from: "users",
 				let: { createdBy: "$createdBy" },
 				as: "createdBy",
 				pipeline: [
 					{ $match: { $expr: { $eq: ["$_id", "$$createdBy"] } } },
 					{ $project: { username: 1, _id: 1, image: 1 } },
-				]
-		} },
-		{ $unwind: { path: "$createdBy", preserveNullAndEmptyArrays: true } }
+				],
+			},
+		},
+		{ $unwind: { path: "$createdBy", preserveNullAndEmptyArrays: true } },
 	]);
 
 	course = course[0];
@@ -171,86 +177,134 @@ exports.start = async (req, res) => {
 
 	const { me } = req.body;
 
-	if (!me.courses.includes(courseId)) return res.status(403).json({ msg: "Please enroll to course first" })
-	
+	if (!me.courses.includes(courseId)) return res.status(403).json({ msg: "Please enroll to course first" });
+
 	let status = COURSE_APPROVED;
 
 	let aggregation = [
 		{ $match: { _id: mongoose.Types.ObjectId(courseId), deleted_at: null, status } },
-		{ $lookup: {
+		{
+			$lookup: {
 				from: "sections",
 				let: { courseId: "$_id" },
 				as: "sections",
 				pipeline: [
 					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
-					{ $lookup: {
+					{
+						$lookup: {
 							from: "lectures",
 							let: { sectionId: "$_id" },
 							as: "lectures",
 							pipeline: [
 								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
-								{ $project: { description: 1, title: 1, video: 1, createdAt: 1 } }
-							]
-					} },
-					{ $lookup: {
+								{ $project: { description: 1, title: 1, video: 1, createdAt: 1 } },
+							],
+						},
+					},
+					{
+						$lookup: {
 							from: "sectionquizzes",
 							let: { sectionId: "$_id" },
 							as: "quiz",
 							pipeline: [
 								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
 								{ $project: { _id: 1 } },
-								{ $lookup: {
+								{
+									$lookup: {
 										from: "sectionquizanswers",
 										let: { quizId: "$_id" },
 										as: "answer",
 										pipeline: [
-											{ $match: { $expr: { $and: [{ $eq: ["$quiz", "$$quizId"] }, { $eq: ["$student", mongoose.Types.ObjectId(me._id)] }] } } },
-											{ $project: { _id: 1 } }
-										]
-								} },
-								{ $project: { _id: 0, isAnswered: { $gt: [{ $size: "$answer" }, 0] } } }
-							]
-					} },
-					{ $project: {
-						lectures: 1,
-						title: 1,
-						hasQuiz: { $gt: [{ $size: "$quiz" }, 0] },
-						isAnswered: {
-							$let: {
-								vars: { quiz: { $cond: { if: { $gt: [{ $size: "$quiz" }, 0] }, then: { $first: "$quiz" }, else: null } } },
-								in: { $cond: { if: { $eq: ["$$quiz", null] }, then: false, else: "$$quiz.isAnswered" } }
-							}
+											{
+												$match: {
+													$expr: {
+														$and: [
+															{ $eq: ["$quiz", "$$quizId"] },
+															{ $eq: ["$student", mongoose.Types.ObjectId(me._id)] },
+														],
+													},
+												},
+											},
+											{ $project: { _id: 1, passRate: 1 } },
+										],
+									},
+								},
+								{ $unwind: { path: "$answer", preserveNullAndEmptyArrays: true } },
+								{
+									$project: { _id: 1, passRate: { $ifNull: ["$answer.passRate", 0] } },
+								},
+							],
 						},
-					} }
-				]
-		} },
-		{ $lookup: {
+					},
+					{ $unwind: { path: "$quiz", preserveNullAndEmptyArrays: true } },
+					{
+						$project: {
+							lectures: 1,
+							title: 1,
+							hasQuiz: { $toBool: { $ifNull: ["$quiz._id", 0] } },
+							quizPassRate: { $toInt: { $ifNull: ["$quiz.passRate", 0] } },
+						},
+					},
+				],
+			},
+		},
+		{
+			$lookup: {
 				from: "users",
 				let: { createdBy: "$createdBy" },
 				as: "createdBy",
 				pipeline: [
 					{ $match: { $expr: { $eq: ["$_id", "$$createdBy"] } } },
 					{ $project: { username: 1, _id: 1, image: 1 } },
-				]
-		} },
-		{ $unwind: "$createdBy" }
+				],
+			},
+		},
+		{ $unwind: "$createdBy" },
+		{
+			$project: {
+				_id: 1,
+				title: 1,
+				createdBy: 1,
+				description: 1,
+				sections: {
+					_id: 1,
+					title: 1,
+					hasQuiz: 1,
+					quizPassRate: 1,
+					lectures: {
+						_id: 1,
+						description: 1,
+						title: 1,
+						video: 1,
+					},
+				},
+			},
+		},
 	];
-	
+
 	let course = await Course.aggregate(aggregation);
 
 	course = course[0];
 
 	if (!course) return res.status(404).json({ msg: "Course is not found" });
 
-	course.requirements = course.requirements.map((r) => r.text);
-
 	course.time = 0;
+
+	let isHaveSectionQuizIsNotPassed = false;
 
 	for (let i = 0; i < course.sections.length; i++) {
 		let section = course.sections[i];
 		let lectures = section.lectures;
 
 		section.time = 0;
+
+		if (i > 0) {
+			let previousSection = course.sections[i - 1];
+
+			if (previousSection.hasQuiz && previousSection.quizPassRate < 50) {
+				isHaveSectionQuizIsNotPassed = true;
+			}
+		}
 
 		for (let l = 0; l < lectures.length; l++) {
 			let lecture = lectures[l];
@@ -260,21 +314,21 @@ exports.start = async (req, res) => {
 				delete lecture.video;
 				continue;
 			}
-			
+
 			let videoExist = lecture.video && fs.existsSync(path.join(__dirname, lecturePath, lecture.video));
 
 			let videoPath = path.join(__dirname, lecturePath, lecture.video || "");
-			
+
 			lecture.time = videoExist ? await getVideoDurationInSeconds(videoPath) : 0;
 
 			section.time += lecture.time;
 
-			if (i > 0) {
-				let lastSection = course.sections[i-1];
-				if (!(lastSection.hasQuiz && lastSection.isAnswered)) {
-					delete lecture.video;
-				}
-			}
+			if (isHaveSectionQuizIsNotPassed) delete lectures[l].video;
+		}
+
+		if (isHaveSectionQuizIsNotPassed) {
+			delete course.sections[i].hasQuiz;
+			delete course.sections[i].quizPassRate;
 		}
 
 		course.time += section.time;

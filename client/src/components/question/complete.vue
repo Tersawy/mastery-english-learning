@@ -8,8 +8,9 @@
 				:key="i"
 				placeholder=".........................."
 				class="input-complete"
-				:value="value[text.index]"
-				@input="(e) => handleAnswer(e, text.index)"
+				:disabled="disabled"
+				v-model="value[text.index]"
+				@change="(e) => handleAnswer(e, text.index)"
 			/>
 		</template>
 		<span class="ml-3">
@@ -20,14 +21,14 @@
 
 <script>
 	export default {
-		props: ["question", "text-class"],
+		props: ["question", "text-class", "disabled"],
 
 		data() {
 			let inputPlaces = this.question.text.match(/\.\.+/gi);
 
-			return {
-				value: this.question.answer || Array(inputPlaces.length).fill("")
-			};
+			let value = this.question.answer || Array(inputPlaces.length).fill("");
+
+			return { value };
 		},
 
 		computed: {
@@ -41,11 +42,7 @@
 
 					let elements = [{ type: "span", value: text }];
 
-					if (!isLast) {
-						this.value[i] = this.question.answer ? this.question.answer[i] : "";
-
-						elements.push({ type: "input", index: i });
-					}
+					if (!isLast) elements.push({ type: "input", index: i });
 
 					return [...prev, ...elements];
 				};

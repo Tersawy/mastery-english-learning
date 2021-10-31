@@ -63,7 +63,7 @@
 
 		computed: {
 			quiz() {
-				return this.$store.state.Course.oneQuiz;
+				return this.lectureQuiz ? this.lecture.quiz : this.section.quiz;
 			},
 
 			lecture() {
@@ -81,24 +81,31 @@
 
 		methods: {
 			createQuiz() {
-				this.$store.commit("Course/setQuiz", {});
+				let action = this.lectureQuiz ? "Course/setQuiz" : "Course/setSectionQuiz";
+
+				this.$store.commit(action, {});
 
 				this.$bvModal.show("quizForm");
 			},
 
 			createQuestion() {
-				this.$store.commit("Course/setQuestion", {});
+				this.setQuestion({});
 				this.$bvModal.show("questionForm");
 			},
 
 			updateQuestion(question) {
-				this.$store.commit("Course/setQuestion", question);
+				this.setQuestion(question);
 				this.$bvModal.show("questionForm");
 			},
 
 			removeQuestion(question) {
-				this.$store.commit("Course/setQuestion", question);
+				this.setQuestion(question);
 				this.$bvModal.show("removeQuestionModal");
+			},
+
+			setQuestion(question) {
+				let action = this.lectureQuiz ? "Course/setQuestion" : "Course/setSectionQuestion";
+				this.$store.commit(action, question);
 			},
 
 			async handleRemoveQuestion() {

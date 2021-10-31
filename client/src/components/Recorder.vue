@@ -1,7 +1,13 @@
 <template>
-	<div class="text-right" style="font-size: 2rem">
-		<b-icon icon="mic" scale="1.5" variant="success" class="bg-transparent rounded-circle p-2 c-pointer" v-if="!isRecording" @click="startRecording"></b-icon>
-		<b-icon icon="mic-fill" scale="1.5" variant="white" class="bg-danger rounded-circle p-2 c-pointer" v-else @click="stopRecording">Stop</b-icon>
+	<div class="text-right">
+		<b-iconstack font-scale="2" v-if="disabled" style="cursor: not-allowed">
+			<b-icon stacked icon="mic" variant="success"></b-icon>
+			<b-icon stacked icon="slash-circle" variant="danger"></b-icon>
+		</b-iconstack>
+		<div style="font-size: 2rem" v-else>
+			<b-icon icon="mic" scale="1.5" variant="success" class="bg-transparent rounded-circle p-2 c-pointer" v-if="!isRecording" @click="startRecording"></b-icon>
+			<b-icon icon="mic-fill" scale="1.5" variant="white" class="bg-danger rounded-circle p-2 c-pointer" v-else @click="stopRecording">Stop</b-icon>
+		</div>
 	</div>
 </template>
 
@@ -9,6 +15,8 @@
 	import Recorder from "recorder-js";
 
 	export default {
+		props: ["disabled"],
+
 		data() {
 			return {
 				isRecording: false,

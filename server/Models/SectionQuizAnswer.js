@@ -30,6 +30,8 @@ const sectionQuizAnswerSchema = new Schema(
 		},
 		answers: [answerSchema],
 		isCorrected: { type: Boolean, default: false },
+		passRate: { type: Number, default: 0 },
+		attempts: { type: Number, default: 1 },
 	},
 	{ timestamps: true }
 );

@@ -6,12 +6,12 @@
 				<slot name="iconStatus"></slot>
 			</span>
 		</span>
-		<b-form-textarea class="d-flex mt-3" :value="question.answer" @change="(value) => $emit('input', value)"></b-form-textarea>
+		<b-form-textarea :disabled="disabled" class="d-flex mt-3" :value="question.answer" @change="(value) => $emit('input', value)"></b-form-textarea>
 	</div>
 </template>
 
 <script>
 	export default {
-		props: ["question", "text-class"]
+		props: ["question", "text-class", "disabled"]
 	};
 </script>

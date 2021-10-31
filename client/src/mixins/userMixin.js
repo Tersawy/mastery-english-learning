@@ -31,6 +31,10 @@ export default {
 			return this.me.type == OWNER;
 		},
 
+		API_URL() {
+			return process.env.VUE_APP_API_URL;
+		},
+
 		lecturesURL() {
 			return process.env.VUE_APP_API_URL + "/lectures";
 		},

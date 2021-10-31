@@ -54,6 +54,17 @@
 							</div>
 							<div>{{ lecturesTime(lecture.time).timeNum }}</div>
 						</div>
+						<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
+							<a
+								class="section-quiz d-inline-block w-100 text-center py-3 mt-3 bg-warning-light text-primary font-weight-600 c-pointer"
+								style="letter-spacing: 0.8px"
+								v-if="showSectionQuiz && section.hasQuiz"
+								@click="getSectionQuiz(section)"
+							>
+								<b-icon icon="file-earmark-spreadsheet" scale="1.3"></b-icon>
+								<span class="mx-2" style="font-size: 12px">Show Section Quiz</span>
+							</a>
+						</b-overlay>
 					</b-card-footer>
 				</b-collapse>
 			</b-card>
@@ -65,7 +76,7 @@
 	import { secondsToHms } from "@/helpers/functions";
 
 	export default {
-		props: ["showVideoInModal"],
+		props: ["showVideoInModal", "showSectionQuiz"],
 		data() {
 			return {
 				allExpanded: false
@@ -74,7 +85,7 @@
 
 		watch: {
 			allExpanded(v) {
-				this.course?.sections?.forEach((section) => {
+				this.course.sections.forEach((section) => {
 					section.lecturesVisible = v;
 					if (!v) {
 						section.lectures.forEach((lecture) => {
@@ -91,7 +102,7 @@
 			},
 
 			lecturesCount() {
-				return this.course?.sections?.reduce((total, section) => {
+				return this.course.sections.reduce((total, section) => {
 					total += section.lectures.length;
 					return total;
 				}, 0);
@@ -117,9 +128,34 @@
 				} catch (err) {
 					//
 				}
+
+				this.$emit("renderLectureVideo");
+			},
+
+			async getSectionQuiz(section) {
+				this.$store.commit("Course/setSection", { ...section, quiz: {} });
+
+				this.setLoading(true);
+
+				try {
+					await this.$store.dispatch("Course/sectionQuiz");
+				} catch (err) {
+					//
+				}
+
+				this.setLoading(false);
+
+				this.$emit("sectionQuizLoaded");
 			}
 		}
 	};
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.section-quiz {
+		&:hover {
+			background-color: #eff6a4;
+			// background-color: #fbffd0;
+		}
+	}
+</style>

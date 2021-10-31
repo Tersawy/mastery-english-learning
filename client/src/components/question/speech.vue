@@ -8,7 +8,7 @@
 						<slot name="iconStatus"></slot>
 					</span>
 				</span>
-				<recorder @input="handleRecorder" v-if="!question.isAnswered" />
+				<recorder :disabled="disabled" @input="handleRecorder" />
 			</div>
 			<div v-if="question.isCorrected">
 				<strong class="text-muted">Your answer is: </strong>
@@ -25,7 +25,7 @@
 	import Recorder from "@/components/Recorder.vue";
 
 	export default {
-		props: ["question", "text-class"],
+		props: ["question", "text-class", "disabled"],
 		components: { Recorder },
 		data() {
 			return {
@@ -34,6 +34,8 @@
 		},
 		methods: {
 			handleRecorder(blob) {
+				if (this.disabled) return;
+
 				this.audioSrc = URL.createObjectURL(blob);
 
 				this.$emit("input", blob);

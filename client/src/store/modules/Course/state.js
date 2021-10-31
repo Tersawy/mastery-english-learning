@@ -3,9 +3,11 @@ export default {
 	one: { sections: [] },
 	all: { docs: [], total: 0 },
 	options: [],
-	oneSection: {},
+	oneSection: { quiz: {} },
+	oneSectionQuiz: {},
+	oneSectionQuestion: {},
 	oneLecture: { quiz: {} },
-	oneQuestion: {},
 	oneQuiz: {},
+	oneQuestion: {},
 	errors: {}
 };

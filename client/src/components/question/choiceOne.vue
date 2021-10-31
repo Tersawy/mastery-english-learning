@@ -9,6 +9,7 @@
 		<b-form-radio-group
 			:options="question.choices"
 			:checked="question.answer"
+			:disabled="disabled"
 			class="choice-radio w-100 d-flex justify-content-around mt-3"
 			@change="(value) => $emit('input', value)"
 		></b-form-radio-group>
@@ -17,6 +18,6 @@
 
 <script>
 	export default {
-		props: ["question", "text-class"]
+		props: ["question", "text-class", "disabled"]
 	};
 </script>

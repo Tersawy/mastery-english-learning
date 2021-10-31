@@ -140,7 +140,7 @@
 
 		computed: {
 			oldQuestion() {
-				return this.$store.state.Course.oneQuestion;
+				return this.$store.state.Course[this.lectureQuiz ? "oneQuestion" : "oneSectionQuestion"];
 			},
 
 			isUpdate() {
