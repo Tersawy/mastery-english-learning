@@ -35,7 +35,7 @@
 			</li>
 		</ul>
 		<b-overlay v-if="!isPassedQuiz" :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
-			<b-btn :disabled="isLoading" variant="primary" @click="saveAnswers">Save</b-btn>
+			<b-btn :disabled="isLoading" variant="primary" @click="saveAnswers" class="mb-4">Save</b-btn>
 		</b-overlay>
 
 		<b-modal id="modalProgress" no-close-on-backdrop hide-header hide-footer centered body-class="p-0">
