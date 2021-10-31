@@ -43,7 +43,7 @@
 						<SectionQuiz @startNextSection="startNextSection" />
 					</template>
 				</b-col>
-				<b-col cols="4" class="d-none d-xl-block">
+				<b-col cols="12" xl="4">
 					<SectionsContent @renderLectureVideo="() => (isSectionQuiz = false)" @sectionQuizLoaded="showSectionQuiz" :show-section-quiz="true" />
 				</b-col>
 			</b-row>
