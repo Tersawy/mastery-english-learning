@@ -1,7 +1,7 @@
 <template>
 	<div class="text-right">
 		<b-iconstack font-scale="2" v-if="disabled" style="cursor: not-allowed">
-			<b-icon stacked icon="mic" variant="success"></b-icon>
+			<b-icon stacked icon="mic" scale="0.75" variant="success"></b-icon>
 			<b-icon stacked icon="slash-circle" variant="danger"></b-icon>
 		</b-iconstack>
 		<div style="font-size: 2rem" v-else>
