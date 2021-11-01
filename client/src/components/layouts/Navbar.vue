@@ -13,7 +13,7 @@
 					<b-dd-header> {{ me.username }} </b-dd-header>
 					<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
 					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
-					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
+					<b-dropdown-item link-class="py-2" to="/my-courses" v-if="isStudent">My Courses</b-dropdown-item>
 					<hr class="m-0" />
 					<b-dropdown-item-btn variant="danger" @click="logout" button-class="py-2">
 						<span class="pr-2">
@@ -103,7 +103,7 @@
 								<b-dd-header> {{ me.username }} </b-dd-header>
 								<b-dropdown-item link-class="py-2" v-b-toggle.userProfile>Profile</b-dropdown-item>
 								<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
-								<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isStudent">My Courses</b-dropdown-item>
+								<b-dropdown-item link-class="py-2" to="/my-courses" v-if="isStudent">My Courses</b-dropdown-item>
 								<hr class="m-0" />
 								<b-dropdown-item-btn variant="danger" @click="logout" button-class="py-2">
 									<span class="pr-2">

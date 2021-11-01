@@ -27,6 +27,13 @@ const routes = [
 		meta: { auth: false, only: [] }
 	},
 	{
+		path: "/my-courses",
+		name: "MyCourse",
+		// component: require("@/views/Course/index").default,
+		component: () => import(/* webpackChunkName: "Course" */ "@/views/Course/my-courses"),
+		meta: { auth: true }
+	},
+	{
 		path: "/courses/:courseId",
 		name: "Course",
 		// component: require("@/views/Course/index").default,
