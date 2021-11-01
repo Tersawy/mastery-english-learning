@@ -39,3 +39,8 @@ export const setUploadStatus = (state, upload) => {
 	let oldUpload = state.uploads.find((old) => old.id == upload.id);
 	if (oldUpload) oldUpload.status = upload.status;
 };
+
+export const setBrightness = (state, value) => {
+	state.appSettings.brightness = value;
+	document.documentElement.style.filter = `brightness(${value})`;
+};

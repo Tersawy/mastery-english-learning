@@ -46,7 +46,8 @@ $spacers: (
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~bootstrap-vue/src/index.scss";
 
-body {
+body,
+html {
 	background-color: #f6f7fa;
 	padding: 0 !important;
 }

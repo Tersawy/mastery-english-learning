@@ -10,6 +10,9 @@ const state = {
 	isLoader: true,
 	pages: {
 		home: {}
+	},
+	appSettings: {
+		brightness: 1
 	}
 };
 

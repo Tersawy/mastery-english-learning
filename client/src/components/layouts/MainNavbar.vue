@@ -14,6 +14,9 @@
 					<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
 					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
 					<b-dropdown-item link-class="py-2" to="/my-courses" v-if="isStudent">My Courses</b-dropdown-item>
+					<div class="py-2 px-3">
+						<input type="range" min="0.5" max="1" step="0.001" v-model="brightness" />
+					</div>
 					<hr class="m-0" />
 					<b-dropdown-item-btn variant="danger" @click="logout" button-class="py-2">
 						<span class="pr-2">
@@ -104,6 +107,9 @@
 								<b-dropdown-item link-class="py-2" v-b-toggle.userProfile>Profile</b-dropdown-item>
 								<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
 								<b-dropdown-item link-class="py-2" to="/my-courses" v-if="isStudent">My Courses</b-dropdown-item>
+								<div class="py-2 px-3">
+									<input type="range" min="0.5" max="1" step="0.001" v-model="brightness" />
+								</div>
 								<hr class="m-0" />
 								<b-dropdown-item-btn variant="danger" @click="logout" button-class="py-2">
 									<span class="pr-2">
@@ -122,6 +128,17 @@
 
 <script>
 	export default {
+		computed: {
+			brightness: {
+				get: function () {
+					return this.$store.state.appSettings.brightness;
+				},
+				set: function (v) {
+					this.$store.commit("setBrightness", v);
+				}
+			}
+		},
+
 		methods: {
 			logout() {
 				this.$store.commit("Auth/logout");
