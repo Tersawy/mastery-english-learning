@@ -1,21 +1,23 @@
 const router = require("express").Router();
 
-const { auth, admin, student } = require("../middlewares/auth");
+const { auth, allowedFor } = require("../middlewares/auth");
+
+const { OWNER, ADMIN, STUDENT } = require( "../helpers/constants" );
 
 const StudentController = require("../Controllers/StudentController");
 
-router.get("/", auth, admin, StudentController.students);
+router.get("/", auth, allowedFor(OWNER, ADMIN), StudentController.students);
 
-router.post("/", auth, admin, StudentController.create);
+router.post("/", auth, allowedFor(OWNER, ADMIN), StudentController.create);
 
-router.put("/:studentId", auth, admin, StudentController.update);
+router.put("/:studentId", auth, allowedFor(OWNER, ADMIN), StudentController.update);
 
-router.post("/enroll", auth, student, StudentController.selfEnroll);
+router.post("/enroll", auth, allowedFor(STUDENT), StudentController.selfEnroll);
 
-router.post("/:studentId", auth, admin, StudentController.changeActivation);
+router.post("/:studentId", auth, allowedFor(OWNER, ADMIN), StudentController.changeActivation);
 
-router.post("/:studentId/enroll", auth, admin, StudentController.enroll);
+router.post("/:studentId/enroll", auth, allowedFor(OWNER, ADMIN), StudentController.enroll);
 
-router.delete("/:studentId", auth, admin, StudentController.remove);
+router.delete("/:studentId", auth, allowedFor(OWNER, ADMIN), StudentController.remove);
 
 module.exports = router;

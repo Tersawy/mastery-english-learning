@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const { USER_STUDENT } = require("../helpers/constants");
+const { STUDENT } = require("../helpers/constants");
 
 const userSchema = new Schema(
 	{
@@ -35,7 +35,7 @@ const userSchema = new Schema(
 			required: [true, "Email is required"],
 		},
 		password: { type: String, required: [true, "Password is required"] },
-		type: { type: Number, default: USER_STUDENT },
+		type: { type: Number, default: STUDENT },
 		image: { type: String, default: "empty.jpg" },
 		courses: [{ type: "ObjectId", ref: "Course" }], // for students only
 		isActive: { type: Boolean , default: false},

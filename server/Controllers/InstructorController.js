@@ -1,13 +1,13 @@
 const User = require("../Models/User");
 
-const { USER_INSTRUCTOR } = require("../helpers/constants");
+const { INSTRUCTOR } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
 exports.instructors = async (req, res) => {
-	let instructors = User.find({ type: USER_INSTRUCTOR });
+	let instructors = User.find({ type: INSTRUCTOR });
 
-	let instructorsCount = User.countDocuments({ type: USER_INSTRUCTOR });
+	let instructorsCount = User.countDocuments({ type: INSTRUCTOR });
 
 	let [docs, total] = await Promise.all([instructors, instructorsCount]);
 
@@ -19,7 +19,7 @@ exports.create = async (req, res) => {
 
 	let passwordHashed = await bcrypt.hash(password, 10);
 
-	const instructor = new User({ username, fullname, phone, email, password: passwordHashed, type: USER_INSTRUCTOR });
+	const instructor = new User({ username, fullname, phone, email, password: passwordHashed, type: INSTRUCTOR });
 
 	await instructor.save();
 
@@ -37,7 +37,7 @@ exports.update = async (req, res) => {
 		instructorData.password = await bcrypt.hash(password, 10);
 	}
 
-	let query = { _id: instructorId, type: USER_INSTRUCTOR };
+	let query = { _id: instructorId, type: INSTRUCTOR };
 
 	await User.updateOne(query, instructorData);
 
@@ -49,7 +49,7 @@ exports.changeActivation = async (req, res) => {
 
 	const { instructorId } = req.params;
 
-	let query = { _id: instructorId, type: USER_INSTRUCTOR };
+	let query = { _id: instructorId, type: INSTRUCTOR };
 
 	await User.updateOne(query, { isActive });
 
@@ -59,7 +59,7 @@ exports.changeActivation = async (req, res) => {
 exports.remove = async (req, res) => {
 	const { instructorId } = req.params;
 
-	await User.deleteOne({ _id: instructorId, type: USER_INSTRUCTOR });
+	await User.deleteOne({ _id: instructorId, type: INSTRUCTOR });
 
 	res.status(200).json({ msg: "Instructor has been deleted successfully" });
 };

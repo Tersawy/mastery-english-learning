@@ -2,11 +2,11 @@ exports.COURSE_PENDING = 0;
 exports.COURSE_APPROVED = 1;
 exports.COURSE_STATUS = [this.COURSE_PENDING, this.COURSE_APPROVED];
 
-exports.USER_STUDENT = 0;
-exports.USER_INSTRUCTOR = 1;
-exports.USER_ADMIN = 2;
-exports.USER_OWNER = 3;
-exports.USER_TYPES = [this.USER_STUDENT, this.USER_INSTRUCTOR, this.USER_ADMIN, this.USER_OWNER];
+exports.STUDENT = 0;
+exports.INSTRUCTOR = 1;
+exports.ADMIN = 2;
+exports.OWNER = 3;
+exports.USER_TYPES = [this.STUDENT, this.INSTRUCTOR, this.ADMIN, this.OWNER];
 
 exports.QUESTION_COMPLETE = 0;
 exports.QUESTION_CHOICE_ONE = 1;

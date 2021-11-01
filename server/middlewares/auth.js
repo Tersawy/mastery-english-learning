@@ -4,7 +4,7 @@ const User = require("../Models/User");
 
 const fs = require("fs");
 
-const { USER_ADMIN, USER_INSTRUCTOR, USER_STUDENT, USER_OWNER } = require("../helpers/constants");
+const { ADMIN, INSTRUCTOR, STUDENT, OWNER } = require("../helpers/constants");
 
 const publicKey = fs.readFileSync("jwtRS256.key.pub", "utf8");
 
@@ -36,10 +36,10 @@ module.exports = {
 			req.body.me = _user;
 
 			req.body.isAuth = true;
-			req.body.isStudent = req.body.me.type == USER_STUDENT;
-			req.body.isInstructor = req.body.me.type == USER_INSTRUCTOR;
-			req.body.isAdmin = req.body.me.type == USER_ADMIN;
-			req.body.isOwner = req.body.me.type == USER_OWNER;
+			req.body.isStudent = req.body.me.type == STUDENT;
+			req.body.isInstructor = req.body.me.type == INSTRUCTOR;
+			req.body.isAdmin = req.body.me.type == ADMIN;
+			req.body.isOwner = req.body.me.type == OWNER;
 
 			next();
 		});
@@ -75,40 +75,19 @@ module.exports = {
 			req.body.me = _user;
 
 			req.body.isAuth = true;
-			req.body.isStudent = req.body.me.type == USER_STUDENT;
-			req.body.isInstructor = req.body.me.type == USER_INSTRUCTOR;
-			req.body.isAdmin = req.body.me.type == USER_ADMIN;
-			req.body.isOwner = req.body.me.type == USER_OWNER;
+			req.body.isStudent = req.body.me.type == STUDENT;
+			req.body.isInstructor = req.body.me.type == INSTRUCTOR;
+			req.body.isAdmin = req.body.me.type == ADMIN;
+			req.body.isOwner = req.body.me.type == OWNER;
 
 			next();
 		});
 	},
 
-	student: (req, res, next) => {
-		if (req.body.me.type != USER_STUDENT) return res.status(403).json(permissionError);
-		next();
-	},
-
-	instructor: (req, res, next) => {
-		if (req.body.me.type != USER_INSTRUCTOR) return res.status(403).json(permissionError);
-		next();
-	},
-
-	admin: (req, res, next) => {
-		let type = req.body.me.type;
-		if (type != USER_ADMIN && type != USER_OWNER) return res.status(403).json(permissionError);
-		next();
-	},
-
-	owner: (req, res, next) => {
-		if (req.body.me.type != USER_OWNER) return res.status(403).json(permissionError);
-		next();
-	},
-
-	instructorAndAdmin: (req, res, next) => {
-		let type = req.body.me.type;
-		if (type != USER_INSTRUCTOR && type != USER_ADMIN && type != USER_OWNER)
-			return res.status(403).json(permissionError);
-		next();
-	},
+	allowedFor(...userTypes) {
+		return function (req, res, next) {
+			if (!userTypes.includes(req.body.me.type)) return res.status(403).json(permissionError);
+			next();
+		}
+	}
 };

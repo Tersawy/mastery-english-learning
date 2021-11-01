@@ -1,17 +1,19 @@
 const router = require("express").Router();
 
-const { auth, owner } = require("../middlewares/auth");
+const { auth, allowedFor } = require("../middlewares/auth");
 
 const AdminController = require("../Controllers/AdminController");
 
-router.get("/", auth, owner, AdminController.admins);
+const { OWNER } = require( "../helpers/constants" );
 
-router.post("/", auth, owner, AdminController.create);
+router.get("/", auth, allowedFor(OWNER), AdminController.admins);
 
-router.post("/:adminId", auth, owner, AdminController.changeActivation);
+router.post("/", auth, allowedFor(OWNER), AdminController.create);
 
-router.put("/:adminId", auth, owner, AdminController.update);
+router.post("/:adminId", auth, allowedFor(OWNER), AdminController.changeActivation);
 
-router.delete("/:adminId", auth, owner, AdminController.remove);
+router.put("/:adminId", auth, allowedFor(OWNER), AdminController.update);
+
+router.delete("/:adminId", auth, allowedFor(OWNER), AdminController.remove);
 
 module.exports = router;

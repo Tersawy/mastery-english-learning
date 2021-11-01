@@ -2,14 +2,14 @@ const User = require("../Models/User");
 
 const Course = require("../Models/Course");
 
-const { USER_STUDENT } = require("../helpers/constants");
+const { STUDENT } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
 exports.students = async (req, res) => {
-	let students = User.find({ type: USER_STUDENT });
+	let students = User.find({ type: STUDENT });
 
-	let studentsCount = User.countDocuments({ type: USER_STUDENT });
+	let studentsCount = User.countDocuments({ type: STUDENT });
 
 	let [docs, total] = await Promise.all([students, studentsCount]);
 
@@ -39,7 +39,7 @@ exports.update = async (req, res) => {
 		studentData.password = await bcrypt.hash(password, 10);
 	}
 
-	let query = { _id: studentId, type: USER_STUDENT };
+	let query = { _id: studentId, type: STUDENT };
 
 	await User.updateOne(query, studentData);
 
@@ -51,7 +51,7 @@ exports.changeActivation = async (req, res) => {
 
 	const { studentId } = req.params;
 
-	let query = { _id: studentId, type: USER_STUDENT };
+	let query = { _id: studentId, type: STUDENT };
 
 	await User.updateOne(query, { isActive });
 
@@ -62,7 +62,7 @@ exports.enroll = async (req, res) => {
 	const { courseId } = req.body;
 	const { studentId } = req.params;
 
-	let query = { _id: studentId, type: USER_STUDENT };
+	let query = { _id: studentId, type: STUDENT };
 
 	let userUpdate = User.updateOne(query, { $push: { courses: courseId } });
 
@@ -76,7 +76,7 @@ exports.enroll = async (req, res) => {
 exports.selfEnroll = async (req, res) => {
 	const { courseId, me } = req.body;
 
-	let query = { _id: me._id, type: USER_STUDENT };
+	let query = { _id: me._id, type: STUDENT };
 
 	if (me.courses.includes(courseId)) return res.status(422).json({ msg: "You have been enrolled already !" })
 
@@ -92,7 +92,7 @@ exports.selfEnroll = async (req, res) => {
 exports.remove = async (req, res) => {
 	const { studentId } = req.params;
 
-	await User.deleteOne({ _id: studentId, type: USER_STUDENT });
+	await User.deleteOne({ _id: studentId, type: STUDENT });
 
 	res.status(200).json({ msg: "Student has been deleted successfully" });
 };

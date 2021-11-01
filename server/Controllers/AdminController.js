@@ -1,15 +1,15 @@
 const User = require("../Models/User");
 
-const { USER_ADMIN, USER_OWNER } = require("../helpers/constants");
+const { ADMIN, OWNER } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
 exports.admins = async (req, res) => {
 	let admins = User.find({
-		$or: [{ type: USER_ADMIN }, { $and: [{ type: USER_OWNER }, { _id: { $ne: req.body.me._id } }] }],
+		$or: [{ type: ADMIN }, { $and: [{ type: OWNER }, { _id: { $ne: req.body.me._id } }] }],
 	});
 
-	let adminsCount = User.countDocuments({ type: USER_ADMIN });
+	let adminsCount = User.countDocuments({ type: ADMIN });
 
 	let [docs, total] = await Promise.all([admins, adminsCount]);
 
@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
 
 	let passwordHashed = await bcrypt.hash(password, 10);
 
-	const admin = new User({ username, fullname, phone, email, password: passwordHashed, type: USER_ADMIN });
+	const admin = new User({ username, fullname, phone, email, password: passwordHashed, type: ADMIN });
 
 	await admin.save();
 
@@ -39,7 +39,7 @@ exports.update = async (req, res) => {
 		adminData.password = await bcrypt.hash(password, 10);
 	}
 
-	let query = { _id: adminId, type: USER_ADMIN };
+	let query = { _id: adminId, type: ADMIN };
 
 	await User.updateOne(query, adminData);
 
@@ -51,7 +51,7 @@ exports.changeActivation = async (req, res) => {
 
 	const { adminId } = req.params;
 
-	let query = { _id: adminId, type: USER_ADMIN };
+	let query = { _id: adminId, type: ADMIN };
 
 	await User.updateOne(query, { isActive });
 
@@ -61,7 +61,7 @@ exports.changeActivation = async (req, res) => {
 exports.remove = async (req, res) => {
 	const { adminId } = req.params;
 
-	await User.deleteOne({ _id: adminId, type: USER_ADMIN });
+	await User.deleteOne({ _id: adminId, type: ADMIN });
 
 	res.status(200).json({ msg: "Admin has been deleted successfully" });
 };
