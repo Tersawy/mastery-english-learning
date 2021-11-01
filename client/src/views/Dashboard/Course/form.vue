@@ -1,5 +1,5 @@
 <template>
-	<div class="course-form">
+	<dashboard-layout class="course-form">
 		<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 mb-30px">
 			<b-breadcrumb-item to="/dashboard">
 				<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
@@ -130,16 +130,17 @@
 				</b-col>
 			</b-row>
 		</b-form>
-	</div>
+	</dashboard-layout>
 </template>
 
 <script>
 	import { required, minLength, maxLength } from "vuelidate/lib/validators";
 	import VueUploadMultipleImage from "vue-upload-multiple-image";
+	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 	import { VueEditor } from "vue2-editor";
 	import { mapActions, mapState } from "vuex";
 	export default {
-		components: { VueUploadMultipleImage, VueEditor },
+		components: { DashboardLayout, VueUploadMultipleImage, VueEditor },
 
 		data() {
 			return {

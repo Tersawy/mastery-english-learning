@@ -30,7 +30,7 @@ const routes = [
 		path: "/my-courses",
 		name: "MyCourse",
 		// component: require("@/views/Course/index").default,
-		component: () => import(/* webpackChunkName: "Course" */ "@/views/Course/my-courses"),
+		component: () => import(/* webpackChunkName: "Course" */ "@/views/Course/myCourses"),
 		meta: { auth: true }
 	},
 	{

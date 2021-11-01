@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<dashboard-layout>
 		<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 mb-30px">
 			<b-breadcrumb-item to="/dashboard">
 				<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
@@ -125,14 +125,15 @@
 			</b-container>
 		</div>
 		<LectureVideo />
-	</div>
+	</dashboard-layout>
 </template>
 
 <script>
 	import { secondsToHms } from "@/helpers/functions";
 	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
+	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 	export default {
-		components: { LectureVideo },
+		components: { DashboardLayout, LectureVideo },
 		data() {
 			return {
 				allExpanded: false

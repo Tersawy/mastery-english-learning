@@ -1,5 +1,5 @@
 <template>
-	<div class="my-courses">
+	<main-layout>
 		<Header />
 		<b-container fluid class="px-xl-5">
 			<b-row class="my-5">
@@ -11,17 +11,18 @@
 				<b-col cols="12"> </b-col>
 			</b-row>
 		</b-container>
-	</div>
+	</main-layout>
 </template>
 
 <script>
 	import Header from "@/components/home/Header.vue";
+	import MainLayout from "@/components/layouts/MainLayout.vue";
 
 	export default {
-		components: { Header },
+		components: { Header, MainLayout },
 
 		async mounted() {
-			await getMyCourses();
+			await this.getMyCourses();
 
 			this.$store.commit("setLoader", false);
 		},

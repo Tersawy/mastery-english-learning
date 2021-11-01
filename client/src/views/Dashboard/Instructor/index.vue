@@ -1,5 +1,5 @@
 <template>
-	<div class="instructors">
+	<dashboard-layout class="instructors">
 		<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 mb-30px">
 			<b-breadcrumb-item to="/dashboard">
 				<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
@@ -103,17 +103,18 @@
 		</b-row>
 		<DeleteFieldModal msg="Are you sure to delete this instructor ?" @done="removeInstructor" modal-id="deleteInstructorModal" />
 		<InstructorForm />
-	</div>
+	</dashboard-layout>
 </template>
 
 <script>
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
 	import InstructorForm from "@/components/dashboard/instructor/InstructorForm.vue";
+	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 	export default {
 		mixins: [dataTableMixin],
 
-		components: { DeleteFieldModal, InstructorForm },
+		components: { DashboardLayout, DeleteFieldModal, InstructorForm },
 
 		data() {
 			return {

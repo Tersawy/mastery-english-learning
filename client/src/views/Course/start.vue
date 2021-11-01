@@ -1,54 +1,56 @@
 <template>
-	<div class="start-learning" v-if="course">
-		<b-container fluid class="px-lg-4">
-			<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 my-30px d-none d-sm-flex">
-				<b-breadcrumb-item to="/dashboard">
-					<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
-					My Courses
-				</b-breadcrumb-item>
-				<b-breadcrumb-item active> {{ course.title }} </b-breadcrumb-item>
-			</b-breadcrumb>
-			<b-row class="mt-3 mt-sm-0">
-				<b-col cols="12" xl="8">
-					<template v-if="!isSectionQuiz">
-						<div v-if="lecture.video">
-							<video :src="`${lecturesURL}/${lecture.video}`" class="video-start" controls ref="video"></video>
-						</div>
-						<div class="course-details my-3 my-xl-30px">
-							<div class="user-details d-flex align-items-center">
-								<b-avatar v-if="course.createdBy" :src="`${userImageURL}/${course.createdBy.image}`"></b-avatar>
-								<span class="font-weight-700 mx-3">{{ course.createdBy | relation("username") }}</span>
-								<div class="ml-auto text-muted">{{ lecture.createdAt | date }}</div>
+	<main-layout>
+		<div class="start-learning" v-if="course">
+			<b-container fluid class="px-lg-4">
+				<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 my-30px d-none d-sm-flex">
+					<b-breadcrumb-item to="/dashboard">
+						<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
+						My Courses
+					</b-breadcrumb-item>
+					<b-breadcrumb-item active> {{ course.title }} </b-breadcrumb-item>
+				</b-breadcrumb>
+				<b-row class="mt-3 mt-sm-0">
+					<b-col cols="12" xl="8">
+						<template v-if="!isSectionQuiz">
+							<div v-if="lecture.video">
+								<video :src="`${lecturesURL}/${lecture.video}`" class="video-start" controls ref="video"></video>
 							</div>
-							<div class="mx-md-50px pl-2 mt-3" v-html="lecture.description"></div>
-							<SectionsContent
-								@renderLectureVideo="() => (isSectionQuiz = false)"
-								@sectionQuizLoaded="showSectionQuiz"
-								:show-section-quiz="true"
-								class="d-xl-none mt-5"
-							/>
-							<div class="lecture-quiz mt-5" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
-								<h3 class="mb-3" style="text-decoration: underline">Quiz :-</h3>
-								<div class="questions ml-3">
-									<ul class="questions-list pl-0 pl-xl-3">
-										<li v-for="(question, i) in lecture.quiz.questions" :key="i" class="questions-item">
-											<Question :question="{ ...question }" :quiz="lecture.quiz" class="px-2 py-4 question-overlay" />
-										</li>
-									</ul>
+							<div class="course-details my-3 my-xl-30px">
+								<div class="user-details d-flex align-items-center">
+									<b-avatar v-if="course.createdBy" :src="`${userImageURL}/${course.createdBy.image}`"></b-avatar>
+									<span class="font-weight-700 mx-3">{{ course.createdBy | relation("username") }}</span>
+									<div class="ml-auto text-muted">{{ lecture.createdAt | date }}</div>
+								</div>
+								<div class="mx-md-50px pl-2 mt-3" v-html="lecture.description"></div>
+								<SectionsContent
+									@renderLectureVideo="() => (isSectionQuiz = false)"
+									@sectionQuizLoaded="showSectionQuiz"
+									:show-section-quiz="true"
+									class="d-xl-none mt-5"
+								/>
+								<div class="lecture-quiz mt-5" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
+									<h3 class="mb-3" style="text-decoration: underline">Quiz :-</h3>
+									<div class="questions ml-3">
+										<ul class="questions-list pl-0 pl-xl-3">
+											<li v-for="(question, i) in lecture.quiz.questions" :key="i" class="questions-item">
+												<Question :question="{ ...question }" :quiz="lecture.quiz" class="px-2 py-4 question-overlay" />
+											</li>
+										</ul>
+									</div>
 								</div>
 							</div>
-						</div>
-					</template>
-					<template v-else>
-						<SectionQuiz @startNextSection="startNextSection" />
-					</template>
-				</b-col>
-				<b-col cols="12" xl="4">
-					<SectionsContent @renderLectureVideo="() => (isSectionQuiz = false)" @sectionQuizLoaded="showSectionQuiz" :show-section-quiz="true" />
-				</b-col>
-			</b-row>
-		</b-container>
-	</div>
+						</template>
+						<template v-else>
+							<SectionQuiz @startNextSection="startNextSection" />
+						</template>
+					</b-col>
+					<b-col cols="12" xl="4">
+						<SectionsContent @renderLectureVideo="() => (isSectionQuiz = false)" @sectionQuizLoaded="showSectionQuiz" :show-section-quiz="true" />
+					</b-col>
+				</b-row>
+			</b-container>
+		</div>
+	</main-layout>
 </template>
 
 <script>
@@ -56,9 +58,10 @@
 
 	import SectionsContent from "@/components/course/SectionsContent";
 	import SectionQuiz from "@/components/course/SectionQuiz";
+	import MainLayout from "@/components/layouts/MainLayout.vue";
 
 	export default {
-		components: { Question, SectionsContent, SectionQuiz },
+		components: { MainLayout, Question, SectionsContent, SectionQuiz },
 
 		data() {
 			return {

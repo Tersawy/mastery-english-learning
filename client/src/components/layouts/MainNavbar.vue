@@ -131,11 +131,24 @@
 	};
 </script>
 
-<style scoped lang="scss">
-	// .form-search {
-	// 	width: 60%;
-	// 	@media (min-width: var(--breakpoint-xl)) {
-	// 		width: 100% !important;
-	// 	}
-	// }
+<style lang="scss">
+	.user {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		border: 1px solid var(--primary);
+		overflow: hidden;
+		cursor: pointer;
+		margin: 0 10px;
+		img {
+			border-radius: 50%;
+			width: 32px;
+			height: 32px;
+			object-fit: cover;
+		}
+	}
 </style>

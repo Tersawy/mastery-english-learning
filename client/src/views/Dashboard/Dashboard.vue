@@ -1,5 +1,5 @@
 <template>
-	<div class="dashboard">
+	<dashboard-layout class="dashboard">
 		<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 mb-30px">
 			<b-breadcrumb-item href="/dashboard" active>
 				<b-icon icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
@@ -59,13 +59,14 @@
 				</div>
 			</b-col>
 		</b-row>
-	</div>
+	</dashboard-layout>
 </template>
 
 <script>
 	import ReportCard from "@/components/dashboard/ReportCard";
+	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 	export default {
-		components: { ReportCard },
+		components: { DashboardLayout, ReportCard },
 		data() {
 			return {
 				students: [

@@ -1,5 +1,5 @@
 <template>
-	<div class="courses">
+	<dashboard-layout class="courses">
 		<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 mb-30px">
 			<b-breadcrumb-item to="/dashboard">
 				<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
@@ -127,7 +127,7 @@
 		<SectionForm />
 		<ApproveFieldModal :msg="approveMsg" @done="changeStatusCourse" />
 		<DeleteFieldModal msg="Are you sure to delete this course ?" @done="removeCourse" modal-id="deleteCourseModal" />
-	</div>
+	</dashboard-layout>
 </template>
 
 <script>
@@ -136,11 +136,12 @@
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	import ApproveFieldModal from "@/components/ApproveFieldModal.vue";
 	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
+	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 	import { COURSE_APPROVED } from "@/helpers/constants";
 	export default {
 		mixins: [dataTableMixin],
 
-		components: { Sections, SectionForm, ApproveFieldModal, DeleteFieldModal },
+		components: { DashboardLayout, Sections, SectionForm, ApproveFieldModal, DeleteFieldModal },
 
 		data() {
 			return {

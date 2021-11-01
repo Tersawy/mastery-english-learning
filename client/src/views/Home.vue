@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<main-layout>
 		<Header />
 		<b-container fluid class="px-xl-5 py-5">
 			<div v-for="(category, i) in homePage.categories" :key="i" class="listening pb-5">
@@ -15,15 +15,16 @@
 				</b-row>
 			</div>
 		</b-container>
-	</div>
+	</main-layout>
 </template>
 
 <script>
 	import Header from "@/components/home/Header";
 	import CourseCard from "@/components/home/CourseCard";
+	import MainLayout from "@/components/layouts/MainLayout.vue";
 	export default {
 		name: "Home",
-		components: { Header, CourseCard },
+		components: { Header, CourseCard, MainLayout },
 
 		async mounted() {
 			await this.$store.dispatch("getHomePage");
@@ -37,5 +38,3 @@
 		}
 	};
 </script>
-
-<style scoped lang="scss"></style>

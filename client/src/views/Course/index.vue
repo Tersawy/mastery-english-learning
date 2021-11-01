@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<main-layout>
 		<div class="course-header-area" v-if="course">
 			<b-container fluid="lg">
 				<b-row>
@@ -71,15 +71,16 @@
 		</div>
 		<LectureVideo />
 		<Congrats v-if="isCongrate" />
-	</div>
+	</main-layout>
 </template>
 
 <script>
 	import Congrats from "@/components/Congrats.vue";
 	import LectureVideo from "@/components/dashboard/course/LectureVideo.vue";
 	import SectionsContent from "@/components/course/SectionsContent.vue";
+	import MainLayout from "@/components/layouts/MainLayout.vue";
 	export default {
-		components: { LectureVideo, Congrats, SectionsContent },
+		components: { LectureVideo, Congrats, SectionsContent, MainLayout },
 		data() {
 			return {
 				isCongrate: false
