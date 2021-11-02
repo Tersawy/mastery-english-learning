@@ -1,5 +1,5 @@
 <template>
-	<div class="questions ml-3">
+	<div class="questions">
 		<b-card body-class="text-center shadow rounded-lg">
 			<b-badge class="font-md mr-2" variant="outline-primary">
 				<b-icon icon="file-earmark-spreadsheet" scale="0.9"></b-icon>
@@ -29,7 +29,7 @@
 			</b-col>
 		</b-row>
 
-		<ul class="questions-list pl-0 pl-xl-3 mt-4">
+		<ul class="questions-list pl-3 pl-xl-3 mt-4">
 			<li v-for="(question, i) in section.quiz.questions" :key="i" class="questions-item">
 				<Question :disabled="isPassedQuiz" :answers="answers" :question="{ ...question }" class="px-2 py-4 question-overlay" />
 			</li>

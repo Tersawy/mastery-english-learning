@@ -11,23 +11,30 @@
 				</b-breadcrumb>
 				<b-row class="mt-3 mt-sm-0">
 					<b-col cols="12" xl="8">
-						<template v-if="!isSectionQuiz">
-							<div v-if="lecture.video">
-								<video :src="`${lecturesURL}/${lecture.video}`" class="video-start" controls ref="video"></video>
-							</div>
-							<div class="course-details my-3 my-xl-30px">
+						<div v-if="lecture.video && !isSectionQuiz">
+							<video :src="`${lecturesURL}/${lecture.video}`" class="video-start" controls ref="video"></video>
+						</div>
+
+						<SectionQuiz @startNextSection="startNextSection" v-if="isSectionQuiz" />
+
+						<div class="course-details my-3 my-xl-30px">
+							<template v-if="!isSectionQuiz">
 								<div class="user-details d-flex align-items-center">
 									<b-avatar v-if="course.createdBy" :src="`${userImageURL}/${course.createdBy.image}`"></b-avatar>
 									<span class="font-weight-700 mx-3">{{ course.createdBy | relation("username") }}</span>
 									<div class="ml-auto text-muted">{{ lecture.createdAt | date }}</div>
 								</div>
 								<div class="mx-md-50px pl-2 mt-3" v-html="lecture.description"></div>
-								<SectionsContent
-									@renderLectureVideo="() => (isSectionQuiz = false)"
-									@sectionQuizLoaded="showSectionQuiz"
-									:show-section-quiz="true"
-									class="d-xl-none mt-5"
-								/>
+							</template>
+
+							<SectionsContent
+								@renderLectureVideo="() => (isSectionQuiz = false)"
+								@sectionQuizLoaded="showSectionQuiz"
+								:show-section-quiz="true"
+								class="d-xl-none mt-5"
+							/>
+
+							<template v-if="!isSectionQuiz">
 								<div class="lecture-quiz mt-5" v-if="lecture.quiz && lecture.quiz.questions && lecture.quiz.questions.length">
 									<h3 class="mb-3" style="text-decoration: underline">Quiz :-</h3>
 									<div class="questions ml-3">
@@ -38,13 +45,10 @@
 										</ul>
 									</div>
 								</div>
-							</div>
-						</template>
-						<template v-else>
-							<SectionQuiz @startNextSection="startNextSection" />
-						</template>
+							</template>
+						</div>
 					</b-col>
-					<b-col cols="12" xl="4">
+					<b-col cols="12" xl="4" class="d-none d-xl-block">
 						<SectionsContent @renderLectureVideo="() => (isSectionQuiz = false)" @sectionQuizLoaded="showSectionQuiz" :show-section-quiz="true" />
 					</b-col>
 				</b-row>
@@ -60,6 +64,8 @@
 	import SectionQuiz from "@/components/course/SectionQuiz";
 	import MainLayout from "@/components/layouts/MainLayout.vue";
 
+	import { asyncHandler } from "@/helpers/functions";
+
 	export default {
 		components: { MainLayout, Question, SectionsContent, SectionQuiz },
 
@@ -72,22 +78,24 @@
 		},
 
 		async mounted() {
-			await this.getCourse();
+			asyncHandler(this.getCourse, (e) => {
+				if (e) return this.$router.push("/my-courses");
 
-			this.$store.commit("setLoader", false);
+				this.$store.commit("setLoader", false);
 
-			for (let i = 0; i < this.course.sections.length; i++) {
-				if (!this.course.sections[i].lectures.length) continue;
+				for (let i = 0; i < this.course.sections.length; i++) {
+					if (!this.course.sections[i].lectures.length) continue;
 
-				for (let l = 0; l < this.course.sections[i].lectures.length; l++) {
-					if (this.course.sections[i].lectures[l]) {
-						this.showLectureVideo(this.course.sections[i].lectures[l]);
-						break;
+					for (let l = 0; l < this.course.sections[i].lectures.length; l++) {
+						if (this.course.sections[i].lectures[l]) {
+							this.showLectureVideo(this.course.sections[i].lectures[l]);
+							break;
+						}
 					}
-				}
 
-				if (Object.keys(this.lecture).length) break;
-			}
+					if (Object.keys(this.lecture).length) break;
+				}
+			});
 		},
 
 		computed: {
@@ -119,11 +127,13 @@
 				} catch (err) {
 					//
 				}
+				window.scrollTo({ top: 0, behavior: "smooth" });
 			},
 
 			showSectionQuiz() {
 				if (this.section.quiz.questions.length) {
 					this.isSectionQuiz = true;
+					window.scrollTo({ top: 0, behavior: "smooth" });
 				}
 			},
 
