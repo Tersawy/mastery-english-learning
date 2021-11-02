@@ -10,13 +10,9 @@ const handleError = require("../helpers/handleError");
 
 const { randomChar } = require("../helpers/functions");
 
-const { getVideoDurationInSeconds } = require("get-video-duration");
-
 const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS } = require("../helpers/constants");
 
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
-
-const lecturePath = "../public/videos/courses/lectures";
 
 exports.all = async (req, res) => {
 	let courses = Course.find()
@@ -101,7 +97,7 @@ exports.show = async (req, res) => {
 							as: "lectures",
 							pipeline: [
 								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
-								{ $project: { description: 1, title: 1, createdAt: 1, video: 1, videoReview: 1 } },
+								{ $project: { description: 1, title: 1, createdAt: 1, video: 1, videoReview: 1, time: 1 } },
 							],
 						},
 					},
@@ -129,31 +125,18 @@ exports.show = async (req, res) => {
 
 	course.requirements = course.requirements.map((r) => r.text);
 
-	course.time = 0;
-
 	for (let i = 0; i < course.sections.length; i++) {
 		let section = course.sections[i];
 		let lectures = section.lectures;
-
-		section.time = 0;
 
 		for (let l = 0; l < lectures.length; l++) {
 			let lecture = lectures[l];
 
 			if (!lecture.video) {
-				lecture.time = 0;
 				delete lecture.video;
 				delete lecture.videoReview;
 				continue;
 			}
-
-			let videoExist = fs.existsSync(path.join(__dirname, lecturePath, lecture.video));
-
-			let videoPath = path.join(__dirname, lecturePath, lecture.video);
-
-			lecture.time = videoExist ? await getVideoDurationInSeconds(videoPath) : 0;
-
-			section.time += lecture.time;
 
 			if (!lecture.videoReview) {
 				if (!isAdmin && !isInstructor && !isOwner) {
@@ -163,8 +146,6 @@ exports.show = async (req, res) => {
 
 			delete lecture.videoReview;
 		}
-
-		course.time += section.time;
 	}
 
 	course.isEnrolled = me && me.courses.includes(courseId);
@@ -197,7 +178,7 @@ exports.start = async (req, res) => {
 							as: "lectures",
 							pipeline: [
 								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
-								{ $project: { description: 1, title: 1, video: 1, createdAt: 1 } },
+								{ $project: { description: 1, title: 1, video: 1, createdAt: 1, time: 1 } },
 							],
 						},
 					},
@@ -276,6 +257,7 @@ exports.start = async (req, res) => {
 						description: 1,
 						title: 1,
 						video: 1,
+						time: 1
 					},
 				},
 			},
@@ -296,8 +278,6 @@ exports.start = async (req, res) => {
 		let section = course.sections[i];
 		let lectures = section.lectures;
 
-		section.time = 0;
-
 		if (i > 0) {
 			let previousSection = course.sections[i - 1];
 
@@ -310,18 +290,9 @@ exports.start = async (req, res) => {
 			let lecture = lectures[l];
 
 			if (!lecture.video) {
-				lecture.time = 0;
 				delete lecture.video;
 				continue;
 			}
-
-			let videoExist = lecture.video && fs.existsSync(path.join(__dirname, lecturePath, lecture.video));
-
-			let videoPath = path.join(__dirname, lecturePath, lecture.video || "");
-
-			lecture.time = videoExist ? await getVideoDurationInSeconds(videoPath) : 0;
-
-			section.time += lecture.time;
 
 			if (isHaveSectionQuizIsNotPassed) delete lectures[l].video;
 		}
@@ -330,8 +301,6 @@ exports.start = async (req, res) => {
 			delete course.sections[i].hasQuiz;
 			delete course.sections[i].quizPassRate;
 		}
-
-		course.time += section.time;
 	}
 
 	res.status(200).json(course);

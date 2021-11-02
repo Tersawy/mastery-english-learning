@@ -1,10 +1,12 @@
-const fs = require("fs");
+const { existsSync, unlinkSync } = require("fs");
 
 const path = require("path");
 
 const handleError = require("../helpers/handleError");
 
 const { randomChar } = require("../helpers/functions");
+
+const { getVideoDurationInSeconds } = require("get-video-duration");
 
 const Lecture = require( "../Models/Lecture" );
 
@@ -85,12 +87,28 @@ exports.uploadVideo = async (req, res) => {
 
 	let videoDir = path.resolve(videosDir, videoName);
 
-	if (!fs.existsSync(videosDir)) throw { status: 500, msg: "Something went wrong" };
+	if (!existsSync(videosDir)) throw { status: 500, msg: "Something went wrong" };
 
-	video.mv(videoDir, (err) => {
+	video.mv(videoDir, async (err) => {
 		if (err) return res.status(500).json({ msg: "Something went wrong" });
 
-		Lecture.updateOne({ _id }, { video: videoName }, (err) => {
+		let tempFilePath = path.resolve(video.tempFilePath);
+
+		if (existsSync(tempFilePath)) unlinkSync(tempFilePath);
+
+		let time = 0;
+
+		try {
+			time = await getVideoDurationInSeconds(videoDir);
+		} catch (e) {
+			console.log(e);
+
+			if (existsSync(videoDir)) unlinkSync(videoDir);
+
+			return res.status(422).json({ msg: "Video is not valid !" });
+		}
+
+		Lecture.updateOne({ _id }, { video: videoName, time }, (err) => {
 			if (err) return handleError(err, (error) => res.status(error.status).json(error));
 
 			res.status(200).json({ status: 200, msg: "Lecture video has been uploaded successfully" });
@@ -125,18 +143,34 @@ exports.changeVideo = async (req, res) => {
 
 	let videoDir = path.resolve(videosDir, videoName);
 
-	if (!fs.existsSync(videosDir)) throw { status: 500, msg: "Something went wrong" };
+	if (!existsSync(videosDir)) throw { status: 500, msg: "Something went wrong" };
 
-	video.mv(videoDir, (err) => {
+	video.mv(videoDir, async (err) => {
 		if (err) return res.status(500).json({ msg: "Something went wrong" });
 
-		Lecture.findOneAndUpdate({ _id }, { video: videoName }, { _id: 0, video: 1 }, (err, lecture) => {
+		let tempFilePath = path.resolve(video.tempFilePath);
+
+		if (existsSync(tempFilePath)) unlinkSync(tempFilePath);
+
+		let time = 0;
+
+		try {
+			time = await getVideoDurationInSeconds(videoDir);
+		} catch (e) {
+			console.log(e);
+
+			if (existsSync(videoDir)) unlinkSync(videoDir);
+
+			return res.status(422).json({ msg: "Video is not valid !" });
+		}
+
+		Lecture.findOneAndUpdate({ _id }, { video: videoName, time }, { _id: 0, video: 1 }, (err, lecture) => {
 				if (err) return handleError(err, (error) => res.status(error.status).json(error));
 
 				if (lecture.video) {
 					let oldVideo = path.resolve(videosDir, lecture.video);
 
-					if (fs.existsSync(oldVideo)) fs.unlinkSync(oldVideo);
+					if (existsSync(oldVideo)) unlinkSync(oldVideo);
 				}
 
 				res.status(200).json({ status: 200, msg: "Lecture video has been uploaded successfully" });

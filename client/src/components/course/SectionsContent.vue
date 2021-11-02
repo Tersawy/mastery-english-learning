@@ -3,7 +3,7 @@
 		<div class="d-flex align-items-center justify-content-between mb-2">
 			<p class="mb-0 font-sm">
 				{{ +course.sections.length }} sections • {{ lecturesCount }} lectures •
-				{{ lecturesTime(course.time).timeStr }}
+				{{ secondsToHms(courseTime).timeStr }}
 				total length
 			</p>
 			<b-btn size="sm" variant="teal" @click="expandAll" class="text-nowrap">
@@ -20,8 +20,8 @@
 					</div>
 					<span class="font-sm d-flex flex-column text-right d-sm-inline-block">
 						<span class="text-nowrap"> {{ section.lectures.length }} lectures </span>
-						<span class="d-none d-sm-inline-block" v-if="lecturesTime(section.time).timeStr"> • </span>
-						<span> {{ lecturesTime(section.time).timeStr }} </span>
+						<span class="d-none d-sm-inline-block" v-if="secondsToHms(section.time).timeStr"> • </span>
+						<span> {{ secondsToHms(getSectionTime(section)).timeStr }} </span>
 					</span>
 				</b-card-body>
 				<b-collapse v-model="section.lecturesVisible">
@@ -52,7 +52,7 @@
 									<p class="text-muted pl-4 mt-1 mb-0" v-html="lecture.description"></p>
 								</b-collapse>
 							</div>
-							<div>{{ lecturesTime(lecture.time).timeNum }}</div>
+							<div>{{ secondsToHms(lecture.time).timeNum }}</div>
 						</div>
 						<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
 							<a
@@ -106,6 +106,16 @@
 					total += section.lectures.length;
 					return total;
 				}, 0);
+			},
+
+			courseTime() {
+				return this.course.sections.reduce((prev, current) => {
+					let lectureTime = current.lectures.reduce((p, c) => {
+						return p + (c.time || 0);
+					}, 0);
+
+					return prev + (lectureTime || 0);
+				}, 0);
 			}
 		},
 
@@ -114,8 +124,14 @@
 				this.allExpanded = !this.allExpanded;
 			},
 
-			lecturesTime(time) {
+			secondsToHms(time) {
 				return secondsToHms(time);
+			},
+
+			getSectionTime(section) {
+				return section.lectures.reduce((prev, current) => {
+					return prev + (current.time || 0);
+				}, 0);
 			},
 
 			async showLectureVideo(lecture) {
@@ -130,6 +146,8 @@
 				}
 
 				this.$emit("renderLectureVideo");
+
+				window.scrollTo({ top: 0, behavior: "smooth" });
 			},
 
 			async getSectionQuiz(section) {

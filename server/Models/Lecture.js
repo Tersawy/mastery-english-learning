@@ -21,7 +21,8 @@ const lectureSchema = new Schema(
 			required: [true, "Section is required"],
 		},
 		video: { type: String, default: null },
-		videoReview: { type: Boolean, default: false }
+		videoReview: { type: Boolean, default: false },
+		time: { type: Number, default: 0 }
 	},
 	{ timestamps: true }
 );
