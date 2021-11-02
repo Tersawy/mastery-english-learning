@@ -13,10 +13,19 @@ export const secondsToHms = (seconds) => {
 
 	hDisplay = h > 0 ? h.toString().padStart(2, "0") + ":" : "";
 	mDisplay = m > 0 ? m.toString().padStart(2, "0") + ":" : "";
-	mDisplay = m == 0 ? "00:" : mDisplay;
+	mDisplay = !m ? "00:" : mDisplay;
 	sDisplay = s > 0 ? s.toString().padStart(2, "0") : "00";
 
 	let numDisplay = hDisplay + mDisplay + sDisplay;
 
 	return { hours: h, minutes: m, seconds: s, timeStr: textDisplay, timeNum: numDisplay };
+};
+
+export const asyncHandler = async (promise, callback = () => {}) => {
+	try {
+		let result = await promise();
+		callback(null, result);
+	} catch (e) {
+		callback(e);
+	}
 };
