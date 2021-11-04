@@ -32,6 +32,21 @@ export default {
 		});
 	},
 
+	myCourses({ commit, state }) {
+		return api("get", `${state.prefix}/my-courses`, (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			commit("setMyCourses", data);
+
+			return Promise.resolve(data);
+		});
+	},
+
 	update({ state, commit }, { course, config }) {
 		return api("put", `${state.prefix}/${state.one._id}`, course, config, (err, data) => {
 			if (err) {

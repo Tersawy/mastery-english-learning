@@ -40,6 +40,88 @@ exports.all = async (req, res) => {
 	return res.json({ docs, total });
 };
 
+exports.myCourses = async function(req, res) {
+	const { me } = req.body;
+
+	let myCourses = me.courses.map(id => mongoose.Types.ObjectId(id));
+
+	let query = { _id: { $in: myCourses } };
+	
+	const aggregate = [
+		{ $match: query },
+		{ $lookup: {
+				from: "sections",
+				as: "sections",
+				let: { courseId: "$_id" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
+					{ $lookup: {
+							from: "lectures",
+							as: "lectures",
+							let: { sectionId: "$_id" },
+							pipeline: [
+								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
+								{ $project: { time: 1, _id: 0 } }
+							]
+					} },
+					{ $project: { time: { $sum: "$lectures.time" }, lecturesCount: { $size: "$lectures" },  _id: 0 } }
+				]
+		} },
+		{ $lookup: {
+				from: "users",
+				as: "instructor",
+				let: { instructorId: "$createdBy" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$_id", "$$instructorId"] } } },
+					{ $project: { username: 1, image: 1 } }
+				]
+		} },
+		{ $unwind: { path: "$instructor", preserveNullAndEmptyArrays: true } },
+		{ $lookup: {
+				from: "categories",
+				as: "category",
+				let: { categoryId: "$category" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$_id", "$$categoryId"] } } },
+					{ $project: { name: 1 } }
+				]
+		} },
+		{ $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
+		{ $lookup: {
+				from: "levels",
+				as: "level",
+				let: { levelId: "$level" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$_id", "$$levelId"] } } },
+					{ $project: { name: 1 } }
+				]
+		} },
+		{ $unwind: { path: "$level", preserveNullAndEmptyArrays: true } },
+		{
+			$project: {
+				title: 1,
+				short_description: 1,
+				thumbnail: 1,
+				studentsCount: 1,
+				instructor: 1,
+				category: 1,
+				level: 1,
+				time: { $sum: "$sections.time" },
+				lecturesCount: { $sum: "$sections.lecturesCount" },
+				updatedAt: 1
+			}
+		}
+	];
+
+	let coursesQuery = Course.aggregate(aggregate);
+
+	let coursesCount = Course.countDocuments(query);
+
+	let [courses, total] = await Promise.all([coursesQuery, coursesCount]);
+	
+	res.json({ docs:courses, total });
+}
+
 exports.create = (req, res) => {
 	const { me, title, short_description, description, category, level, langMadeIn, requirements } = req.body;
 

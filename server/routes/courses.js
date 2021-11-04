@@ -8,6 +8,8 @@ const { OWNER, ADMIN, INSTRUCTOR, STUDENT } = require( "../helpers/constants" );
 
 router.get("/", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.all);
 
+router.get("/my-courses", auth, allowedFor(STUDENT), CourseController.myCourses);
+
 router.post("/", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.create);
 
 router.get("/:courseId", getAuth, CourseController.show);

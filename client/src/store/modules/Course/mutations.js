@@ -18,6 +18,11 @@ export default {
 		state.one = data;
 	},
 
+	setMyCourses(state, data) {
+		state.myCourses.docs = data.docs;
+		state.myCourses.total = data.total;
+	},
+
 	...sectionMutations,
 
 	...lectureMutations
