@@ -1,7 +1,7 @@
 <template>
 	<b-form @submit.prevent="handleLogin" class="w-100">
 		<b-form-group label="Email address" label-for="email">
-			<b-form-input type="text" id="email" v-model.trim="login.email" />
+			<b-form-input type="text" id="email" ref="email" v-model.trim="login.email" />
 		</b-form-group>
 		<b-form-group label="Password" label-for="password">
 			<b-form-input type="password" id="password" v-model="login.password" />
@@ -32,6 +32,12 @@
 			};
 
 			return { login };
+		},
+
+		mounted() {
+			setTimeout(() => {
+				this.$refs.email.$el.focus();
+			});
 		},
 
 		methods: {
