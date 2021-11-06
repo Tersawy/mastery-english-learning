@@ -3,7 +3,7 @@
 		<div class="start-learning" v-if="course">
 			<b-container fluid class="px-lg-4">
 				<b-breadcrumb class="bg-white border rounded shadow-sm font-weight-600 my-30px d-none d-sm-flex">
-					<b-breadcrumb-item to="/dashboard">
+					<b-breadcrumb-item to="/my-courses">
 						<b-icon class="mr-1" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
 						My Courses
 					</b-breadcrumb-item>
