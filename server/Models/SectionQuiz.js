@@ -4,7 +4,9 @@ const Schema = mongoose.Schema;
 
 const { QUESTION_ESSAY } = require("../helpers/constants");
 
-let isNotEssay = function () { return this.type != QUESTION_ESSAY };
+let isNotEssay = function () {
+	return this.type != QUESTION_ESSAY;
+};
 
 const questionSchema = new Schema(
 	{
@@ -36,6 +38,7 @@ const sectionQuizSchema = new Schema(
 			minLength: [1, "The Quiz must be have at least 1 question"],
 			default: [],
 		},
+		minimumPassRate: { type: Number, default: 50 },
 	},
 	{ timestamps: true }
 );
