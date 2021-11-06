@@ -4,7 +4,7 @@ const CourseController = require("../Controllers/CourseController");
 
 const { auth, getAuth, allowedFor } = require("../middlewares/auth");
 
-const { OWNER, ADMIN, INSTRUCTOR, STUDENT } = require( "../helpers/constants" );
+const { OWNER, ADMIN, INSTRUCTOR, STUDENT } = require("../helpers/constants");
 
 router.get("/", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.all);
 
@@ -53,6 +53,8 @@ const sectionQuizURL = "/sections/:sectionId/quiz";
 router.get(sectionQuizURL, auth, SectionQuizController.show);
 
 router.post(sectionQuizURL, auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), SectionQuizController.create);
+
+router.put(`${sectionQuizURL}/:quizId`, auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), SectionQuizController.update);
 
 router.delete(`${sectionQuizURL}/:quizId`, auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), SectionQuizController.remove);
 
