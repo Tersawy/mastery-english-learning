@@ -33,7 +33,7 @@ exports.answer = async (req, res) => {
 	if (!quiz) return res.status(404).json({ msg: "Quiz is not found !" });
 
 	if (quizAnswer) {
-		if (quizAnswer.passRate >= 50) {
+		if (quizAnswer.passRate >= quiz.minimumPassRate) {
 			return res.status(422).json({ msg: "You have already answered" });
 		}
 
@@ -63,8 +63,6 @@ exports.answer = async (req, res) => {
 	quizAnswer.answers = quizAnswer.answers.map((answer) => {
 		let question = quiz.questions.find((q) => q._id.toString() == answer.question.toString());
 
-		let isEssay = question.type == QUESTION_ESSAY;
-
 		let isRightAnswer =
 			JSON.stringify(question.answer).toString().toLocaleLowerCase() ==
 			JSON.stringify(answer.value).toString().toLocaleLowerCase();
@@ -76,6 +74,8 @@ exports.answer = async (req, res) => {
 
 			answer.value = String(answer.value) === "true" ? true : false;
 		}
+
+		let isEssay = question.type == QUESTION_ESSAY;
 
 		answer.isTrue = !isEssay && isRightAnswer;
 

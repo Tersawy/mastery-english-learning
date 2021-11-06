@@ -24,6 +24,17 @@
 		</template>
 		<template #default="{ ok }">
 			<b-form @submit.prevent="addQuestion">
+				<!-- -------------Quiz pass rate------------- -->
+				<b-form-group label="Pass rate" label-for="minimumPassRate">
+					<b-form-spinbutton id="minimumPassRate" v-model="quiz.minimumPassRate" min="1" max="100"></b-form-spinbutton>
+					<input-error :vuelidate="$v.quiz.minimumPassRate" field="choices" :namespace="namespace" />
+				</b-form-group>
+				<hr class="my-4" />
+
+				<h4 class="text-center">
+					<span class="shadow-sm py-3 px-4 d-inline-block rounded-lg border">Questions</span>
+				</h4>
+
 				<!-- -------------text------------- -->
 				<b-form-group label="Question" label-for="text">
 					<b-form-input :disabled="isLoading" id="text" v-model="question.text" ref="textInput"></b-form-input>
@@ -95,7 +106,7 @@
 </template>
 
 <script>
-	import { required, minLength, maxLength, numeric, requiredIf } from "vuelidate/lib/validators";
+	import { required, minLength, maxLength, minValue, maxValue, numeric, requiredIf } from "vuelidate/lib/validators";
 	import { QUESTION_COMPLETE, QUESTION_CHOICE_ONE, QUESTION_TRUE_OR_FALSE, QUESTION_ESSAY, QUESTION_SPEECH, QUESTION_TYPES_STR } from "@/helpers/constants";
 	export default {
 		props: ["lectureQuiz"],
@@ -110,7 +121,8 @@
 					{ text: QUESTION_TYPES_STR[QUESTION_SPEECH], value: QUESTION_SPEECH }
 				],
 				quiz: {
-					questions: []
+					questions: [],
+					minimumPassRate: 100
 				},
 				question: {
 					text: null,
@@ -139,7 +151,8 @@
 				}
 			},
 			quiz: {
-				questions: { required, minLength: minLength(1), maxLength: maxLength(100) }
+				questions: { required, minLength: minLength(1), maxLength: maxLength(100) },
+				minimumPassRate: { required, minValue: minValue(1), maxValue: maxValue(100) }
 			}
 		},
 

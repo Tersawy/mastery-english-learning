@@ -19,6 +19,7 @@
 			<template v-else>
 				<div class="mb-3 text-center">
 					<b-btn variant="outline-blue" @click="createQuestion">Add a new Question</b-btn>
+					<b-btn variant="outline-success" v-b-modal.minimumPassRate class="ml-3" v-if="!lectureQuiz">Edit pass rate</b-btn>
 				</div>
 				<ul class="list-unstyled">
 					<li v-for="(question, i) in quiz.questions" :key="i" class="question-item odd-light px-2 py-3">
@@ -43,11 +44,28 @@
 			<QuizForm :lectureQuiz="lectureQuiz" />
 			<QuestionForm :lectureQuiz="lectureQuiz" />
 			<DeleteFieldModal msg="Are you sure to delete this question ?" @done="handleRemoveQuestion" modal-id="removeQuestionModal" />
+
+			<b-modal id="minimumPassRate" hide-footer hide-header centered @ok="updateSectionQuiz">
+				<template #default="{ ok }">
+					<!-- -------------Quiz pass rate------------- -->
+					<b-form-group label="Pass rate" label-for="minimumPassRate">
+						<b-form-spinbutton id="minimumPassRate" v-model="minimumPassRate" min="1" max="100"></b-form-spinbutton>
+						<input-error :vuelidate="$v.minimumPassRate" field="minimumPassRate" :namespace="namespace" />
+					</b-form-group>
+
+					<div class="text-center">
+						<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
+							<b-btn :disabled="isLoading" @click="ok()" variant="outline-success">Update</b-btn>
+						</b-overlay>
+					</div>
+				</template>
+			</b-modal>
 		</template>
 	</b-modal>
 </template>
 
 <script>
+	import { required, minValue, maxValue } from "vuelidate/lib/validators";
 	import { QUESTION_TYPES_STR } from "@/helpers/constants";
 	import QuizForm from "@/components/dashboard/course/QuizForm.vue";
 	import QuestionForm from "@/components/dashboard/course/QuestionForm.vue";
@@ -56,9 +74,16 @@
 		components: { QuizForm, QuestionForm, DeleteFieldModal },
 		props: ["lectureQuiz"],
 		data() {
+			let section = this.$store.state.Course.oneSection;
+
 			return {
-				namespace: "Course"
+				namespace: "Course",
+				minimumPassRate: section ? section.quiz.minimumPassRate : 100
 			};
+		},
+
+		validations: {
+			minimumPassRate: { required, minValue: minValue(1), maxValue: maxValue(100) }
 		},
 
 		computed: {
@@ -119,6 +144,28 @@
 					//
 				}
 				this.$bvModal.hide("removeQuestionModal");
+			},
+
+			async updateSectionQuiz(bvt) {
+				bvt.preventDefault();
+
+				this.$v.$touch();
+
+				if (this.$v.$invalid) return;
+
+				this.setLoading(true);
+
+				try {
+					let res = await this.$store.dispatch("Course/updateSectionQuiz", { minimumPassRate: this.minimumPassRate });
+
+					this.setGlobalSuccess(res.msg);
+				} catch (err) {
+					//
+				}
+
+				this.$bvModal.hide("minimumPassRate");
+
+				this.setLoading(false);
 			}
 		}
 	};

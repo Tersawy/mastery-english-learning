@@ -4,17 +4,33 @@ const SectionQuiz = require("../Models/SectionQuiz");
 exports.create = async (req, res) => {
 	let { sectionId: section } = req.params;
 
-	let { questions } = req.body;
+	let { questions, minimumPassRate } = req.body;
 
 	let quiz = await SectionQuiz.findOne({ section });
 
 	if (quiz) return res.status(422).json({ msg: "This section already has a quiz!" });
 
-	quiz = new SectionQuiz({ section, questions });
+	quiz = new SectionQuiz({ section, questions, minimumPassRate });
 
 	await quiz.save();
 
 	res.json({ msg: "The quiz has been created successfully" });
+};
+
+exports.update = async (req, res) => {
+	let { sectionId: section, quizId } = req.params;
+
+	let { minimumPassRate } = req.body;
+
+	let quiz = await SectionQuiz.findOne({ section, _id: quizId });
+
+	if (!quiz) return res.status(404).json({ msg: "This quiz is not found!" });
+
+	quiz.minimumPassRate = minimumPassRate;
+
+	await quiz.save();
+
+	res.json({ msg: "The quiz has been updated successfully" });
 };
 
 exports.show = async (req, res) => {
@@ -70,6 +86,7 @@ exports.show = async (req, res) => {
 
 	quiz = {
 		_id: quiz._id,
+		minimumPassRate: quiz.minimumPassRate,
 		passRate: quiz.quizAnswer ? quiz.quizAnswer.passRate : undefined,
 		section: quiz.section,
 		questions: quiz.questions,

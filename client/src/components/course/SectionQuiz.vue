@@ -77,8 +77,22 @@
 		components: { Question, RadialProgressBar, Congrats },
 
 		data() {
+			let quiz = this.$store.state.Course.oneSection.quiz;
+
+			let answers;
+
+			if (quiz) {
+				answers = quiz.questions.filter((question) => question.type != QUESTION_SPEECH);
+
+				answers = answers.map((question) => ({
+					question: question._id,
+					type: question.type,
+					value: question.answer
+				}));
+			}
+
 			return {
-				answers: [],
+				answers: answers || [],
 				isCongrate: false,
 				quizProgress: {
 					completedSteps: 0
@@ -100,11 +114,11 @@
 			},
 
 			isAnswered() {
-				return this.section.quiz.passRate >= 0;
+				return this.section.quiz.passRate >= this.section.quiz.minimumPassRate;
 			},
 
 			isPassedQuiz() {
-				return this.section.quiz.passRate >= 50;
+				return this.section.quiz.passRate >= this.section.quiz.minimumPassRate;
 			}
 		},
 
@@ -112,10 +126,11 @@
 			validateAnswers() {
 				const answers = this.answers,
 					questions = this.section.quiz.questions;
+				console.log(answers);
 				for (let i = 0; i < questions.length; i++) {
 					let question = questions[i];
 					let answer = answers.find((a) => a.question == question._id);
-					if (!answer) {
+					if (!answer || answer.value == null || answer.value == undefined) {
 						this.setGlobalError(`Question No. ${i + 1} is required`);
 						return false;
 					}
@@ -172,7 +187,7 @@
 						setTimeout(() => {
 							this.$bvModal.hide("modalProgress");
 
-							if (res.passRate >= 50) {
+							if (res.passRate >= this.section.quiz.minimumPassRate) {
 								this.passedQuiz();
 							} else {
 								this.failedQuiz();
