@@ -11,7 +11,7 @@
 						<b-avatar variant="white" :src="`${userImageURL}/${me.image}`" class="border border-primary" style="padding: 2px"></b-avatar>
 					</template>
 					<b-dd-header> {{ me.username }} </b-dd-header>
-					<b-dropdown-item link-class="py-2" href="#">Profile</b-dropdown-item>
+					<b-dropdown-item link-class="py-2" v-b-toggle.userProfile>Profile</b-dropdown-item>
 					<b-dropdown-item link-class="py-2" to="/dashboard" v-if="isAdmin || isInstructor || isOwner">Dashboard</b-dropdown-item>
 					<b-dropdown-item link-class="py-2" to="/my-courses" v-if="isStudent">My Courses</b-dropdown-item>
 					<div class="py-2 px-3">
