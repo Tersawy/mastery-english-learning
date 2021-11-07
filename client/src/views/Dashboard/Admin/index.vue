@@ -77,7 +77,7 @@
 			</template>
 
 			<template #cell(image)="row">
-				<b-avatar :src="require('@/assets/images/course.jpg')" :alt="row.value" class="shadow-sm" rounded="lg"></b-avatar>
+				<b-avatar :src="`${API_URL}/user-image/${row.value}`" :alt="row.value" class="shadow-sm" rounded="lg"></b-avatar>
 			</template>
 		</b-table>
 
