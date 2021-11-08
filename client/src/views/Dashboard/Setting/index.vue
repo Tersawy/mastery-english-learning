@@ -8,15 +8,15 @@
 			<b-breadcrumb-item active> Settings </b-breadcrumb-item>
 		</b-breadcrumb>
 
-		<b-row cols="3">
+		<b-row cols="1" cols-md="2" cols-lg="3">
 			<b-col>
-				<Levels />
+				<Levels class="shadow-sm" />
 			</b-col>
-			<b-col>
-				<Categories />
+			<b-col class="mt-4 mt-md-0">
+				<Categories class="shadow-sm" />
 			</b-col>
-			<b-col>
-				<Languages />
+			<b-col md="12" lg="4" class="mt-4 mt-lg-0">
+				<Languages class="shadow-sm" />
 			</b-col>
 		</b-row>
 	</dashboard-layout>
