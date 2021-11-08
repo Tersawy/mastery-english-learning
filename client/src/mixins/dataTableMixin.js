@@ -35,7 +35,7 @@ export default {
 		},
 
 		fieldSort() {
-			return this.sortBy == "image" ? "id" : this.sortBy;
+			return this.sortBy == "image" ? "_id" : this.sortBy;
 		},
 
 		queries() {
@@ -52,7 +52,7 @@ export default {
 	watch: {
 		search() {
 			this.page = 1;
-			this.sortBy = "id";
+			this.sortBy = "_id";
 			this.sortDesc = false;
 		},
 		page() {
