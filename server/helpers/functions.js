@@ -1,6 +1,38 @@
 
 const fs = require("fs").promises;
 
+exports.handleQueries = (req, Model, searchOptions = { isSearch: false, fields: null }) => {
+	const { page = 1, per_page = 10, search = "", sort_by = "createdAt", sort_dir = "desc" } = req.query;
+
+	const attributes = Object.keys(Model.schema.paths);
+
+	const sortDirections = ["asc", "desc"];
+
+	req.query.sort_dir = sortDirections.includes(sort_dir) ? sort_dir : "desc";
+
+	req.query.sort_by = attributes.includes(sort_by) ? sort_by : "createdAt";
+
+	req.query.page = +(/^\d+$/.test(page) ? page : 1);
+
+	req.query.per_page = +(/^\d+$/.test(per_page) ? per_page : 10);
+
+  req.query.sort = {[req.query.sort_by]: req.query.sort_dir};
+
+  req.query.skip = (req.query.page - 1) * req.query.per_page;
+
+  req.query.limit = req.query.per_page;
+
+  if (typeof searchOptions == "object" && searchOptions.isSearch) {
+    searchOptions.fields = searchOptions.fields || attributes;
+
+    req.query.search = {};
+
+    req.query.search.$or = searchOptions.fields.map(field => {
+      return { [field]: { $regex: search, $options: "i" } };
+    })
+  }
+}
+
 exports.randomChar = (num = 8) => {
 	let chars = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
