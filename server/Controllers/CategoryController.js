@@ -1,11 +1,17 @@
 const Category = require("../Models/Category");
 
+const { handleQueries } = require("../helpers/functions");
+
 exports.all = async (req, res) => {
+	handleQueries(req, Category);
+
+	const { sort, skip, limit } = req.query;
+
 	let query = { deleted_at: null };
 
 	let projection = "_id name";
 
-	let categories = Category.find(query, projection);
+	let categories = Category.find(query, projection).sort(sort).skip(skip).limit(limit);
 
 	let categoriesCount = Category.countDocuments(query);
 

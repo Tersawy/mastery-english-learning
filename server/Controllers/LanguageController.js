@@ -1,11 +1,17 @@
 const Language = require("../Models/Language");
 
+const { handleQueries } = require("../helpers/functions");
+
 exports.all = async (req, res) => {
+	handleQueries(req, Language);
+
+	const { sort, skip, limit } = req.query;
+
 	let query = { deleted_at: null };
 
 	let projection = "_id name";
 
-	let languages = Language.find(query, projection);
+	let languages = Language.find(query, projection).sort(sort).skip(skip).limit(limit);
 
 	let languagesCount = Language.countDocuments(query);
 

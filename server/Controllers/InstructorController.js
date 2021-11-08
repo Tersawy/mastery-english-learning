@@ -4,8 +4,17 @@ const { INSTRUCTOR } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
+const { handleQueries } = require("../helpers/functions");
+
 exports.instructors = async (req, res) => {
-	let instructors = User.find({ type: INSTRUCTOR });
+
+	let searchOptions = { isSearch: true, fields: ["username", "fullname", "phone", "email"] };
+
+	handleQueries(req, User, searchOptions);
+
+	const { sort, skip, limit, search } = req.query;
+
+	let instructors = User.find({ type: INSTRUCTOR, ...search }).sort(sort).skip(skip).limit(limit);
 
 	let instructorsCount = User.countDocuments({ type: INSTRUCTOR });
 

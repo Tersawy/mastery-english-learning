@@ -14,8 +14,17 @@ const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS } = require("../helpers/c
 
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
 
+const { handleQueries } = require("../helpers/functions");
+
 exports.all = async (req, res) => {
-	let courses = Course.find()
+
+	let searchOptions = { isSearch: true, fields: ["title", "short_description", "description"] };
+
+	handleQueries(req, Course, searchOptions);
+
+	const { sort, skip, limit, search } = req.query;
+
+	let courses = Course.find(search).sort(sort).skip(skip).limit(limit)
 		.populate("category", "name")
 		.populate("langMadeIn", "name")
 		.populate("level", "name")

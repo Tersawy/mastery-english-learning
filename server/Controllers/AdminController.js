@@ -4,10 +4,22 @@ const { ADMIN, OWNER } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
+const { handleQueries } = require("../helpers/functions");
+
 exports.admins = async (req, res) => {
+
+	let searchOptions = { isSearch: true, fields: ["username", "fullname", "phone", "email"] };
+
+	handleQueries(req, User, searchOptions);
+
+	const { sort, skip, limit, search } = req.query;
+
 	let admins = User.find({
-		$or: [{ type: ADMIN }, { $and: [{ type: OWNER }, { _id: { $ne: req.body.me._id } }] }],
-	});
+		$and: [
+			{ $or: [{ type: ADMIN }, { $and: [{ type: OWNER }, { _id: { $ne: req.body.me._id } }] }] },
+			search
+		]
+	}).sort(sort).skip(skip).limit(limit);
 
 	let adminsCount = User.countDocuments({ type: ADMIN });
 

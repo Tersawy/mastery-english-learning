@@ -6,8 +6,17 @@ const { STUDENT } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
+const { handleQueries } = require("../helpers/functions");
+
 exports.students = async (req, res) => {
-	let students = User.find({ type: STUDENT });
+
+	let searchOptions = { isSearch: true, fields: ["username", "fullname", "phone", "email"] };
+
+	handleQueries(req, User, searchOptions);
+
+	const { sort, skip, limit, search } = req.query;
+
+	let students = User.find({ type: STUDENT, ...search }).sort(sort).skip(skip).limit(limit);
 
 	let studentsCount = User.countDocuments({ type: STUDENT });
 
