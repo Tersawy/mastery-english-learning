@@ -61,6 +61,7 @@ app.use("/api/v1/lectures", express.static("./public/videos/courses/lectures"));
 app.use("/api/v1/thumbnails", express.static("./public/images/courses/thumbnails"));
 app.use("/api/v1/user-image", express.static("./public/images/users"));
 app.use("/api/v1/icons", express.static("./public/images/icons"));
+app.use("/api/v1/settings-images", express.static("./public/images/settings"));
 
 app.use("/api/v1/", require("./routes/auth"));
 app.use("/api/v1/levels", require("./routes/levels"));
@@ -71,6 +72,7 @@ app.use("/api/v1/students", require("./routes/students"));
 app.use("/api/v1/instructors", require("./routes/instructors"));
 app.use("/api/v1/admins", require("./routes/admins"));
 app.use("/api/v1/pages", require("./routes/pages"));
+app.use("/api/v1/settings", require("./routes/settings"));
 
 app.get(/.*/, (req, res) => {
 	res.sendFile(__dirname + "/public/dist/index.html");

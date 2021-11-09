@@ -52,7 +52,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to) => {
 	Vue.nextTick(() => {
-		document.title = to.meta.title || DEFAULT_TITLE;
+		document.title = to.meta.title || store.state.Setting.settings.appName || DEFAULT_TITLE;
 	});
 });
 
@@ -77,6 +77,7 @@ new Vue({
 }).$mount("#app");
 
 store.dispatch("Auth/me");
+store.dispatch("Setting/getSettings");
 
 //https://www.facebook.com/Gam3aBookStore/
 //https://www.facebook.com/printige/

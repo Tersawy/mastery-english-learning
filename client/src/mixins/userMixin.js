@@ -45,6 +45,10 @@ export default {
 
 		userImageURL() {
 			return process.env.VUE_APP_API_URL + "/user-image";
+		},
+
+		appLogo() {
+			return `${this.API_URL}/settings-images/${this.$store.state.Setting.settings.logoDark}`;
 		}
 	},
 

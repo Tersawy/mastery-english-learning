@@ -2,7 +2,7 @@
 	<b-navbar toggleable="xl" variant="white" style="height: 65px" class="bg-white">
 		<b-container fluid>
 			<b-navbar-brand to="/">
-				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
+				<img :src="appLogo" class="d-inline-block align-top" alt="Academy" height="35" />
 			</b-navbar-brand>
 
 			<div class="d-flex d-xl-none">
@@ -32,7 +32,7 @@
 				<template #header="{ hide }">
 					<div class="w-100 d-flex justify-content-between align-items-center border-bottom pb-1">
 						<b-navbar-brand to="/">
-							<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
+							<img :src="appLogo" class="d-inline-block align-top" alt="Academy" height="35" />
 						</b-navbar-brand>
 						<span @click="hide">&times;</span>
 					</div>
@@ -42,7 +42,7 @@
 					<b-input-group>
 						<b-form-input placeholder="Search for courses" class="py-4"></b-form-input>
 						<b-input-group-append>
-							<b-button variant="danger">
+							<b-button variant="primary">
 								<b-icon icon="search" scale="0.8"></b-icon>
 							</b-button>
 						</b-input-group-append>
@@ -62,7 +62,7 @@
 
 				<div class="text-center" v-if="!isAuth">
 					<b-btn variant="outline-dark" v-b-modal.loginModal class="mr-2">Sign In</b-btn>
-					<b-btn variant="danger" v-b-modal.registerModal>Sign Up</b-btn>
+					<b-btn variant="primary" v-b-modal.registerModal>Sign Up</b-btn>
 				</div>
 			</b-sidebar>
 
@@ -84,7 +84,7 @@
 						<b-input-group>
 							<b-form-input placeholder="Search for courses" class="py-4"></b-form-input>
 							<b-input-group-append>
-								<b-button variant="danger">
+								<b-button variant="primary">
 									<b-icon icon="search" scale="0.8"></b-icon>
 								</b-button>
 							</b-input-group-append>
@@ -94,7 +94,7 @@
 					<div class="ml-4 d-flex">
 						<template v-if="!isAuth">
 							<b-btn variant="outline-dark" class="mx-3 text-nowrap d-flex align-items-center" v-b-modal.loginModal>Sign In</b-btn>
-							<b-btn variant="danger" class="text-nowrap d-flex align-items-center" v-b-modal.registerModal>Sign Up</b-btn>
+							<b-btn variant="primary" class="text-nowrap d-flex align-items-center" v-b-modal.registerModal>Sign Up</b-btn>
 						</template>
 						<template v-else>
 							<b-dropdown variant="link" toggle-class="text-decoration-none" no-caret right size="lg" lazy menu-class="py-0">

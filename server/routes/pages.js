@@ -2,6 +2,8 @@ const router = require("express").Router();
 
 const PagesController = require("../Controllers/PagesController");
 
-router.get("/home", PagesController.home);
+const { getAuth } = require("../middlewares/auth");
+
+router.get("/home", getAuth, PagesController.home);
 
 module.exports = router;

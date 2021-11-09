@@ -1,7 +1,7 @@
 <template>
 	<b-modal id="registerModal" hide-header hide-footer centered body-class="p-4 d-flex flex-column align-items-center">
 		<b-navbar-brand to="/">
-			<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
+			<img :src="appLogo" class="d-inline-block align-top" alt="Academy" height="35" />
 		</b-navbar-brand>
 		<h2 class="font-weight-900 my-3">Create a new account</h2>
 		<div class="mb-4">

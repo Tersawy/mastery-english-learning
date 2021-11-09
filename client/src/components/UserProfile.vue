@@ -11,7 +11,7 @@
 	>
 		<template #header="{ hide }">
 			<div class="d-flex align-items-center justify-content-between w-100">
-				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
+				<img :src="appLogo" class="d-inline-block align-top" alt="Academy" height="35" />
 				<span @click="hide" class="p-2 c-pointer">&times;</span>
 			</div>
 		</template>

@@ -10,6 +10,7 @@ export default {
 		},
 		removeAllErrors() {
 			this.$store.commit(`${this.namespace}/removeErrors`);
-		}
+		},
+		$showToast: showToast
 	}
 };

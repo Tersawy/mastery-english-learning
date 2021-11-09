@@ -2,7 +2,7 @@
 	<div class="topbar px-2 shadow-sm">
 		<div class="d-flex align-items-center pl-3">
 			<b-navbar-brand to="/">
-				<img :src="require('@/assets/images/logo-dark.png')" class="d-inline-block align-top" alt="Academy" height="35" />
+				<img :src="appLogo" class="d-inline-block align-top" alt="Academy" height="35" />
 			</b-navbar-brand>
 		</div>
 

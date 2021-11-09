@@ -9,7 +9,7 @@ const state = {
 	uploads: [],
 	isLoader: true,
 	pages: {
-		home: {}
+		home: { headerBg: "", categories: [] }
 	},
 	appSettings: {
 		brightness: 1

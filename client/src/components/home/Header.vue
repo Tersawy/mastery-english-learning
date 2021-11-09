@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="header overflow-hidden">
+		<div class="header overflow-hidden" :style="`background-image: url(${headerBg})`">
 			<b-row class="h-100" align-v="center">
 				<b-col cols="12" md="7" offset-md="1">
 					<div class="home-banner-wrap px-3 text-white">
@@ -68,13 +68,19 @@
 			return {
 				iconHovered: false
 			};
+		},
+
+		computed: {
+			headerBg() {
+				return `${this.API_URL}/settings-images/${this.$store.state.pages.home.headerBg}`;
+			}
 		}
 	};
 </script>
 
 <style scoped lang="scss">
 	.header {
-		background: url("../../assets/images/header.jpeg") no-repeat;
+		background-repeat: no-repeat;
 		background-size: cover;
 		width: 100%;
 		height: calc(100vh - 65px - 99px);
@@ -106,10 +112,10 @@
 	}
 	.home-fact-area {
 		background-color: #ec5252;
-		background: -webkit-linear-gradient(-45deg, #ec5252, #6e1a52);
-		background: -moz-linear-gradient(-45deg, #ec5252 0, #6e1a52 100%);
-		background: -ms-linear-gradient(-45deg, #ec5252 0, #6e1a52 100%);
-		background: -o-linear-gradient(-45deg, #ec5252 0, #6e1a52 100%);
-		background: linear-gradient(-45deg, #ec5252, #6e1a52);
+		background: -webkit-linear-gradient(-45deg, #d254aa, #5c1546);
+		background: -moz-linear-gradient(-45deg, #d254aa, 0, #5c1546 100%);
+		background: -ms-linear-gradient(-45deg, #d254aa, 0, #5c1546 100%);
+		background: -o-linear-gradient(-45deg, #d254aa, 0, #5c1546 100%);
+		background: linear-gradient(-45deg, #d254aa, #5c1546);
 	}
 </style>

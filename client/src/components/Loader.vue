@@ -2,7 +2,7 @@
 	<div class="loader" v-if="isLoader">
 		<div class="text-center">
 			<b-navbar-brand to="/" class="m-0">
-				<img :src="require('@/assets/images/logo-dark.png')" alt="Academy" height="55" />
+				<img :src="appLogo" alt="Academy" height="55" />
 			</b-navbar-brand>
 			<div>
 				<b-spinner class="spinner" type="grow" variant="primary" label="Loading..."></b-spinner>&nbsp;&nbsp;
