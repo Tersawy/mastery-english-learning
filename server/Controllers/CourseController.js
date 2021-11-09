@@ -24,13 +24,15 @@ exports.all = async (req, res) => {
 
 	const { sort, skip, limit, search } = req.query;
 
-	let courses = Course.find(search).sort(sort).skip(skip).limit(limit)
+	let query = { deleted_at: null, ...search };
+
+	let courses = Course.find(query).sort(sort).skip(skip).limit(limit)
 		.populate("category", "name")
 		.populate("langMadeIn", "name")
 		.populate("level", "name")
 		.populate("createdBy", "username");
 
-	let coursesCount = Course.countDocuments();
+	let coursesCount = Course.countDocuments(query);
 
 	let [docs, total] = await Promise.all([courses, coursesCount]);
 
