@@ -48,7 +48,7 @@ exports.home = async (req, res) => {
 							pipeline: [
 								{
 									$match: {
-										$expr: { $and: [{ $eq: ["$category", "$$category"] }, { $eq: ["$status", COURSE_APPROVED] }] }, // match courses
+										$expr: { $and: [{ $eq: ["$category", "$$category"] }, { $eq: ["$status", COURSE_APPROVED] }, { $eq: ["$deleted_at", null] }] }, // match courses
 									},
 								},
 								{ $sort: { studentsCount: -1 } }, // sort courses by students count
