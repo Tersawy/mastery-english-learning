@@ -1,16 +1,23 @@
 <template>
 	<main-layout>
 		<Header />
+		<b-container fluid>
+			<b-card class="mt-5 text-center shadow-sm">
+				<h1 class="mb-0">Our Courses</h1>
+			</b-card>
+		</b-container>
 		<b-container fluid class="px-xl-5 py-5">
 			<div v-for="(category, i) in homePage.categories" :key="i" class="listening pb-5">
-				<h3>{{ category.name }} :-</h3>
-				<b-row>
-					<b-col cols="10" offset="1" class="mt-3">
-						<b-row cols="1" cols-md="2" cols-lg="3" class="justify-content-center">
-							<b-col v-for="(course, i) in category.courses" :key="i" :class="{ 'mt-3 mt-md-0': i != 0, 'mt-md-3 mt-lg-0': !(i % 2) && i != 0 }">
-								<CourseCard :course="course" />
-							</b-col>
-						</b-row>
+				<b-row class="justify-content-center">
+					<b-col cols="7" sm="6" md="4" xl="3">
+						<b-card no-body class="p-3 text-center shadow-sm">
+							<h4 class="mb-0">{{ category.name }}</h4>
+						</b-card>
+					</b-col>
+				</b-row>
+				<b-row cols="1" cols-md="2" cols-xl="3" class="mt-4">
+					<b-col v-for="(course, i) in category.courses" :key="i" class="mb-4">
+						<CardCourse :description="false" img-top :course="{ ...course, category: { _id: category._id, name: category.name } }" />
 					</b-col>
 				</b-row>
 			</div>
@@ -20,11 +27,11 @@
 
 <script>
 	import Header from "@/components/home/Header";
-	import CourseCard from "@/components/home/CourseCard";
+	import CardCourse from "@/components/cards/CardCourse.vue";
 	import MainLayout from "@/components/layouts/MainLayout.vue";
 	export default {
 		name: "Home",
-		components: { Header, CourseCard, MainLayout },
+		components: { Header, CardCourse, MainLayout },
 
 		async mounted() {
 			await this.$store.dispatch("getHomePage");

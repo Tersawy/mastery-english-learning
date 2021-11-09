@@ -1,48 +1,44 @@
 <template>
-	<b-card tag="article" body-class="p-0 p-md-3" :class="`mb-2 course-card ${cardIsHovered ? 'hovered' : ''}`" v-b-hover="handleCardHover">
+	<b-card tag="article" :body-class="`p-0 ${imgTop ? '' : 'p-md-3'}`" :class="`mb-2 course-card ${cardIsHovered ? 'hovered' : ''}`" v-b-hover="handleCardHover">
 		<b-row>
-			<b-col cols="12" md="4">
+			<b-col cols="12" :md="imgTop ? '12' : '4'">
 				<b-card-img @click="showCourse(course)" class="c-pointer" style="height: 250px" :src="`${thumbnailsURL}/${course.thumbnail}`"> </b-card-img>
 			</b-col>
-			<b-col class="mt-4 mt-md-0">
-				<div class="p-3 p-md-0 d-flex flex-column h-100">
+			<b-col :class="`${imgTop ? '' : 'mt-4 mt-md-0'}`">
+				<div :class="`p-3 ${imgTop ? '' : 'p-md-0'} d-flex flex-column h-100`">
 					<div style="letter-spacing: 0.7px">
-						<h4 class="font-weight-bold d-none d-lg-block">{{ course.title }}</h4>
-						<h5 class="font-weight-bold d-lg-none" style="line-height: 1.5">{{ course.title }}</h5>
+						<h6 class="font-weight-bold">{{ course.title }}</h6>
 					</div>
 
-					<div class="text-muted font-md mt-3 d-none d-lg-block">{{ course.short_description }}</div>
-					<div class="text-muted mt-3 d-lg-none" style="font-size: 12px">{{ course.short_description }}</div>
+					<div class="text-muted mt-3" style="font-size: 12px" v-if="description">{{ course.short_description }}</div>
 
 					<div class="mt-3" :style="{ fontSize: '12px' }">
-						<span>
-							•
-							<strong :style="{ letterSpacing: '0.7px' }">Updated</strong>
-							<strong class="text-primary" :style="{ opacity: 0.7 }">
-								{{ course.updatedAt | date }}
-							</strong>
-						</span>
-						<span class="text-nowrap">
-							•
-							<strong :style="{ letterSpacing: '0.7px' }">total time: </strong>
-							<strong class="text-primary" :style="{ opacity: 0.7 }">
-								{{ courseHours }}
-							</strong>
-						</span>
-						<span>
-							•
-							<strong :style="{ letterSpacing: '0.7px' }">lectures: </strong>
-							<strong class="text-primary" :style="{ opacity: 0.7 }">
-								{{ course.lecturesCount }}
-							</strong>
-						</span>
-						<span class="text-nowrap">
-							•
-							<strong :style="{ letterSpacing: '0.7px' }">level: </strong>
-							<strong class="text-primary" :style="{ opacity: 0.7 }">
-								{{ course.level | relation("name") }}
-							</strong>
-						</span>
+						<b-row cols-xl="2">
+							<b-col class="py-1 text-nowrap">
+								<strong :style="{ letterSpacing: '0.7px' }">Updated</strong>
+								<strong class="text-primary" :style="{ opacity: 0.7 }">
+									{{ course.updatedAt | date }}
+								</strong>
+							</b-col>
+							<b-col class="py-1 text-nowrap">
+								<strong :style="{ letterSpacing: '0.7px' }">total time: </strong>
+								<strong class="text-primary" :style="{ opacity: 0.7 }">
+									{{ courseHours }}
+								</strong>
+							</b-col>
+							<b-col class="py-1 text-nowrap">
+								<strong :style="{ letterSpacing: '0.7px' }">level: </strong>
+								<strong class="text-primary" :style="{ opacity: 0.7 }">
+									{{ course.level | relation("name") }}
+								</strong>
+							</b-col>
+							<b-col class="py-1 text-nowrap">
+								<strong :style="{ letterSpacing: '0.7px' }">lectures: </strong>
+								<strong class="text-primary" :style="{ opacity: 0.7 }">
+									{{ course.lecturesCount }}
+								</strong>
+							</b-col>
+						</b-row>
 					</div>
 
 					<div class="my-3">
@@ -62,7 +58,20 @@
 
 	export default {
 		components: { ButtonStartLearn },
-		props: ["course"],
+		props: {
+			course: {
+				type: Object,
+				required: true
+			},
+			imgTop: {
+				type: Boolean,
+				default: () => false
+			},
+			description: {
+				type: Boolean,
+				default: () => true
+			}
+		},
 		data() {
 			return {
 				cardIsHovered: false
@@ -71,7 +80,7 @@
 
 		computed: {
 			courseHours() {
-				return secondsToHms(this.course.time).timeStr;
+				return secondsToHms(this.course.time).timeStr || "00:00:00";
 			}
 		},
 
