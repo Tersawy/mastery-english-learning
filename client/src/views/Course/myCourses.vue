@@ -1,6 +1,6 @@
 <template>
 	<main-layout>
-		<Header />
+		<Header :header-bg="headerBg" />
 		<b-container fluid class="px-xl-5 py-5">
 			<b-row class="justify-content-md-center">
 				<b-col md="4" lg="3">
@@ -39,6 +39,9 @@
 		computed: {
 			myCourses() {
 				return this.$store.state.Course.myCourses.docs;
+			},
+			headerBg() {
+				return `${this.API_URL}/settings-images/${this.settings.studentCoursesPage.headerBg}`;
 			}
 		},
 

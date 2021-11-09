@@ -1,6 +1,6 @@
 <template>
 	<main-layout>
-		<Header />
+		<Header :header-bg="headerBg" />
 		<b-container fluid>
 			<b-card class="mt-5 text-center shadow-sm">
 				<h1 class="mb-0">Our Courses</h1>
@@ -41,6 +41,9 @@
 		computed: {
 			homePage() {
 				return this.$store.state.pages.home;
+			},
+			headerBg() {
+				return `${this.API_URL}/settings-images/${this.settings.homePage.headerBg}`;
 			}
 		}
 	};

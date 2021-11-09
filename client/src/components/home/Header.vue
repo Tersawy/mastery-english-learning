@@ -64,16 +64,16 @@
 
 <script>
 	export default {
+		props: {
+			headerBg: {
+				type: String,
+				default: () => "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg"
+			}
+		},
 		data() {
 			return {
 				iconHovered: false
 			};
-		},
-
-		computed: {
-			headerBg() {
-				return `${this.API_URL}/settings-images/${this.$store.state.pages.home.headerBg}`;
-			}
 		}
 	};
 </script>
