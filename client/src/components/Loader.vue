@@ -1,7 +1,7 @@
 <template>
 	<div class="loader" v-if="isLoader">
 		<div class="text-center">
-			<b-navbar-brand to="/" class="m-0">
+			<b-navbar-brand to="/" class="m-0" v-if="settings.logoDark">
 				<img :src="appLogo" alt="Academy" height="55" />
 			</b-navbar-brand>
 			<div>
