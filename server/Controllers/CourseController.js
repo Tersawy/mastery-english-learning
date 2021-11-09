@@ -55,7 +55,7 @@ exports.myCourses = async function(req, res) {
 	let myCourses = me.courses.map(id => mongoose.Types.ObjectId(id));
 
 	let query = { _id: { $in: myCourses } };
-	
+ 
 	const aggregate = [
 		{ $match: query },
 		{ $lookup: {
@@ -127,7 +127,7 @@ exports.myCourses = async function(req, res) {
 	let coursesCount = Course.countDocuments(query);
 
 	let [courses, total] = await Promise.all([coursesQuery, coursesCount]);
-	
+ 
 	res.json({ docs:courses, total });
 }
 

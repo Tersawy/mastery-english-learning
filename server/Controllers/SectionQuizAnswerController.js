@@ -16,7 +16,7 @@ const audiosDir = path.resolve(__dirname, "../public/audios");
 exports.answer = async (req, res) => {
 	const { courseId, quizId } = req.params;
 
-	const { me, answers } = req.body;
+	const { me, answers = [] } = req.body;
 
 	let audiosAnswers = req.files.answers;
 

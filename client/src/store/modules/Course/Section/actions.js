@@ -152,7 +152,7 @@ export default {
 	},
 
 	updateSectionQuestion({ state, commit, dispatch }, item) {
-		return api("put", `${state.prefix}/sections/quiz/${state.oneSection.quiz._id}/questions/${state.oneQuestion._id}`, item, async (err, data) => {
+		return api("put", `${state.prefix}/sections/quiz/${state.oneSection.quiz._id}/questions/${state.oneSectionQuestion._id}`, item, async (err, data) => {
 			if (err) {
 				if (err.status != 401) {
 					commit("setErrors", err.data);

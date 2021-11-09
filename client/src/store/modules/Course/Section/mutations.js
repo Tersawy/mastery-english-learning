@@ -4,14 +4,14 @@ export default {
 	},
 
 	setSection: (state, section) => {
-		state.oneSection = section;
+		state.oneSection = { ...section, quiz: {} };
 		let sections = state.one.sections;
 
 		if (Array.isArray(sections)) {
 			let index = sections.findIndex((s) => s._id == section._id);
 
 			if (index != -1) {
-				sections[index] = section;
+				sections[index] = { ...section, quiz: {} };
 				state.one = { ...state.one, sections };
 			}
 		}
