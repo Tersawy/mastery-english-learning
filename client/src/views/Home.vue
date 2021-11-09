@@ -15,7 +15,7 @@
 						</b-card>
 					</b-col>
 				</b-row>
-				<b-row cols="1" cols-md="2" cols-xl="3" class="mt-4">
+				<b-row cols="1" cols-md="2" cols-xl="3" class="mt-4 justify-content-center">
 					<b-col v-for="(course, i) in category.courses" :key="i" class="mb-4">
 						<CardCourse :description="false" img-top :course="{ ...course, category: { _id: category._id, name: category.name } }" />
 					</b-col>
