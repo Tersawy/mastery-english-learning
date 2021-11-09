@@ -9,7 +9,7 @@ const fs = require("fs");
 const settingsDir = path.resolve(__dirname, "../public/images/settings");
 
 exports.getSettings = async (req, res) => {
-	let settings = await Setting.findOne({}, { _id: 0, appName: 1, logoDark: 1 });
+	let settings = await Setting.findOne({}, { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 });
 
 	settings = settings || new Setting();
 
@@ -75,6 +75,32 @@ exports.updateHomePage = async (req, res) => {
 			if (err) return res.status(err.status).json(err);
 
 			settings.homePage.headerBg = imgName;
+
+			await settings.save();
+
+			res.json({ msg: "Settings updated successfully" });
+		});
+	} else {
+		await settings.save();
+
+		res.json({ msg: "Settings updated successfully" });
+	}
+};
+
+exports.updateStudentCoursesPage = async (req, res) => {
+	let headerBg = req.files && req.files.headerBg ? req.files.headerBg : null;
+
+	let settings = await Setting.findOne({});
+
+	settings = settings || new Setting();
+
+	if (headerBg) {
+		uploadImage(headerBg, async (err, imgName) => {
+			if (err) return res.status(err.status).json(err);
+
+			if (!settings.studentCoursesPage) settings.studentCoursesPage = {};
+
+			settings.studentCoursesPage.headerBg = imgName;
 
 			await settings.save();
 

@@ -42,5 +42,20 @@ export default {
 
 			return Promise.resolve(data);
 		});
+	},
+
+	updateStudentCoursesPage({ commit, state, dispatch }, { studentCoursesPage, config }) {
+		return api("put", `${state.prefix}/student-courses-page`, studentCoursesPage, config, async (err, data) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			await dispatch("getSettings");
+
+			return Promise.resolve(data);
+		});
 	}
 };

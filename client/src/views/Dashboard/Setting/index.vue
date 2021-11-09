@@ -98,7 +98,7 @@
 								</b-form-group>
 							</b-col>
 
-							<!-- -------------App Logo Light------------- -->
+							<!-- -------------Home page background header------------- -->
 							<b-col class="d-flex justify-content-center">
 								<b-card header="Header background" header-class="font-weight-900 text-muted" body-class="p-0" class="shadow-sm" style="width: max-content">
 									<VueUploadMultipleImage
@@ -130,6 +130,49 @@
 				</b-card>
 			</b-col>
 		</b-row>
+
+		<b-row>
+			<b-col class="mt-30px">
+				<b-card class="shadow-sm">
+					<template #header>
+						<div class="d-flex justify-content-between align-items-center">
+							<span>Student courses page</span>
+						</div>
+					</template>
+					<b-form @submit.prevent="handleSaveStudentCoursesPage">
+						<b-row cols="1">
+							<!-- -------------App Logo Light------------- -->
+							<b-col class="d-flex justify-content-center">
+								<b-card header="Header background" header-class="font-weight-900 text-muted" body-class="p-0" class="shadow-sm" style="width: max-content">
+									<VueUploadMultipleImage
+										idUpload="studentCoursesPageHeader"
+										idEdit="studentCoursesPageHeaderEdit"
+										:disabled="isLoading"
+										class="upload-image"
+										browseText="(or) Select"
+										dragText="Drag & Drop image"
+										:data-images="studentCoursesPage.headerBg"
+										@upload-success="uploadStudentCoursesPageHeaderBg"
+										@before-remove="beforeRemoveStudentCoursesPageHeaderBg"
+										:showEdit="false"
+										accept="image/jpeg,image/png,image/jpg"
+										:multiple="false"
+										:showPrimary="false"
+									/>
+								</b-card>
+							</b-col>
+							<b-col>
+								<div class="text-right mt-4">
+									<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
+										<b-btn :disabled="isLoading" @click="handleSaveStudentCoursesPage" variant="outline-success">Update</b-btn>
+									</b-overlay>
+								</div>
+							</b-col>
+						</b-row>
+					</b-form>
+				</b-card>
+			</b-col>
+		</b-row>
 	</dashboard-layout>
 </template>
 
@@ -147,12 +190,11 @@
 			return {
 				namespace: "Setting",
 				setting: { appName: "", logoDark: [] },
-				homePage: {
-					categories: [],
-					headerBg: []
-				},
+				homePage: { categories: [], headerBg: [] },
+				studentCoursesPage: { headerBg: [] },
+				settingFormData: new FormData(),
 				homePageFormData: new FormData(),
-				settingFormData: new FormData()
+				studentCoursesPageFormData: new FormData()
 			};
 		},
 
@@ -164,6 +206,9 @@
 			homePage: {
 				categories: { required, minLength: minLength(1), maxLength: maxLength(3) },
 				headerBg: { required, minLength: minLength(1), maxLength: maxLength(1) }
+			},
+			studentCoursesPage: {
+				headerBg: { required, minLength: minLength(1), maxLength: maxLength(1) }
 			}
 		},
 
@@ -171,6 +216,7 @@
 			await this.getSetting();
 
 			this.homePage.headerBg = [{ path: `${this.API_URL}/settings-images/${this.settings.homePage.headerBg}` }];
+			this.studentCoursesPage.headerBg = [{ path: `${this.API_URL}/settings-images/${this.settings.studentCoursesPage.headerBg}` }];
 			this.setting.appName = this.settings.appName;
 			this.setting.logoDark = [{ path: `${this.API_URL}/settings-images/${this.settings.logoDark}` }];
 
@@ -220,6 +266,25 @@
 				this.homePage.headerBg = [];
 
 				this.homePageFormData.delete("headerBg");
+
+				done();
+				// var r = confirm("remove header image");
+
+				// if (r == true) return done();
+			},
+
+			uploadStudentCoursesPageHeaderBg(formData, _index, fileList) {
+				this.studentCoursesPage.headerBg = fileList;
+
+				formData.forEach((file) => {
+					this.studentCoursesPageFormData.append("headerBg", file);
+				});
+			},
+
+			beforeRemoveStudentCoursesPageHeaderBg(_index, done) {
+				this.studentCoursesPage.headerBg = [];
+
+				this.studentCoursesPageFormData.delete("headerBg");
 
 				done();
 				// var r = confirm("remove header image");
@@ -287,6 +352,28 @@
 					let data = { homePage: this.homePageFormData, config };
 
 					let res = await this.$store.dispatch(`${this.namespace}/updateHomePage`, data);
+
+					this.$showToast(res.msg);
+				} catch (error) {
+					this.$showToast(error.msg);
+				} finally {
+					this.isLoading = false;
+				}
+			},
+
+			async handleSaveStudentCoursesPage() {
+				this.$v.studentCoursesPage.$touch();
+
+				if (this.$v.studentCoursesPage.$invalid) return;
+
+				try {
+					this.isLoading = true;
+
+					let config = { headers: { "Content-Type": "multipart/form-data" } };
+
+					let data = { studentCoursesPage: this.studentCoursesPageFormData, config };
+
+					let res = await this.$store.dispatch(`${this.namespace}/updateStudentCoursesPage`, data);
 
 					this.$showToast(res.msg);
 				} catch (error) {

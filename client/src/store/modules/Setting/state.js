@@ -1,6 +1,6 @@
 export default {
 	prefix: "settings",
-	settingsData: { appName: "", homePage: { categories: [] } },
-	settings: { appName: "", logoDark: "" },
+	settingsData: { appName: "", homePage: { categories: [] }, studentCoursesPage: { headerBg: "" } },
+	settings: { appName: "", logoDark: "", homePage: { headerBg: "" }, studentCoursesPage: { headerBg: "" } },
 	errors: {}
 };

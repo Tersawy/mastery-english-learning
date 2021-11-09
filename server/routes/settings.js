@@ -14,4 +14,6 @@ router.put("/", auth, allowedFor(ADMIN, OWNER), SettingController.updateSettings
 
 router.put("/home-page", auth, allowedFor(ADMIN, OWNER), SettingController.updateHomePage);
 
+router.put("/student-courses-page", auth, allowedFor(ADMIN, OWNER), SettingController.updateStudentCoursesPage);
+
 module.exports = router;
