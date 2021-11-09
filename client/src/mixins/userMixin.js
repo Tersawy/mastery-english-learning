@@ -48,7 +48,11 @@ export default {
 		},
 
 		appLogo() {
-			return `${this.API_URL}/settings-images/${this.$store.state.Setting.settings.logoDark}`;
+			return `${this.API_URL}/settings-images/${this.settings.logoDark}`;
+		},
+
+		settings() {
+			return this.$store.state.Setting.settings;
 		}
 	},
 
