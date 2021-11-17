@@ -10,8 +10,8 @@
 							<b-input-group>
 								<b-form-input placeholder="What do you want to learn ?" class="py-4 border-0 shadow-none"></b-form-input>
 								<b-input-group-append>
-									<b-button :class="`border${iconHovered ? '-danger bg-danger' : '-white bg-white'}`" v-b-hover="(v) => (iconHovered = v)">
-										<b-icon icon="search" scale="1.2" :variant="iconHovered ? 'white' : 'danger'"></b-icon>
+									<b-button :class="`border${iconHovered ? '-primary bg-primary' : '-white bg-white'}`" style="z-index: auto" v-b-hover="(v) => (iconHovered = v)">
+										<b-icon icon="search" scale="1.2" :variant="iconHovered ? 'white' : 'primary'"></b-icon>
 									</b-button>
 								</b-input-group-append>
 							</b-input-group>
