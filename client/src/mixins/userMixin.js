@@ -35,6 +35,10 @@ export default {
 			return process.env.VUE_APP_API_URL;
 		},
 
+		SERVER_URL() {
+			return process.env.VUE_APP_SERVER_URL;
+		},
+
 		lecturesURL() {
 			return process.env.VUE_APP_API_URL + "/lectures";
 		},
