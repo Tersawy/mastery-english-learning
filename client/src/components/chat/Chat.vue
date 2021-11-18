@@ -289,6 +289,7 @@
 		position: fixed;
 		bottom: 20px;
 		right: 20px;
+		z-index: 1000;
 		.chat__icon {
 			display: flex;
 			align-items: center;
