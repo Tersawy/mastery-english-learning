@@ -58,7 +58,7 @@ exports.myCourses = async function(req, res) {
 
 	let myCourses = me.courses.map(id => mongoose.Types.ObjectId(id));
 
-	let query = { _id: { $in: myCourses } };
+	let query = { _id: { $in: myCourses }, deleted_at: null };
  
 	const aggregate = [
 		{ $match: query },
