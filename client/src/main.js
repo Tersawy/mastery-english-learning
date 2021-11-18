@@ -70,6 +70,10 @@ import "@/filters";
 
 Vue.config.productionTip = false;
 
+import io from "socket.io-client";
+
+Vue.prototype.$socket = io.connect(`${process.env.VUE_APP_SERVER_URL}?token=${sessionStorage.getItem("token")}`);
+
 new Vue({
 	router,
 	store,

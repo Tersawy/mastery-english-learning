@@ -37,8 +37,9 @@ const userSchema = new Schema(
 		password: { type: String, required: [true, "Password is required"] },
 		type: { type: Number, default: STUDENT },
 		image: { type: String, default: "empty.jpg" },
-		courses: [{ type: "ObjectId", ref: "Course" }], // for students only
-		isActive: { type: Boolean , default: false},
+		courses: [{ type: "ObjectId", ref: "Course" }],
+		isActive: { type: Boolean, default: false },
+		isOnline: { type: Boolean, default: false },
 		remmemberToken: { type: String, default: null },
 		expiresToken: { type: Date, default: Date.now },
 	},

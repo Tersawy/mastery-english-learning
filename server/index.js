@@ -20,14 +20,12 @@ const app = express();
 
 const fs = require("fs");
 
-const https = require("https");
-
 const options = {
 	key: fs.readFileSync("./file.pem"),
 	cert: fs.readFileSync("./file.crt"),
 };
 
-const server = https.createServer(options, app);
+const HTTPS = require("https").createServer(options, app);
 
 const cors = require("cors");
 
@@ -43,13 +41,19 @@ app.use(fileUpload({ useTempFiles: true, uploadTimeout: 0, parseNested: true }))
 
 require("express-async-errors");
 
+require("./database/config");
+
+const io = require("socket.io")(HTTPS, {
+	cors: { methods: ["GET", "PATCH", "POST", "PUT"], origin: true /* accept from any domain */ },
+});
+
+require("./ws/connection")(io);
+
 const handleError = require("./helpers/handleError");
 
 if (process.env.NODE_ENV == "development") {
 	require("dotenv").config();
 }
-
-require("./database/config");
 
 // app.post("/api/v1/upload", (req, res) => {
 // 	console.log(req.files);
@@ -73,6 +77,7 @@ app.use("/api/v1/instructors", require("./routes/instructors"));
 app.use("/api/v1/admins", require("./routes/admins"));
 app.use("/api/v1/pages", require("./routes/pages"));
 app.use("/api/v1/settings", require("./routes/settings"));
+app.use("/api/v1/chat", require("./routes/chat"));
 
 app.get(/.*/, (req, res) => {
 	res.sendFile(__dirname + "/public/dist/index.html");
@@ -84,7 +89,59 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
+HTTPS.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", `Server Listened on PORT ${PORT}`));
+
+// let settings = require("./test.json");ظ
+// settings.username = "sobhy";
+// console.log(fs)
+// fs.writeFileSync("./test.json", JSON.stringify(settings))
+// fs.closeSync(2)
+// fs.open(fs.readFileSync("./test.json"), (err, b, c, d, e, f) => {
+// if (err) {
+// 	return console.log(err.message)
+// }
+// console.log(a, b, c, d, e, f)
+// })
+
+// mkdir -p public/audios
+// mkdir -p public/images/courses/thumbnails
+// mkdir -p public/images/settings
+// mkdir -p public/images/users
+// mkdir -p public/videos/courses/lectures
+
+// const Lecture = require("@models/Lecture");
+// const Section = require("@models/Section");
+
+// const mongoose = require("mongoose");
+
+// const { MongoClient } = require("mongodb")
+
+// let client = new MongoClient(`${process.env.DB_URL}/${process.env.DB_NAME}`);
+
+// client.connect().then(async () => {
+// 		let db = client.db("masteryEnglishLearning");
+
+// 		let sectionCollection = db.collection("coursesections");
+
+// 		let cursor = await sectionCollection.find();
+
+// 		if (await cursor.count() === 0) {
+// 			return console.log("No Sections found");
+// 		}
+
+// 		await cursor.forEach(async doc => {
+// 			// if (doc.lectures && doc.lectures.length) {
+// 			// 	await doc.lectures.forEach(async lecture => {
+// 			// 		await new Lecture({ ...lecture, section: doc._id }).save();
+// 			// 	})
+// 			// }
+// 			delete doc.lectures
+// 			await new Section(doc).save()
+// 		});
+// })
+// Section.find().then(sections => {
+// 	console.log(sections)
+// })
 
 // const Category = require("./Models/Category");
 
