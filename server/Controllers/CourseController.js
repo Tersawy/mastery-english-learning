@@ -1,5 +1,7 @@
 const Course = require("../Models/Course");
 
+const User = require("../Models/User");
+
 const mongoose = require("mongoose");
 
 const path = require("path");
@@ -159,11 +161,11 @@ exports.create = (req, res) => {
 
 		course = new Course(course);
 
-		course.save((err) => {
-			if (err) return handleError(err, (error) => res.status(error.status).json(error));
+		let userUpdate = User.updateOne({ _id: me._id }, { $push: { courses: course._id } });
 
-			res.status(200).json({ status: 200, msg: "Course has been created successfully" });
-		});
+		course = course.save();
+
+		Promise.all([userUpdate, course]).then(() => res.json({ msg: "Course has been created successfully" })).catch(err => handleError(err, (error) => res.status(error.status).json(error)));
 	});
 };
 
