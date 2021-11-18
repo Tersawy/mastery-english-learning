@@ -25,6 +25,10 @@ const options = {
 	cert: fs.readFileSync("./file.crt"),
 };
 
+if (process.env.NODE_ENV == "development") {
+	require("dotenv").config();
+}
+
 const HTTPS = require("https").createServer(options, app);
 
 const cors = require("cors");
@@ -50,10 +54,6 @@ const io = require("socket.io")(HTTPS, {
 require("./ws/connection")(io);
 
 const handleError = require("./helpers/handleError");
-
-if (process.env.NODE_ENV == "development") {
-	require("dotenv").config();
-}
 
 // app.post("/api/v1/upload", (req, res) => {
 // 	console.log(req.files);
