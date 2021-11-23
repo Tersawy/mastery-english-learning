@@ -1,0 +1,100 @@
+const User = require("../../Models/User");
+
+const bcrypt = require("bcrypt");
+const { OWNER, ADMIN, INSTRUCTOR, STUDENT } = require("../../helpers/constants");
+
+module.exports = {
+	model: User,
+	data: [
+		{
+			username: "owner",
+			fullname: "owner owner",
+			phone: "01016205287",
+			email: "owner@gmail.com",
+			password: bcrypt.hashSync("123123123", 10),
+			isOwner: true,
+			type: OWNER,
+			isActive: true,
+		},
+		{
+			username: "admin",
+			fullname: "admin admin",
+			phone: "010162052871",
+			email: "admin@gmail.com",
+			type: ADMIN,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "instructor",
+			fullname: "instructor instructor",
+			phone: "010162052872",
+			email: "instructor@gmail.com",
+			type: INSTRUCTOR,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "student",
+			fullname: "student student",
+			phone: "010162052873",
+			email: "student@gmail.com",
+			type: STUDENT,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "admin1",
+			fullname: "admin admin",
+			phone: "010162052870",
+			email: "admin1@gmail.com",
+			type: ADMIN,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "instructor1",
+			fullname: "instructor instructor",
+			phone: "010162052874",
+			email: "instructor1@gmail.com",
+			type: INSTRUCTOR,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "instructor2",
+			fullname: "instructor instructor",
+			phone: "010162052875",
+			email: "instructor2@gmail.com",
+			type: INSTRUCTOR,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "instructor3",
+			fullname: "instructor instructor",
+			phone: "010162052876",
+			email: "instructor3@gmail.com",
+			type: INSTRUCTOR,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "student1",
+			fullname: "student student",
+			phone: "010162052877",
+			email: "student1@gmail.com",
+			type: STUDENT,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "student2",
+			fullname: "student student",
+			phone: "010162052878",
+			email: "student2@gmail.com",
+			type: STUDENT,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+		{
+			username: "student3",
+			fullname: "student student",
+			phone: "010162052879",
+			email: "student3@gmail.com",
+			type: STUDENT,
+			password: bcrypt.hashSync("123123123", 10),
+		},
+	],
+};
