@@ -1,6 +1,6 @@
 import api from "@/plugins/api";
 
-const all = ({ commit, state }, queries = "") => {
+const all = ({ commit, state }, queries = "?page=1&per_page=10&search=&sort_by=createdAt&sort_dir=desc") => {
 	api("get", state.prefix + queries, (err, data) => {
 		if (err) {
 			if (err.status != 401) {

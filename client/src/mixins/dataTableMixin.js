@@ -31,7 +31,7 @@ export default {
 		},
 
 		dirSort() {
-			return this.sortDesc ? "desc" : "asc";
+			return this.sortDesc || "desc";
 		},
 
 		fieldSort() {
