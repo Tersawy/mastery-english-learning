@@ -25,13 +25,13 @@
 		<template #default="{ ok }">
 			<b-form @submit.prevent="addQuestion">
 				<!-- -------------Quiz pass rate------------- -->
-				<b-form-group label="Pass rate" label-for="minimumPassRate">
+				<b-form-group label="Pass rate" label-for="minimumPassRate" v-if="!lectureQuiz">
 					<b-form-spinbutton id="minimumPassRate" v-model="quiz.minimumPassRate" min="1" max="100"></b-form-spinbutton>
 					<input-error :vuelidate="$v.quiz.minimumPassRate" field="choices" :namespace="namespace" />
 				</b-form-group>
-				<hr class="my-4" />
+				<hr class="my-4" v-if="!lectureQuiz" />
 
-				<h4 class="text-center">
+				<h4 class="text-center" v-if="!lectureQuiz">
 					<span class="shadow-sm py-3 px-4 d-inline-block rounded-lg border">Questions</span>
 				</h4>
 
