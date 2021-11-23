@@ -215,7 +215,6 @@
 			},
 
 			async loadMessages(load) {
-				console.log(load, this.currentContact.messages.hasMoreMessages)
 				if (!load || !this.currentContact.messages.hasMoreMessages) return;
 
 				this.isLoadMessages = true;
