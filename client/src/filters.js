@@ -8,6 +8,16 @@ Vue.filter("strLength", function (value, count = 10) {
 	return value.toString().slice(0, count) + " ...";
 });
 
+Vue.filter("wordtruncate", function (value, count = 8) {
+	if (!value) return "";
+
+	value = value.toString().replace(/\s+/g, " ").trim().split(" ");
+
+	if (value.length <= count) return value;
+
+	return value.slice(0, count).join(" ") + " ...";
+});
+
 Vue.filter("date", function (value) {
 	if (!value) return "";
 
