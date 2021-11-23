@@ -72,27 +72,10 @@
 		components: { DashboardLayout, ReportCard },
 		data() {
 			return {
-				students: [
-					{ name: "David", country: "Italy", img: "user1.jpg" },
-					{ name: "Muhammad", country: "Egypt", img: "user2.jpg" },
-					{ name: "Amelia", country: "France", img: "user3.jpg" },
-					{ name: "Olivia", country: "USA", img: "user4.jpg" },
-					{ name: "Amit", country: "Jaban", img: "user5.jpg" }
-					// { name: "Ashraf", country: "India", img: "user6.jpg" },
-					// { name: "Diana", country: "Malaysia", img: "user7.jpg" },
-					// { name: "Yasser", country: "Egypt", img: "user8.jpg" }
-				],
 				coursesFields: [
 					{ key: "title", lable: "Title" },
 					{ key: "status", lable: "Status" },
 					{ key: "studentsCount", lable: "Students Count" }
-				],
-				courses: [
-					{ title: "NodeJs", status: 0, studentsCount: 10 },
-					{ title: "MongoDB", status: 1, studentsCount: 40 },
-					{ title: "PHP", status: 0, studentsCount: 20 },
-					{ title: "MySQL", status: 0, studentsCount: 100 },
-					{ title: "Python", status: 1, studentsCount: 120 }
 				]
 			};
 		},
