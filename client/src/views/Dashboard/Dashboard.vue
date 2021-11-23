@@ -9,13 +9,13 @@
 
 		<b-row cols="1" cols-md="3">
 			<b-col class="mb-4 mb-lg-0">
-				<report-card name="Number of Courses" icon="collection" number="17" />
+				<report-card name="Number of Courses" icon="collection" :number="dashboardData.coursesCount" />
 			</b-col>
 			<b-col class="mb-4 mb-lg-0">
-				<report-card name="Number of Students" icon="people" number="17" />
+				<report-card name="Number of Students" icon="people" :number="dashboardData.studentsCount" />
 			</b-col>
 			<b-col>
-				<report-card name="Number of Enrollment" icon="diagram3" number="17" />
+				<report-card name="Number of Enrollment" icon="diagram3" :number="dashboardData.enrollmentCount" />
 			</b-col>
 		</b-row>
 
@@ -26,7 +26,10 @@
 						<div class="font-weight-600">Recent Courses</div>
 						<router-link to="/course" class="font-md"> View All </router-link>
 					</div>
-					<b-table :fields="coursesFields" :items="courses" hover class="mb-0">
+					<b-table :fields="coursesFields" :items="dashboardData.recentCourses" hover class="mb-0">
+						<template #cell(title)="row">
+							<span v-b-tooltip.hover="row.value">{{ row.value | wordtruncate(5) }}</span>
+						</template>
 						<template #cell(status)="row">
 							<span v-course-status="row.value"></span>
 						</template>
@@ -40,17 +43,15 @@
 					</div>
 					<table class="table table-hover mb-0">
 						<tbody>
-							<tr v-for="(student, i) in students" :key="i">
+							<tr v-for="(student, i) in dashboardData.recentStudents" :key="i">
 								<td width="60px">
 									<div class="student-img">
-										<img :src="require(`@/assets/images/user6.jpg`)" alt="" />
+										<img v-if="student.image" :src="`${userImageURL}/${student.image}`" alt="" />
 									</div>
 								</td>
-								<td>
+								<td class="d-flex align-items-center w-100">
 									<h4 class="mb-0">
-										{{ student.name }}
-										<br />
-										<span>{{ student.country }}</span>
+										{{ student.username }}
 									</h4>
 								</td>
 							</tr>
@@ -65,6 +66,8 @@
 <script>
 	import ReportCard from "@/components/dashboard/ReportCard";
 	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
+	import { asyncHandler } from "@/helpers/functions";
+
 	export default {
 		components: { DashboardLayout, ReportCard },
 		data() {
@@ -94,8 +97,22 @@
 			};
 		},
 
-		mounted() {
-			this.$store.commit("setLoader", false);
+		computed: {
+			dashboardData() {
+				return this.$store.state.Page.dashboard;
+			}
+		},
+
+		async mounted() {
+			asyncHandler(this.getDashboard, () => {
+				this.$store.commit("setLoader", false);
+			});
+		},
+
+		methods: {
+			getDashboard() {
+				return this.$store.dispatch("Page/getDashboard");
+			}
 		}
 	};
 </script>
@@ -119,6 +136,7 @@
 		}
 		table {
 			tr {
+				display: flex;
 				&:hover,
 				&:hover td h4 span {
 					background: lighten(#007bff, 20);
