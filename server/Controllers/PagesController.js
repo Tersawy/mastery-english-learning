@@ -1,5 +1,7 @@
-const { COURSE_APPROVED } = require("../helpers/constants");
+const { COURSE_APPROVED, STUDENT } = require("../helpers/constants");
 const Setting = require("../Models/Setting");
+const Course = require("../Models/Course");
+const User = require("../Models/User");
 
 // let homePageCached = null; // cached home page
 
@@ -48,7 +50,13 @@ exports.home = async (req, res) => {
 							pipeline: [
 								{
 									$match: {
-										$expr: { $and: [{ $eq: ["$category", "$$category"] }, { $eq: ["$status", COURSE_APPROVED] }, { $eq: ["$deleted_at", null] }] }, // match courses
+										$expr: {
+											$and: [
+												{ $eq: ["$category", "$$category"] },
+												{ $eq: ["$status", COURSE_APPROVED] },
+												{ $eq: ["$deleted_at", null] },
+											],
+										}, // match courses
 									},
 								},
 								{ $sort: { studentsCount: -1 } }, // sort courses by students count
@@ -136,4 +144,33 @@ exports.home = async (req, res) => {
 	}
 
 	res.json(homePageData);
+};
+
+exports.dashboard = async (req, res) => {
+	let recentCourses = Course.find({ deleted_at: null }, { title: 1, status: 1, studentsCount: 1 })
+		.sort({ createdAt: -1 })
+		.limit(5);
+
+	let recentStudents = User.find({ type: STUDENT, deleted_at: null }, { username: 1, image: 1 })
+		.sort({ createdAt: -1 })
+		.limit(5);
+
+	let coursesCount = Course.countDocuments({ deleted_at: null });
+
+	let studentsCount = User.countDocuments({ type: STUDENT, deleted_at: null });
+
+	let enrollmentCount = User.find({ type: STUDENT, courses: { $exists: true, $ne: [] }, deleted_at: null });
+
+	let [recentCoursesData, recentStudentsData, coursesCountData, studentsCountData, enrollmentCountData] =
+		await Promise.all([recentCourses, recentStudents, coursesCount, studentsCount, enrollmentCount]);
+
+	enrollmentCountData = enrollmentCountData.reduce((acc, curr) => acc + curr.courses.length, 0);
+
+	res.json({
+		recentCourses: recentCoursesData,
+		recentStudents: recentStudentsData,
+		coursesCount: coursesCountData,
+		studentsCount: studentsCountData,
+		enrollmentCount: enrollmentCountData,
+	});
 };
