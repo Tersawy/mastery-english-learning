@@ -36,7 +36,8 @@
 					<input-error :vuelidate="$v.lecture.description" field="description" :namespace="namespace" />
 				</b-form-group>
 
-				<div class="text-right">
+				<div class="d-flex align-items-center justify-content-end">
+					<b-form-checkbox class="mr-3" v-if="!isUpdate" v-model="stillOpen"> Still Here </b-form-checkbox>
 					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
 						<b-btn :disabled="isLoading" v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
 						<b-btn :disabled="isLoading" v-else @click="ok()" variant="outline-primary">Save</b-btn>
@@ -67,7 +68,8 @@
 					[{ color: [] }, { background: [] }],
 					// ["link", "image", "video"],
 					["clean"]
-				]
+				],
+				stillOpen: false
 			};
 		},
 
@@ -110,8 +112,16 @@
 					} else {
 						res = await this.$store.dispatch("Course/createLecture", this.lecture);
 					}
+
 					this.setGlobalSuccess(res.msg);
-					this.$bvModal.hide("lectureForm");
+
+					this.resetModal();
+
+					setTimeout(() => this.$refs.titleInput.focus(), 400);
+
+					if (!this.stillOpen || this.isUpdate) {
+						this.$bvModal.hide("lectureForm");
+					}
 				} catch (err) {
 					//
 				}

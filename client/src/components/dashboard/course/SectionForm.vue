@@ -3,7 +3,7 @@
 		:no-close-on-backdrop="isLoading"
 		:no-close-on-esc="isLoading"
 		id="sectionForm"
-		@hidden="resetModal"
+		@hidden="hideModal"
 		hide-footer
 		@ok="handleSave"
 		size="lg"
@@ -26,11 +26,12 @@
 			<b-form @submit.prevent="handleSave">
 				<!-- -------------Title------------- -->
 				<b-form-group label="Section Title" label-for="title">
-					<b-form-textarea :disabled="isLoading" id="title" v-model="section.title"></b-form-textarea>
+					<b-form-textarea :disabled="isLoading" id="title" ref="titleInput" v-model="section.title"></b-form-textarea>
 					<input-error :vuelidate="$v.section.title" field="title" :namespace="namespace" />
 				</b-form-group>
 
-				<div class="text-right">
+				<div class="d-flex align-items-center justify-content-end">
+					<b-form-checkbox class="mr-3" v-if="!isUpdate" v-model="stillOpen"> Still Here </b-form-checkbox>
 					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
 						<b-btn :disabled="isLoading" v-if="isUpdate" @click="ok()" variant="outline-success">Update</b-btn>
 						<b-btn :disabled="isLoading" v-else @click="ok()" variant="outline-primary">Save</b-btn>
@@ -50,7 +51,8 @@
 				namespace: "Course",
 				section: {
 					title: null
-				}
+				},
+				stillOpen: false
 			};
 		},
 
@@ -88,13 +90,19 @@
 						res = await this.$store.dispatch("Course/createSection", this.section);
 					}
 
-					this.$bvModal.hide("sectionForm");
-
 					this.setGlobalSuccess(res.msg);
 
-					this.$nextTick(() => {
-						this.$bvModal.show("sections");
-					});
+					this.resetModal();
+
+					if (this.$refs.titleInput) setTimeout(() => this.$refs.titleInput.focus(), 400);
+
+					if (!this.stillOpen || this.isUpdate) {
+						this.$nextTick(() => {
+							this.$bvModal.hide("sectionForm");
+
+							this.$bvModal.show("sections");
+						});
+					}
 				} catch (err) {
 					if (err) console.log(err);
 				}
@@ -116,6 +124,10 @@
 				this.removeAllErrors();
 
 				this.section.title = null;
+			},
+
+			hideModal() {
+				this.resetModal();
 
 				this.$emit("closed");
 			}
