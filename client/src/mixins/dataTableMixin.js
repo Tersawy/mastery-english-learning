@@ -11,7 +11,7 @@ export default {
 		perPage: 10,
 		page: 1,
 		sortBy: "",
-		sortDesc: false,
+		sortDesc: true,
 		search: ""
 	}),
 
