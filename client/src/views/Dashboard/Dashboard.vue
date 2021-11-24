@@ -24,7 +24,7 @@
 				<div class="recent-courses shadow-sm bg-white px-3 pb-3 rounded">
 					<div class="recent-header py-3 d-flex justify-content-between align-items-center">
 						<div class="font-weight-600">Recent Courses</div>
-						<router-link to="/course" class="font-md"> View All </router-link>
+						<router-link to="/dashboard/courses" class="font-md"> View All </router-link>
 					</div>
 					<b-table :fields="coursesFields" :items="dashboardData.recentCourses" hover class="mb-0">
 						<template #cell(title)="row">
