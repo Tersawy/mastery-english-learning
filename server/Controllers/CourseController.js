@@ -12,11 +12,12 @@ const handleError = require("../helpers/handleError");
 
 const { randomChar } = require("../helpers/functions");
 
-const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS } = require("../helpers/constants");
+const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS, STUDENT } = require("../helpers/constants");
 
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
 
 const { handleQueries } = require("../helpers/functions");
+const Lecture = require("../Models/Lecture");
 
 exports.all = async (req, res) => {
 
@@ -509,3 +510,114 @@ const uploadThumbnail = (image, callback) => {
 		callback(null, imgName);
 	});
 };
+/*
+**
+**-------------------------------------------------------------------------------------------**
+**----------------------------------- Course Detail -----------------------------------------**
+**-------------------------------------------------------------------------------------------**
+**
+*/
+exports.detail = async (req, res) => {
+	const { courseId } = req.params;
+
+	if (!courseId) throw { status: 422, msg: "Course id is required" };
+	
+	let aggregate = [
+		{ $match: { _id: mongoose.Types.ObjectId(courseId) } },
+		{ $project: { studentsCount: 1, title: 1 } },
+		{ $lookup: {
+				from: "sections",
+				as: "sections",
+				let: { courseId: "$_id" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
+					{ $lookup: { // get the number of lectures in each section
+							from: "lectures",
+							as: "lectures",
+							let: { sectionId: "$_id" },
+							pipeline: [
+								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
+								{ $project: { _id: 1 } },
+								{ $group: { _id: null, count: { $sum: 1 } } }
+							]
+					} },
+					{ $lookup: { // check if the section has quiz
+						from: "sectionquizzes",
+						as: "quiz",
+						let: { sectionId: "$_id" },
+						pipeline: [
+							{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
+							{ $project: { _id: 1 } },
+						]
+					} },
+					{ $unwind: { path: "$lectures", preserveNullAndEmptyArrays: true } },
+					{ $unwind: { path: "$quiz", preserveNullAndEmptyArrays: true } },
+					{ $project: { title: 1, lecturesCount: "$lectures.count", hasQuiz: { $toBool: { $ifNull: ["$quiz", 0] } } } }
+				]
+			}
+		},
+		{ $lookup: {
+			from: "users",
+			as: "students",
+			let: { courseId: "$_id" },
+			pipeline: [
+				{ $match: { $expr: { $and: [{ $in: ["$$courseId", "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
+				{ $project: { _id: 1, username: 1, image: 1 } },
+				{ $sort: { createdAt: -1 } },
+				{ $limit: 5 }
+			]
+		}}
+	];
+
+	let [course] = await Course.aggregate(aggregate);
+
+	if (!course) throw { status: 404, msg: "Course not found" };
+	
+	course.sectionsCount = course.sections.length;
+
+	course.lecturesCount = course.sections.reduce((pv, cv) => pv + (cv.lecturesCount || 0), 0);
+	
+	res.json(course);
+}
+
+exports.studentCourse = async (req, res) => {
+	let { courseId } = req.params;
+
+	handleQueries(req, User);
+
+	let { sort, skip, limit } = req.query;
+
+	if (!courseId) throw { status: 422, msg: "Course id is required" };
+
+	let students = await User.find({ courses: { $in: courseId }, type: STUDENT }, { _id: 1, username: 1, image: 1 }).sort(sort).skip(skip).limit(limit);
+
+	res.json(students);
+}
+
+exports.courseSectionLectures = async (req, res) => {
+	let { courseId, sectionId } = req.params;
+
+	if (!courseId) throw { status: 422, msg: "Course id is required" };
+
+	if (!sectionId) throw { status: 422, msg: "Section id is required" };
+
+	let aggregate = [
+		{ $match: { section: mongoose.Types.ObjectId(sectionId) } },
+		{ $lookup: {
+				from: "quizzes",
+				as: "quiz",
+				let: { lectureId: "$lecture" },
+				pipeline: [
+					{ $match: { $expr: { $eq: ["$lecture", "$$lectureId"] } } },
+					{ $project: { _id: 1 } },
+					{ $group: { _id: null, count: { $sum: 1 } } }
+				]
+		} },
+		{ $unwind: { path: "$quiz", preserveNullAndEmptyArrays: true } },
+		{ $project: { title: 1, hasQuiz: { $toBool: { $ifNull: ["$quiz", 0] } } } }
+	];
+
+	let lectures = await Lecture.aggregate(aggregate);
+
+	res.json(lectures);
+}
