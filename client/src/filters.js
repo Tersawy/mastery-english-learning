@@ -13,7 +13,7 @@ Vue.filter("wordtruncate", function (value, count = 8) {
 
 	value = value.toString().replace(/\s+/g, " ").trim().split(" ");
 
-	if (value.length <= count) return value;
+	if (value.length <= count) return value.join(" ");
 
 	return value.slice(0, count).join(" ") + " ...";
 });
