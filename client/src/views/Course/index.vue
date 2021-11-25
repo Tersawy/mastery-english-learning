@@ -114,9 +114,9 @@
 
 					this.$swal
 						.fire({
-							title: "Congratulations on the new course",
+							title: "Welcome to the new course",
 							icon: "success",
-							confirmButtonText: "Start to learning"
+							confirmButtonText: "Start learning"
 						})
 						.then((result) => {
 							if (result.isConfirmed) {
