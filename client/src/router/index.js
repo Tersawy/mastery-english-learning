@@ -70,9 +70,14 @@ const routes = [
 	},
 	{
 		path: "/dashboard/courses/:courseId",
-		name: "DashboardShowCourse",
-		// component: require("@/views/Dashboard/Course/show").default,
-		component: () => import(/* webpackChunkName: "CourseShow" */ "@/views/Dashboard/Course/show"),
+		name: "DashboardCourseDetail",
+		component: () => import(/* webpackChunkName: "DashboardCourseDetail" */ "@/views/Dashboard/Course/detail"),
+		meta: { dashboard: true, auth: true, only: [OWNER, ADMIN, INSTRUCTOR] }
+	},
+	{
+		path: "/dashboard/courses/:courseId/review",
+		name: "DashboardReviewCourse",
+		component: () => import(/* webpackChunkName: "CourseReview" */ "@/views/Dashboard/Course/show"),
 		meta: { dashboard: true, auth: true, only: [OWNER, ADMIN, INSTRUCTOR] }
 	},
 	{
