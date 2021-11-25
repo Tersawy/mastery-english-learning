@@ -17,6 +17,7 @@ const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS, STUDENT } = require("../
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
 
 const { handleQueries } = require("../helpers/functions");
+
 const Lecture = require("../Models/Lecture");
 
 exports.all = async (req, res) => {
