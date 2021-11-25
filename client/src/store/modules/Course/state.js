@@ -10,5 +10,13 @@ export default {
 	oneLecture: { quiz: {} },
 	oneQuiz: {},
 	oneQuestion: {},
-	errors: {}
+	errors: {},
+	detail: {
+		sectionsCount: 7,
+		lecturesCount: 32,
+		studentsCount: 12,
+		sections: [],
+		students: []
+	},
+	oneSectionDetail: { lectures: [], quiz: {} }
 };
