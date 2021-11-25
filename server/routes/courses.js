@@ -14,6 +14,12 @@ router.post("/", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.cr
 
 router.get("/:courseId", getAuth, CourseController.show);
 
+router.get("/:courseId/detail", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.detail);
+
+router.get("/:courseId/detail/students", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.studentCourse);
+
+router.get("/:courseId/detail/sections/:sectionId/lectures", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.courseSectionLectures);
+
 router.get("/:courseId/start", auth, allowedFor(STUDENT), CourseController.start);
 
 router.get("/:courseId/edit", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.edit);
