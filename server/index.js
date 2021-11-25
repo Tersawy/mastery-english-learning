@@ -20,6 +20,7 @@ const app = express();
 
 const fs = require("fs");
 
+// openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout file.pem -out file.crt
 const options = {
 	key: fs.readFileSync("./file.pem"),
 	cert: fs.readFileSync("./file.crt"),
