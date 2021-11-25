@@ -31,7 +31,7 @@
 
 		<b-modal id="dropdownActionModal" hide-header hide-footer body-class="p-0" centered size="sm">
 			<ul class="m-0 p-0 list-unstyled">
-				<b-dropdown-item link-class="py-2 d-flex align-items-center" :to="{ name: `DashboardShowCourse`, params: { courseId: course._id } }">
+				<b-dropdown-item link-class="py-2 d-flex align-items-center" :to="{ name: `DashboardCourseDetail`, params: { courseId: course._id } }">
 					<b-icon icon="eye" scale="0.8"></b-icon>
 					<span class="mx-2 text-muted">Show Details</span>
 				</b-dropdown-item>
