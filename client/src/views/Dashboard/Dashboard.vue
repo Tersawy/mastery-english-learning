@@ -28,7 +28,9 @@
 					</div>
 					<b-table :fields="coursesFields" :items="dashboardData.recentCourses" hover class="mb-0">
 						<template #cell(title)="row">
-							<span v-b-tooltip.hover="row.value">{{ row.value | wordtruncate(5) }}</span>
+							<router-link :to="{ name: 'DashboardCourseDetail', params: { courseId: row.item._id } }">
+								<span v-b-tooltip.hover="row.value">{{ row.value | wordtruncate(5) }}</span>
+							</router-link>
 						</template>
 						<template #cell(status)="row">
 							<span v-course-status="row.value"></span>
