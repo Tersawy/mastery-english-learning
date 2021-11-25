@@ -23,13 +23,13 @@
 
 		<b-row class="mt-lg-30px">
 			<b-col lg="8" md="12" order="2" order-lg="1" class="mt-30px mt-lg-0">
-				<CourseSections />
+				<CourseDetailSections />
 			</b-col>
 			<b-col lg="4" md="12" order="1" order-lg="2">
-				<CourseStudents />
+				<CourseDetailStudents />
 			</b-col>
 			<b-col cols="12" class="mt-30px" order="3">
-				<CourseLectures />
+				<CourseDetailLectures />
 			</b-col>
 		</b-row>
 	</dashboard-layout>
@@ -38,13 +38,12 @@
 <script>
 	import ReportCard from "@/components/dashboard/ReportCard";
 	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
-	import { COURSE_APPROVED } from "@/helpers/constants";
 	import { asyncHandler } from "@/helpers/functions";
-	import CourseStudents from "@/components/dashboard/course/CourseStudents.vue";
-	import CourseSections from "@/components/dashboard/course/CourseSections.vue";
-	import CourseLectures from "@/components/dashboard/course/CourseLectures.vue";
+	import CourseDetailStudents from "@/components/dashboard/course/CourseDetailStudents.vue";
+	import CourseDetailSections from "@/components/dashboard/course/CourseDetailSections.vue";
+	import CourseDetailLectures from "@/components/dashboard/course/CourseDetailLectures.vue";
 	export default {
-		components: { DashboardLayout, ReportCard, CourseStudents, CourseSections, CourseLectures },
+		components: { DashboardLayout, ReportCard, CourseDetailStudents, CourseDetailSections, CourseDetailLectures },
 
 		data() {
 			return {
