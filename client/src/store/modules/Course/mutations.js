@@ -1,5 +1,6 @@
 import sectionMutations from "./Section/mutations";
 import lectureMutations from "./Lecture/mutations";
+import detailMutations from "./Detail/mutations";
 
 export default {
 	setOne: (state, data) => {
@@ -25,5 +26,7 @@ export default {
 
 	...sectionMutations,
 
-	...lectureMutations
+	...lectureMutations,
+
+	...detailMutations
 };

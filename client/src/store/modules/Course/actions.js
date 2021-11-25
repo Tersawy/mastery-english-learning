@@ -2,6 +2,7 @@ import api from "@/plugins/api";
 
 import sectionActions from "./Section/actions";
 import lectureActions from "./Lecture/actions";
+import detailActions from "./Detail/actions";
 
 export default {
 	create({ state, commit }, { course, config }) {
@@ -91,5 +92,6 @@ export default {
 	},
 
 	...sectionActions,
-	...lectureActions
+	...lectureActions,
+	...detailActions
 };
