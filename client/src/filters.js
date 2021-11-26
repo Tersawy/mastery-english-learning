@@ -30,6 +30,20 @@ Vue.filter("date", function (value) {
 	return `${dayStr}, ${fullDate}`;
 });
 
+Vue.filter("dateTime", function (value) {
+	if (!value) return "";
+
+	let date = new Date(value);
+
+	let dayStr = date.toDateString().split(" ")[0];
+
+	let fullDate = date.toLocaleDateString();
+
+	let time = date.toLocaleTimeString();
+
+	return `${dayStr}, ${fullDate} ${time}`;
+});
+
 Vue.filter("relation", function (value, key) {
 	if (!value) return "Unknown";
 
