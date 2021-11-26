@@ -1,6 +1,7 @@
 export default {
 	setCourseDetail(state, data) {
 		state.detail = data;
+		state.oneSectionDetail = { lectures: [], quiz: { studentsAnswers: [] } };
 	},
 
 	setCourseDetailStudents(state, data) {
