@@ -18,11 +18,17 @@ let areTheyEqual = (a, b) => {
 
 	if (!a && !b) return true;
 
-	if ((!a || !b) && ( a || b )) return false;
-	
+	if ((!a || !b) && (a || b)) return false;
+
 	if (typeof a === "string") {
-		a = a.toString().replace(/[^a-zA-Z0-9]/g, "").toLocaleLowerCase();
-		b = b.toString().replace(/[^a-zA-Z0-9]/g, "").toLocaleLowerCase();
+		a = a
+			.toString()
+			.replace(/[^a-zA-Z0-9]/g, "")
+			.toLocaleLowerCase();
+		b = b
+			.toString()
+			.replace(/[^a-zA-Z0-9]/g, "")
+			.toLocaleLowerCase();
 		return a === b;
 	}
 
@@ -74,6 +80,8 @@ exports.answer = async (req, res) => {
 
 	quizAnswer = quizAnswer || new SectionQuizAnswer({ quiz: quizId, student: me._id });
 
+	quizAnswer.updatedAt = Date.now();
+
 	if (audiosAnswers) {
 		let newAnswer = await handleAudioAnswer(audiosAnswers);
 
@@ -102,7 +110,7 @@ exports.answer = async (req, res) => {
 
 			return answer;
 		}
-		
+
 		let isRightAnswer = areTheyEqual(answer.value, question.answer);
 
 		let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
