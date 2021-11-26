@@ -13,6 +13,36 @@ const { unlinkSync, existsSync } = require("fs");
 
 const audiosDir = path.resolve(__dirname, "../public/audios");
 
+let areTheyEqual = (a, b) => {
+	if (typeof a !== typeof b) return false;
+
+	if (!a && !b) return true;
+
+	if ((!a || !b) && ( a || b )) return false;
+	
+	if (typeof a === "string") {
+		a = a.toString().replace(/[^a-zA-Z0-9]/g, "").toLocaleLowerCase();
+		b = b.toString().replace(/[^a-zA-Z0-9]/g, "").toLocaleLowerCase();
+		return a === b;
+	}
+
+	if (Array.isArray(a)) {
+		if (a.length !== b.length) return false;
+
+		for (let i = 0; i < a.length; i++) {
+			if (!areTheyEqual(a[i], b[i])) return false;
+		}
+		return true;
+	}
+
+	if (typeof a === "object") {
+		for (let key in a) {
+			if (!areTheyEqual(a[key], b[key])) return false;
+		}
+		return true;
+	}
+};
+
 exports.answer = async (req, res) => {
 	const { courseId, quizId } = req.params;
 
@@ -63,27 +93,33 @@ exports.answer = async (req, res) => {
 	quizAnswer.answers = quizAnswer.answers.map((answer) => {
 		let question = quiz.questions.find((q) => q._id.toString() == answer.question.toString());
 
-		let isRightAnswer =
-			JSON.stringify(question.answer).toString().toLocaleLowerCase() ==
-			JSON.stringify(answer.value).toString().toLocaleLowerCase();
+		let isEssay = question.type == QUESTION_ESSAY;
+
+		if (isEssay) {
+			rightAnswersCount += 1;
+
+			answer.isCorrected = true;
+
+			return answer;
+		}
+		
+		let isRightAnswer = areTheyEqual(answer.value, question.answer);
 
 		let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
 
 		if (isTrueOrFalse) {
-			isRightAnswer = String(question.answer).toLocaleLowerCase() == String(answer.value).toLocaleLowerCase();
+			isRightAnswer = areTheyEqual(answer.value, question.answer);
 
 			answer.value = String(answer.value) === "true" ? true : false;
 		}
 
-		let isEssay = question.type == QUESTION_ESSAY;
-
-		answer.isTrue = !isEssay && isRightAnswer;
+		answer.isTrue = isRightAnswer;
 
 		if (answer.isTrue) {
 			rightAnswersCount += 1;
 		}
 
-		answer.isCorrected = !isEssay;
+		answer.isCorrected = true;
 
 		return answer;
 	});
