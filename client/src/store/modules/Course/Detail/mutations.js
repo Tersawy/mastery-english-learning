@@ -19,7 +19,7 @@ export default {
 		state.oneSectionDetail = { ...section, quiz: {}, lectures };
 	},
 
-	setCourseDetailSectionQuiz({ state }, { quiz, sectionId }) {
+	setCourseDetailSectionQuiz(state, { quiz, sectionId }) {
 		let section = state.detail.sections.find((section) => section._id == sectionId);
 
 		if (!section) {
@@ -27,6 +27,12 @@ export default {
 			return;
 		}
 
-		state.oneSectionDetail = { ...section, quiz };
+		state.oneSectionDetail = { ...section, lectures: [], quiz };
+	},
+
+	setCourseDetailSectionQuizStudentsAnswers(state, { quizId, studentsAnswers }) {
+		if (!state.oneSectionDetail.quiz._id == quizId) return;
+
+		state.oneSectionDetail.quiz.studentsAnswers = studentsAnswers;
 	}
 };
