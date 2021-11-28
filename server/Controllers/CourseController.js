@@ -1,24 +1,25 @@
-const Course = require("../Models/Course");
-
-const User = require("../Models/User");
-
 const mongoose = require("mongoose");
 
 const path = require("path");
 
 const fs = require("fs");
 
-const handleError = require("../helpers/handleError");
+const Course = require("../Models/Course");
 
-const { randomChar } = require("../helpers/functions");
+const User = require("../Models/User");
+
+const Lecture = require("../Models/Lecture");
+
+const SectionQuiz = require("../Models/SectionQuiz");
 
 const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS, STUDENT } = require("../helpers/constants");
 
+const { randomChar, handleQueries } = require("../helpers/functions");
+
+const handleError = require("../helpers/handleError");
+const SectionQuizAnswer = require("../Models/SectionQuizAnswer");
+
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
-
-const { handleQueries } = require("../helpers/functions");
-
-const Lecture = require("../Models/Lecture");
 
 exports.all = async (req, res) => {
 
@@ -621,4 +622,81 @@ exports.courseSectionLectures = async (req, res) => {
 	let lectures = await Lecture.aggregate(aggregate);
 
 	res.json(lectures);
+}
+
+exports.courseSectionQuiz = async (req, res) => {
+	let { courseId, sectionId } = req.params;
+
+	handleQueries(req, User);
+
+	let { skip, limit } = req.query;
+
+	if (!courseId) throw { status: 422, msg: "Course id is required" };
+
+	if (!sectionId) throw { status: 422, msg: "Section id is required" };
+
+	let aggregate = [
+		{ $match: { section: mongoose.Types.ObjectId(sectionId) } },
+		{ $project: { minimumPassRate: 1 } },
+		{ $lookup: {
+			from: "users",
+			as: "studentsAnswers",
+			let: { quizId: "$_id" },
+			pipeline: [
+				{ $match: { $expr: { $and: [{ $in: [mongoose.Types.ObjectId(courseId), "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
+				{ $project: { username: 1 } },
+				{ $sort: { createdAt: -1 } },
+				{ $skip: skip },
+				{ $limit: limit },
+				{ $lookup: {
+					from: "sectionquizanswers",
+					as: "quizAnswer",
+					let: { studentId: "$_id", quizId: "$$quizId" },
+					pipeline: [
+						{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", "$$quizId"] }] } } },
+						{ $project: { passRate: 1, attempts: 1, lastAttemptAt: "$updatedAt" } },
+					]
+				} },
+				{ $unwind: { path: "$quizAnswer", preserveNullAndEmptyArrays: true } },
+			]
+		} },
+	];
+
+	let [quiz] = await SectionQuiz.aggregate(aggregate);
+
+	res.json(quiz);
+}
+
+exports.courseSectionQuizStudentAnswers = async (req, res) => {
+	let { courseId, quizId } = req.params;
+
+	handleQueries(req, User);
+
+	let { skip, limit } = req.query;
+
+	if (!courseId) throw { status: 422, msg: "Course id is required" };
+
+	if (!quizId) throw { status: 422, msg: "Quiz id is required" };
+
+	let aggregate = [
+		{ $match: { $expr: { $and: [{ $in: [mongoose.Types.ObjectId(courseId), "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
+		{ $project: { username: 1 } },
+		{ $sort: { createdAt: -1 } },
+		{ $skip: skip },
+		{ $limit: limit },
+		{ $lookup: {
+			from: "sectionquizanswers",
+			as: "quizAnswer",
+			let: { studentId: "$_id" },
+			pipeline: [
+				{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", quizId] }] } } },
+				{ $project: { passRate: 1, attempts: 1, lastAttemptAt: "$updatedAt" } },
+			]
+		} },
+		{ $unwind: { path: "$quizAnswer", preserveNullAndEmptyArrays: true } },
+	];
+
+	let studentsAnswers = await User.aggregate(aggregate);
+
+	res.json(studentsAnswers);
 }
