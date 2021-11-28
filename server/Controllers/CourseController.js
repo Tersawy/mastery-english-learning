@@ -17,7 +17,6 @@ const { COURSE_APPROVED, COURSE_PENDING, COURSE_STATUS, STUDENT } = require("../
 const { randomChar, handleQueries } = require("../helpers/functions");
 
 const handleError = require("../helpers/handleError");
-const SectionQuizAnswer = require("../Models/SectionQuizAnswer");
 
 const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
 
