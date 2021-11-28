@@ -25,9 +25,9 @@
 			</template>
 
 			<template #cell(actions)="row">
-				<span class="w-50 d-inline-block text-right">
-					<b-btn size="sm" class="mr-3" v-if="row.item.hasQuiz" variant="outline-success">Quiz</b-btn>
-				</span>
+				<b-overlay :show="row.item.quizBtnLoading" rounded opacity="0.6" size="sm" spinner-small spinner-variant="success">
+					<b-btn size="sm" v-if="row.item.hasQuiz" variant="outline-success" @click="getQuiz(row.item)">Quiz</b-btn>
+				</b-overlay>
 				<!-- <span class="w-50 d-inline-block text-left">
 					<b-overlay :show="row.item.lecturesBtnLoading" rounded opacity="0.6" size="sm" spinner-small spinner-variant="blue" class="d-inline-block">
 						<b-btn size="sm" :disabled="row.item.lecturesBtnLoading" @click="getLectures(row.item)" v-if="row.item.lecturesCount" variant="outline-blue">
@@ -67,7 +67,7 @@
 					{ key: "title", label: "Title", tdClass: "text-left", thClass: "text-left" },
 					{ key: "lecturesCount", label: "Lectures Count" },
 					{ key: "hasQuiz", label: "Quiz", tdClass: "align-middle text-center", thClass: "text-center" },
-					{ key: "actions", label: "Actions", tdClass: "align-middle text-left", thClass: "text-center" }
+					{ key: "actions", label: "Actions", thClass: "text-center" }
 				]
 			};
 		},
@@ -81,6 +81,7 @@
 				return this.course.sections.map((section) => ({
 					...section,
 					lecturesBtnLoading: false,
+					quizBtnLoading: false,
 					_cellVariants: {
 						hasQuiz: section.hasQuiz ? "" : "warning",
 						lecturesCount: +section.lecturesCount > 0 ? "" : "danger"
@@ -101,16 +102,15 @@
 				}
 			},
 
-			async showQuiz(section) {
+			async getQuiz(section) {
+				section.quizBtnLoading = true;
 				try {
-					await this.$store.dispatch("Quiz/getQuizDetail", section.quizId);
+					await this.$store.dispatch("Course/getCourseDetailSectionQuiz", section._id);
 				} catch (e) {
-					console.log(e);
 					//
 				}
+				section.quizBtnLoading = false;
 			}
 		}
 	};
 </script>
-
-<style lang="scss" scoped></style>
