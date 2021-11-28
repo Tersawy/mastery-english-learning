@@ -8,7 +8,7 @@ const Answer = require("../Models/QuizAnswer");
 
 const path = require("path");
 
-const { randomChar } = require("../helpers/functions");
+const { randomChar, areTheyEqual } = require("../helpers/functions");
 
 const PythonShell = require("python-shell").PythonShell;
 
@@ -49,15 +49,13 @@ exports.answer = async (req, res) => {
 
 	let isEssay = question.type == QUESTION_ESSAY;
 
-	let isRightAnswer = JSON.stringify(question.answer).toString().toLocaleLowerCase() == JSON.stringify(answer.value).toString().toLocaleLowerCase();
-
 	let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
 
 	if (isTrueOrFalse) {
-		isRightAnswer = String(question.answer).toLocaleLowerCase() == String(answer.value).toLocaleLowerCase();
-
 		answer.value = String(answer.value) === "true" ? true : false;
 	}
+
+	let isRightAnswer = areTheyEqual(answer.value, question.answer);
 
 	answer.isTrue = !isEssay && isRightAnswer;
 
