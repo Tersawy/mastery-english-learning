@@ -18,8 +18,6 @@ let areTheyEqual = (a, b) => {
 
 	if (!a && !b) return true;
 
-	if ((!a || !b) && (a || b)) return false;
-
 	if (typeof a === "string") {
 		a = a
 			.toString()
@@ -47,6 +45,8 @@ let areTheyEqual = (a, b) => {
 		}
 		return true;
 	}
+
+	return a === b;
 };
 
 exports.answer = async (req, res) => {
@@ -103,29 +103,21 @@ exports.answer = async (req, res) => {
 
 		let isEssay = question.type == QUESTION_ESSAY;
 
-		if (isEssay) {
-			rightAnswersCount += 1;
+		let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
 
-			answer.isCorrected = true;
+		if (isEssay) {
+			answer.isCorrected = false;
 
 			return answer;
 		}
 
-		let isRightAnswer = areTheyEqual(answer.value, question.answer);
-
-		let isTrueOrFalse = question.type == QUESTION_TRUE_OR_FALSE;
-
 		if (isTrueOrFalse) {
-			isRightAnswer = areTheyEqual(answer.value, question.answer);
-
 			answer.value = String(answer.value) === "true" ? true : false;
 		}
 
-		answer.isTrue = isRightAnswer;
+		answer.isTrue = areTheyEqual(answer.value, question.answer);
 
-		if (answer.isTrue) {
-			rightAnswersCount += 1;
-		}
+		rightAnswersCount = answer.isTrue ? rightAnswersCount + 1 : rightAnswersCount;
 
 		answer.isCorrected = true;
 
