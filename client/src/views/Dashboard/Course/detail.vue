@@ -28,7 +28,10 @@
 			<b-col lg="4" md="12" order="1" order-lg="2">
 				<CourseDetailStudents />
 			</b-col>
-			<b-col cols="12" class="mt-30px" order="3">
+			<b-col cols="12" class="mt-30px" order="3" v-if="oneSectionDetail.quiz._id">
+				<CourseDetailSectionQuiz />
+			</b-col>
+			<b-col cols="12" class="mt-30px" order="3" v-if="oneSectionDetail.lectures.length">
 				<CourseDetailLectures />
 			</b-col>
 		</b-row>
@@ -42,8 +45,9 @@
 	import CourseDetailStudents from "@/components/dashboard/course/CourseDetailStudents.vue";
 	import CourseDetailSections from "@/components/dashboard/course/CourseDetailSections.vue";
 	import CourseDetailLectures from "@/components/dashboard/course/CourseDetailLectures.vue";
+	import CourseDetailSectionQuiz from "@/components/dashboard/course/CourseDetailSectionQuiz.vue";
 	export default {
-		components: { DashboardLayout, ReportCard, CourseDetailStudents, CourseDetailSections, CourseDetailLectures },
+		components: { DashboardLayout, ReportCard, CourseDetailStudents, CourseDetailSections, CourseDetailLectures, CourseDetailSectionQuiz },
 
 		data() {
 			return {
@@ -65,6 +69,10 @@
 		computed: {
 			course() {
 				return this.$store.state.Course.detail;
+			},
+
+			oneSectionDetail() {
+				return this.$store.state.Course.oneSectionDetail;
 			}
 		},
 
