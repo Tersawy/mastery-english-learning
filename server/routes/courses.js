@@ -20,6 +20,10 @@ router.get("/:courseId/detail/students", auth, allowedFor(OWNER, ADMIN, INSTRUCT
 
 router.get("/:courseId/detail/sections/:sectionId/lectures", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.courseSectionLectures);
 
+router.get("/:courseId/detail/sections/:sectionId/quiz", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.courseSectionQuiz);
+
+router.get("/:courseId/detail/sections/:sectionId/quiz/:quizId/students-answers", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.courseSectionQuizStudentAnswers);
+
 router.get("/:courseId/start", auth, allowedFor(STUDENT), CourseController.start);
 
 router.get("/:courseId/edit", auth, allowedFor(OWNER, ADMIN, INSTRUCTOR), CourseController.edit);
