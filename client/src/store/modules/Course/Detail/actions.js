@@ -59,5 +59,20 @@ export default {
 
 			return Promise.resolve(quiz);
 		});
+	},
+
+	getCourseDetailSectionQuizStudentsAnswers({ state, commit }, { sectionId, quizId, queries = "" }) {
+		return api("get", `${state.prefix}/${state.detail._id}/detail/sections/${sectionId}/quiz/${quizId}/students-answers${queries}`, (err, studentsAnswers) => {
+			if (err) {
+				if (err.status != 401) {
+					commit("setErrors", err.data);
+				}
+				return Promise.reject(err.data);
+			}
+
+			commit("setCourseDetailSectionQuizStudentsAnswers", { quizId, studentsAnswers });
+
+			return Promise.resolve(studentsAnswers);
+		});
 	}
 };
