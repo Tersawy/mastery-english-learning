@@ -45,6 +45,42 @@ exports.randomChar = (num = 8) => {
 	return random;
 }
 
+exports.areTheyEqual = (a, b) => {
+	if (typeof a !== typeof b) return false;
+
+	if (!a && !b) return true;
+
+	if (typeof a === "string") {
+		a = a
+			.toString()
+			.replace(/[^a-zA-Z0-9]/g, "")
+			.toLocaleLowerCase();
+		b = b
+			.toString()
+			.replace(/[^a-zA-Z0-9]/g, "")
+			.toLocaleLowerCase();
+		return a === b;
+	}
+
+	if (Array.isArray(a)) {
+		if (a.length !== b.length) return false;
+
+		for (let i = 0; i < a.length; i++) {
+			if (!areTheyEqual(a[i], b[i])) return false;
+		}
+		return true;
+	}
+
+	if (typeof a === "object") {
+		for (let key in a) {
+			if (!areTheyEqual(a[key], b[key])) return false;
+		}
+		return true;
+	}
+
+	return a === b;
+};
+
 // pulled from https://gist.github.com/Elements-/cf063254730cd754599e
 exports.videoDuration = async (filePath) => {
 
