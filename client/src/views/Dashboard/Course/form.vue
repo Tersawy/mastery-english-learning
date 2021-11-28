@@ -122,7 +122,7 @@
 					<input-error :vuelidate="$v.course.description" field="description" :namespace="namespace" />
 				</b-col>
 
-				<b-col cols="12" class="mt-4 text-right">
+				<b-col cols="12" class="mt-4 text-center">
 					<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
 						<b-btn :disabled="isLoading" v-if="isUpdate" @click="handleSave" variant="outline-success">Update</b-btn>
 						<b-btn :disabled="isLoading" v-else @click="handleSave" variant="outline-primary">Create</b-btn>
