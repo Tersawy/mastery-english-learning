@@ -101,7 +101,15 @@ exports.selfEnroll = async (req, res) => {
 exports.remove = async (req, res) => {
 	const { studentId } = req.params;
 
-	await User.deleteOne({ _id: studentId, type: STUDENT });
+	let user = await User.findById(studentId);
+
+	if (!user) return res.status(404).json({ msg: "Student not found" });
+
+	let studentCourses = Course.updateMany({ _id: { $in: user.courses } }, { $inc: { studentsCount: -1 } });
+
+	let deleteUser =  User.deleteOne({ _id: studentId, type: STUDENT });
+
+	await Promise.all([studentCourses, deleteUser]);
 
 	res.status(200).json({ msg: "Student has been deleted successfully" });
 };
