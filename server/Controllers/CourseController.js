@@ -626,10 +626,6 @@ exports.courseSectionLectures = async (req, res) => {
 exports.courseSectionQuiz = async (req, res) => {
 	let { courseId, sectionId } = req.params;
 
-	handleQueries(req, User);
-
-	let { skip, limit } = req.query;
-
 	if (!courseId) throw { status: 422, msg: "Course id is required" };
 
 	if (!sectionId) throw { status: 422, msg: "Section id is required" };
@@ -645,8 +641,7 @@ exports.courseSectionQuiz = async (req, res) => {
 				{ $match: { $expr: { $and: [{ $in: [mongoose.Types.ObjectId(courseId), "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
 				{ $project: { username: 1 } },
 				{ $sort: { createdAt: -1 } },
-				{ $skip: skip },
-				{ $limit: limit },
+				{ $limit: 5 },
 				{ $lookup: {
 					from: "sectionquizanswers",
 					as: "quizAnswer",
@@ -688,7 +683,7 @@ exports.courseSectionQuizStudentAnswers = async (req, res) => {
 			as: "quizAnswer",
 			let: { studentId: "$_id" },
 			pipeline: [
-				{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", quizId] }] } } },
+				{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", mongoose.Types.ObjectId(quizId)] }] } } },
 				{ $project: { passRate: 1, attempts: 1, lastAttemptAt: "$updatedAt" } },
 			]
 		} },
