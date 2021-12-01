@@ -6,7 +6,11 @@ exports.create = async (req, res) => {
 
 	let { questions } = req.body;
 
-	let quiz = new Quiz({ lecture, questions });
+	let quiz = await Quiz.findOne({ lecture });
+
+	if (quiz) return res.json({ msg: "This Lecture has already quiz !" });
+	
+	quiz = new Quiz({ lecture, questions });
 
 	await quiz.save();
 
