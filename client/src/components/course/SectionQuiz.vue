@@ -126,7 +126,6 @@
 			validateAnswers() {
 				const answers = this.answers,
 					questions = this.section.quiz.questions;
-				console.log(answers);
 				for (let i = 0; i < questions.length; i++) {
 					let question = questions[i];
 					let answer = answers.find((a) => a.question == question._id);
@@ -181,7 +180,7 @@
 				this.$bvModal.show("modalProgress");
 
 				let interval = setInterval(() => {
-					if (this.quizProgress.completedSteps == res.passRate) {
+					if (this.quizProgress.completedSteps == parseInt(res.passRate)) {
 						clearInterval(interval);
 
 						setTimeout(() => {
