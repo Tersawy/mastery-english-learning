@@ -674,7 +674,7 @@ exports.courseSectionQuizStudentAnswers = async (req, res) => {
 
 	let aggregate = [
 		{ $match: { $expr: { $and: [{ $in: [mongoose.Types.ObjectId(courseId), "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
-		{ $project: { username: 1 } },
+		{ $project: { username: 1, createdAt: 1 } },
 		{ $sort: { createdAt: -1 } },
 		{ $skip: skip },
 		{ $limit: limit },
