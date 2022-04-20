@@ -1,7 +1,5 @@
 const User = require("../Models/User");
 
-const jwt = require("jsonwebtoken");
-
 const crypto = require("crypto");
 
 const bcrypt = require("bcrypt");
@@ -12,6 +10,8 @@ const path = require("path");
 
 const { randomChar } = require("../helpers/functions");
 
+const JWT = require("../services/jwt");
+
 // const nodemailer = require("nodemailer");
 
 // const sgMail = require("@sendgrid/mail");
@@ -19,9 +19,6 @@ const { randomChar } = require("../helpers/functions");
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const imagesDir = path.resolve(__dirname, "../../public/images/users");
-
-const privateKey = fs.readFileSync("jwtRS256.key", "utf8");
-const publicKey = fs.readFileSync("jwtRS256.key.pub", "utf8");
 
 exports.login = async (req, res) => {
 	const { email, password } = req.body;
@@ -38,23 +35,21 @@ exports.login = async (req, res) => {
 
 	const JWTPayload = { userId: user._id, type: user.type };
 
-	const JWTSignOptions = { algorithm: "RS256", expiresIn: "8h" };
+	let [err, token] = await JWT.sign(JWTPayload);
 
-	jwt.sign(JWTPayload, privateKey, JWTSignOptions, async (err, token) => {
-		if (err) throw err;
+	if (err) return res.status(500).json({ msg: "Something went wrong" });
 
-		user = {
-			id: user.id,
-			fullname: user.fullname,
-			username: user.username,
-			phone: user.phone,
-			email: user.email,
-			type: user.type,
-			image: user.image
-		};
+	user = {
+		id: user.id,
+		fullname: user.fullname,
+		username: user.username,
+		phone: user.phone,
+		email: user.email,
+		type: user.type,
+		image: user.image
+	};
 
-		res.json({ status: 200, token, user });
-	});
+	res.json({ status: 200, token, user });
 };
 
 exports.register = async (req, res) => {
@@ -73,28 +68,26 @@ exports.register = async (req, res) => {
 	res.status(200).json({ msg: "You're Welcome, you can now sign in" });
 };
 
-exports.me = (req, res) => {
+exports.me = async (req, res) => {
 	let token = req.headers.authorization;
 
 	if (!token || token == "undefined") {
 		throw { status: 401, msg: "Unauthentication" };
 	}
 
-	const JWTVerifyOptions = { algorithms: ["RS256"] };
+	let [err, decoded] = await JWT.verify(token);
 
-	jwt.verify(token, publicKey, JWTVerifyOptions, async (err, decoded) => {
-		if (err) return res.status(401).json({ msg: "Unauthentication" });
+	if (err) return res.status(401).json({ msg: "Unauthentication" });
 
-		let userQuery = { _id: decoded.userId, isActive: true };
+	let userQuery = { _id: decoded.userId, isActive: true };
 
-		let user = await User.findOne(userQuery, { password: 0 });
+	let user = await User.findOne(userQuery, { password: 0 });
 
-		if (!user) return res.status(401).json({ msg: "Unauthentication" });
+	if (!user) return res.status(401).json({ msg: "Unauthentication" });
 
-		let _user = { ...user._doc };
+	let _user = { ...user._doc };
 
-		return res.json({ status: 200, user: _user });
-	});
+	return res.json({ status: 200, user: _user });
 };
 
 exports.updateProfile = async (req, res) => {
