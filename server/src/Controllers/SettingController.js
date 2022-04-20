@@ -6,7 +6,7 @@ const { randomChar } = require("../helpers/functions");
 
 const fs = require("fs");
 
-const settingsDir = path.resolve(__dirname, "../public/images/settings");
+const settingsDir = path.resolve(__dirname, "../../public/images/settings");
 
 exports.getSettings = async (req, res) => {
 	let settings = await Setting.findOne({}, { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 });

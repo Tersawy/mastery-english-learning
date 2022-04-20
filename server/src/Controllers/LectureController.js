@@ -8,9 +8,9 @@ const { randomChar } = require("../helpers/functions");
 
 const { getVideoDurationInSeconds } = require("get-video-duration");
 
-const Lecture = require( "../Models/Lecture" );
+const Lecture = require("../Models/Lecture");
 
-const videosDir = path.resolve(__dirname, "../public/videos/courses/lectures");
+const videosDir = path.resolve(__dirname, "../../public/videos/courses/lectures");
 
 exports.create = async (req, res) => {
 	const { title, description } = req.body;
@@ -20,7 +20,7 @@ exports.create = async (req, res) => {
 	if (!section) throw { status: 422, msg: "Section Id is required" };
 
 	let lecture = new Lecture({ title, description, section });
-	
+
 	await lecture.save();
 
 	res.status(200).json({ msg: "Lecture has been created successfully" });
@@ -34,7 +34,7 @@ exports.update = async (req, res) => {
 	if (!_id) throw { status: 422, msg: "Lecture Id is required" };
 
 	await Lecture.updateOne({ _id }, { title, description });
-	
+
 	res.status(200).json({ msg: "Lecture has been created successfully" });
 };
 
@@ -165,16 +165,16 @@ exports.changeVideo = async (req, res) => {
 		}
 
 		Lecture.findOneAndUpdate({ _id }, { video: videoName, time }, { _id: 0, video: 1 }, (err, lecture) => {
-				if (err) return handleError(err, (error) => res.status(error.status).json(error));
+			if (err) return handleError(err, (error) => res.status(error.status).json(error));
 
-				if (lecture.video) {
-					let oldVideo = path.resolve(videosDir, lecture.video);
+			if (lecture.video) {
+				let oldVideo = path.resolve(videosDir, lecture.video);
 
-					if (existsSync(oldVideo)) unlinkSync(oldVideo);
-				}
-
-				res.status(200).json({ status: 200, msg: "Lecture video has been uploaded successfully" });
+				if (existsSync(oldVideo)) unlinkSync(oldVideo);
 			}
+
+			res.status(200).json({ status: 200, msg: "Lecture video has been uploaded successfully" });
+		}
 		);
 	});
 };

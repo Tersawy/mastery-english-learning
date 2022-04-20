@@ -14,7 +14,7 @@ const PythonShell = require("python-shell").PythonShell;
 
 const { unlinkSync, existsSync } = require("fs");
 
-const audiosDir = path.resolve(__dirname, "../public/audios");
+const audiosDir = path.resolve(__dirname, "../../public/audios");
 
 exports.answer = async (req, res) => {
 	const { courseId, quizId } = req.params;

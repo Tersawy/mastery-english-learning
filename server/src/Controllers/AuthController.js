@@ -18,7 +18,7 @@ const { randomChar } = require("../helpers/functions");
 
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const imagesDir = path.resolve(__dirname, "../public/images/users");
+const imagesDir = path.resolve(__dirname, "../../public/images/users");
 
 const privateKey = fs.readFileSync("jwtRS256.key", "utf8");
 const publicKey = fs.readFileSync("jwtRS256.key.pub", "utf8");
@@ -106,7 +106,7 @@ exports.updateProfile = async (req, res) => {
 	if (password) {
 		updateData.password = await bcrypt.hash(password, 10);
 	}
-	
+
 	await User.updateOne({ _id: me._id }, updateData);
 
 	res.json({ msg: "Your Profile has been updated successfully" });
@@ -134,7 +134,7 @@ exports.changeImage = (req, res) => {
 	let imageName = `${randomChar(8)}_${Date.now()}.${imageExtension}`;
 
 	if (!fs.existsSync(imagesDir)) return res.status(500).json({ msg: "Something went wrong" });
-	
+
 	let imageDir = path.resolve(imagesDir, imageName);
 
 	image.mv(imageDir, async (err) => {
@@ -143,7 +143,7 @@ exports.changeImage = (req, res) => {
 		await User.updateOne({ _id: me._id }, { image: imageName });
 
 		res.json({ msg: "Your image has been updated successfully" });
-		
+
 	});
 }
 

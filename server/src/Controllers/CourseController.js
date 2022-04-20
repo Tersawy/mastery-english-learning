@@ -18,7 +18,7 @@ const { randomChar, handleQueries } = require("../helpers/functions");
 
 const handleError = require("../helpers/handleError");
 
-const thumbnailsDir = path.resolve(__dirname, "../public/images/courses/thumbnails");
+const thumbnailsDir = path.resolve(__dirname, "../../public/images/courses/thumbnails");
 
 exports.all = async (req, res) => {
 
@@ -55,22 +55,24 @@ exports.all = async (req, res) => {
 	return res.json({ docs, total });
 };
 
-exports.myCourses = async function(req, res) {
+exports.myCourses = async function (req, res) {
 	const { me } = req.body;
 
 	let myCourses = me.courses.map(id => mongoose.Types.ObjectId(id));
 
 	let query = { _id: { $in: myCourses }, deleted_at: null };
- 
+
 	const aggregate = [
 		{ $match: query },
-		{ $lookup: {
+		{
+			$lookup: {
 				from: "sections",
 				as: "sections",
 				let: { courseId: "$_id" },
 				pipeline: [
 					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
-					{ $lookup: {
+					{
+						$lookup: {
 							from: "lectures",
 							as: "lectures",
 							let: { sectionId: "$_id" },
@@ -78,11 +80,14 @@ exports.myCourses = async function(req, res) {
 								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
 								{ $project: { time: 1, _id: 0 } }
 							]
-					} },
-					{ $project: { time: { $sum: "$lectures.time" }, lecturesCount: { $size: "$lectures" },  _id: 0 } }
+						}
+					},
+					{ $project: { time: { $sum: "$lectures.time" }, lecturesCount: { $size: "$lectures" }, _id: 0 } }
 				]
-		} },
-		{ $lookup: {
+			}
+		},
+		{
+			$lookup: {
 				from: "users",
 				as: "instructor",
 				let: { instructorId: "$createdBy" },
@@ -90,9 +95,11 @@ exports.myCourses = async function(req, res) {
 					{ $match: { $expr: { $eq: ["$_id", "$$instructorId"] } } },
 					{ $project: { username: 1, image: 1 } }
 				]
-		} },
+			}
+		},
 		{ $unwind: { path: "$instructor", preserveNullAndEmptyArrays: true } },
-		{ $lookup: {
+		{
+			$lookup: {
 				from: "categories",
 				as: "category",
 				let: { categoryId: "$category" },
@@ -100,9 +107,11 @@ exports.myCourses = async function(req, res) {
 					{ $match: { $expr: { $eq: ["$_id", "$$categoryId"] } } },
 					{ $project: { name: 1 } }
 				]
-		} },
+			}
+		},
 		{ $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
-		{ $lookup: {
+		{
+			$lookup: {
 				from: "levels",
 				as: "level",
 				let: { levelId: "$level" },
@@ -110,7 +119,8 @@ exports.myCourses = async function(req, res) {
 					{ $match: { $expr: { $eq: ["$_id", "$$levelId"] } } },
 					{ $project: { name: 1 } }
 				]
-		} },
+			}
+		},
 		{ $unwind: { path: "$level", preserveNullAndEmptyArrays: true } },
 		{
 			$project: {
@@ -133,8 +143,8 @@ exports.myCourses = async function(req, res) {
 	let coursesCount = Course.countDocuments(query);
 
 	let [courses, total] = await Promise.all([coursesQuery, coursesCount]);
- 
-	res.json({ docs:courses, total });
+
+	res.json({ docs: courses, total });
 }
 
 exports.create = (req, res) => {
@@ -522,17 +532,19 @@ exports.detail = async (req, res) => {
 	const { courseId } = req.params;
 
 	if (!courseId) throw { status: 422, msg: "Course id is required" };
-	
+
 	let aggregate = [
 		{ $match: { _id: mongoose.Types.ObjectId(courseId) } },
 		{ $project: { studentsCount: 1, title: 1 } },
-		{ $lookup: {
+		{
+			$lookup: {
 				from: "sections",
 				as: "sections",
 				let: { courseId: "$_id" },
 				pipeline: [
 					{ $match: { $expr: { $eq: ["$course", "$$courseId"] } } },
-					{ $lookup: { // get the number of lectures in each section
+					{
+						$lookup: { // get the number of lectures in each section
 							from: "lectures",
 							as: "lectures",
 							let: { sectionId: "$_id" },
@@ -541,43 +553,48 @@ exports.detail = async (req, res) => {
 								{ $project: { _id: 1 } },
 								{ $group: { _id: null, count: { $sum: 1 } } }
 							]
-					} },
-					{ $lookup: { // check if the section has quiz
-						from: "sectionquizzes",
-						as: "quiz",
-						let: { sectionId: "$_id" },
-						pipeline: [
-							{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
-							{ $project: { _id: 1 } },
-						]
-					} },
+						}
+					},
+					{
+						$lookup: { // check if the section has quiz
+							from: "sectionquizzes",
+							as: "quiz",
+							let: { sectionId: "$_id" },
+							pipeline: [
+								{ $match: { $expr: { $eq: ["$section", "$$sectionId"] } } },
+								{ $project: { _id: 1 } },
+							]
+						}
+					},
 					{ $unwind: { path: "$lectures", preserveNullAndEmptyArrays: true } },
 					{ $unwind: { path: "$quiz", preserveNullAndEmptyArrays: true } },
 					{ $project: { title: 1, lecturesCount: "$lectures.count", hasQuiz: { $toBool: { $ifNull: ["$quiz", 0] } } } }
 				]
 			}
 		},
-		{ $lookup: {
-			from: "users",
-			as: "students",
-			let: { courseId: "$_id" },
-			pipeline: [
-				{ $match: { $expr: { $and: [{ $in: ["$$courseId", "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
-				{ $project: { _id: 1, username: 1, image: 1 } },
-				{ $sort: { createdAt: -1 } },
-				{ $limit: 5 }
-			]
-		}}
+		{
+			$lookup: {
+				from: "users",
+				as: "students",
+				let: { courseId: "$_id" },
+				pipeline: [
+					{ $match: { $expr: { $and: [{ $in: ["$$courseId", "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
+					{ $project: { _id: 1, username: 1, image: 1 } },
+					{ $sort: { createdAt: -1 } },
+					{ $limit: 5 }
+				]
+			}
+		}
 	];
 
 	let [course] = await Course.aggregate(aggregate);
 
 	if (!course) throw { status: 404, msg: "Course not found" };
-	
+
 	course.sectionsCount = course.sections.length;
 
 	course.lecturesCount = course.sections.reduce((pv, cv) => pv + (cv.lecturesCount || 0), 0);
-	
+
 	res.json(course);
 }
 
@@ -604,7 +621,8 @@ exports.courseSectionLectures = async (req, res) => {
 
 	let aggregate = [
 		{ $match: { section: mongoose.Types.ObjectId(sectionId) } },
-		{ $lookup: {
+		{
+			$lookup: {
 				from: "quizzes",
 				as: "quiz",
 				let: { lectureId: "$lecture" },
@@ -613,7 +631,8 @@ exports.courseSectionLectures = async (req, res) => {
 					{ $project: { _id: 1 } },
 					{ $group: { _id: null, count: { $sum: 1 } } }
 				]
-		} },
+			}
+		},
 		{ $unwind: { path: "$quiz", preserveNullAndEmptyArrays: true } },
 		{ $project: { title: 1, hasQuiz: { $toBool: { $ifNull: ["$quiz", 0] } } } }
 	];
@@ -633,27 +652,31 @@ exports.courseSectionQuiz = async (req, res) => {
 	let aggregate = [
 		{ $match: { section: mongoose.Types.ObjectId(sectionId) } },
 		{ $project: { minimumPassRate: 1 } },
-		{ $lookup: {
-			from: "users",
-			as: "studentsAnswers",
-			let: { quizId: "$_id" },
-			pipeline: [
-				{ $match: { $expr: { $and: [{ $in: [mongoose.Types.ObjectId(courseId), "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
-				{ $project: { username: 1 } },
-				{ $sort: { createdAt: -1 } },
-				{ $limit: 5 },
-				{ $lookup: {
-					from: "sectionquizanswers",
-					as: "quizAnswer",
-					let: { studentId: "$_id", quizId: "$$quizId" },
-					pipeline: [
-						{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", "$$quizId"] }] } } },
-						{ $project: { passRate: 1, attempts: 1, lastAttemptAt: "$updatedAt" } },
-					]
-				} },
-				{ $unwind: { path: "$quizAnswer", preserveNullAndEmptyArrays: true } },
-			]
-		} },
+		{
+			$lookup: {
+				from: "users",
+				as: "studentsAnswers",
+				let: { quizId: "$_id" },
+				pipeline: [
+					{ $match: { $expr: { $and: [{ $in: [mongoose.Types.ObjectId(courseId), "$courses"] }, { $eq: ["$type", STUDENT] }] } } },
+					{ $project: { username: 1 } },
+					{ $sort: { createdAt: -1 } },
+					{ $limit: 5 },
+					{
+						$lookup: {
+							from: "sectionquizanswers",
+							as: "quizAnswer",
+							let: { studentId: "$_id", quizId: "$$quizId" },
+							pipeline: [
+								{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", "$$quizId"] }] } } },
+								{ $project: { passRate: 1, attempts: 1, lastAttemptAt: "$updatedAt" } },
+							]
+						}
+					},
+					{ $unwind: { path: "$quizAnswer", preserveNullAndEmptyArrays: true } },
+				]
+			}
+		},
 	];
 
 	let [quiz] = await SectionQuiz.aggregate(aggregate);
@@ -678,15 +701,17 @@ exports.courseSectionQuizStudentAnswers = async (req, res) => {
 		{ $sort: { createdAt: -1 } },
 		{ $skip: skip },
 		{ $limit: limit },
-		{ $lookup: {
-			from: "sectionquizanswers",
-			as: "quizAnswer",
-			let: { studentId: "$_id" },
-			pipeline: [
-				{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", mongoose.Types.ObjectId(quizId)] }] } } },
-				{ $project: { passRate: 1, attempts: 1, lastAttemptAt: "$updatedAt" } },
-			]
-		} },
+		{
+			$lookup: {
+				from: "sectionquizanswers",
+				as: "quizAnswer",
+				let: { studentId: "$_id" },
+				pipeline: [
+					{ $match: { $expr: { $and: [{ $eq: ["$student", "$$studentId"] }, { $eq: ["$quiz", mongoose.Types.ObjectId(quizId)] }] } } },
+					{ $project: { passRate: 1, attempts: 1, lastAttemptAt: "$updatedAt" } },
+				]
+			}
+		},
 		{ $unwind: { path: "$quizAnswer", preserveNullAndEmptyArrays: true } },
 	];
 
