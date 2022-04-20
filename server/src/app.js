@@ -22,6 +22,10 @@ const path = require("path");
 
 app.use(express.static(path.join(__dirname, "./public/dist")));
 
+app.use((req, res, next) => {
+    next();
+})
+
 let statics = [
     { path: "/lectures", dir: "./public/videos/courses/lectures" },
     { path: "/thumbnails", dir: "./public/images/courses/thumbnails" },
@@ -31,7 +35,7 @@ let statics = [
 ];
 
 for (let static of statics) {
-    app.use("api/v2" + static.path, express.static(static.dir));
+    app.use("/api/v2" + static.path, express.static(static.dir));
 }
 
 let routes = [
@@ -49,7 +53,7 @@ let routes = [
 ];
 
 for (let route of routes) {
-    app.use("api/v2" + route.path, require("./routes/" + route.file));
+    app.use("/api/v2" + route.path, require("./routes/" + route.file));
 }
 
 app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "../public/dist/index.html")));
