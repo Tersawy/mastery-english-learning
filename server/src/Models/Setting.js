@@ -17,8 +17,8 @@ const settingSchema = new Schema(
 		appName: String,
 		logoDark: String,
 		logoLight: String,
-		homePage: homePageSchema,
-		studentCoursesPage: studentCoursesPageSchema,
+		homePage: { type: homePageSchema, default: { categories: [], headerBg: "" } },
+		studentCoursesPage: { type: studentCoursesPageSchema, default: { headerBg: "" } },
 	},
 	{ timestamps: true }
 );
