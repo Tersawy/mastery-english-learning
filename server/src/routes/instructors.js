@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const { auth, allowedFor } = require("../middlewares/auth");
 
-const { OWNER, ADMIN } = require( "../helpers/constants" );
+const { OWNER, ADMIN } = require("../helpers/constants");
 
 const InstructorController = require("../Controllers/InstructorController");
 

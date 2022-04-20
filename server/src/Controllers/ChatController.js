@@ -1,9 +1,9 @@
-const mongoose = require( "mongoose" );
+const mongoose = require("mongoose");
 const { INSTRUCTOR, STUDENT, ADMIN, OWNER } = require("../helpers/constants");
 const Chat = require("../Models/Chat");
 const User = require("../Models/User");
 
-const { getSocket, anySocket } = require("../ws/socket");
+const { getSocket, anySocket } = require("../src/ws/socket");
 
 exports.contacts = async (req, res) => {
 	const { me, isStudent, isInstructor } = req.body;
@@ -30,8 +30,8 @@ exports.contacts = async (req, res) => {
 
 	let msgQuery = {
 		$or: [
-			{ $and: [{ $eq: ["$recipient", "$$userId" ]}, { $eq: ["$sender", mongoose.Types.ObjectId(me._id)] }]  },
-			{ $and: [{ $eq: ["$recipient", mongoose.Types.ObjectId(me._id) ]}, { $eq: ["$sender", "$$userId"] }]  },
+			{ $and: [{ $eq: ["$recipient", "$$userId"] }, { $eq: ["$sender", mongoose.Types.ObjectId(me._id)] }] },
+			{ $and: [{ $eq: ["$recipient", mongoose.Types.ObjectId(me._id)] }, { $eq: ["$sender", "$$userId"] }] },
 		],
 	};
 
@@ -59,20 +59,23 @@ exports.contacts = async (req, res) => {
 				as: "unSeenMessagesCount",
 				let: { userId: "$_id" },
 				pipeline: [
-					{ $match: { $expr: { $and: [ msgQuery, unSeenMessagesCountQuery ] } } },
+					{ $match: { $expr: { $and: [msgQuery, unSeenMessagesCountQuery] } } },
 					{ $project: { _id: 1 } },
 				],
 			},
 		},
-		{ $project: {
-			username: 1,
-			image: 1,
-			isOnline: 1,
-			type: 1,
-			messages: {
-				docs: "$_messages",
-				unSeenMessagesCount: { $size: "$unSeenMessagesCount" }},
-		} }
+		{
+			$project: {
+				username: 1,
+				image: 1,
+				isOnline: 1,
+				type: 1,
+				messages: {
+					docs: "$_messages",
+					unSeenMessagesCount: { $size: "$unSeenMessagesCount" }
+				},
+			}
+		}
 	];
 
 	let users = User.aggregate(aggregation);
@@ -96,7 +99,7 @@ exports.messages = async (req, res) => {
 	let limit = 10;
 
 	skip = parseInt(skip) || 0;
-	
+
 	let query = {
 		$or: [
 			{ recipient: mongoose.Types.ObjectId(recipient), sender: mongoose.Types.ObjectId(me._id) },

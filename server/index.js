@@ -46,15 +46,15 @@ app.use(fileUpload({ useTempFiles: true, uploadTimeout: 0, parseNested: true }))
 
 require("express-async-errors");
 
-require("./database/config");
+require("./src/database/config");
 
 const io = require("socket.io")(HTTPS, {
 	cors: { methods: ["GET", "PATCH", "POST", "PUT"], origin: true /* accept from any domain */ },
 });
 
-require("./ws/connection")(io);
+require("./src/ws/connection")(io);
 
-const handleError = require("./helpers/handleError");
+const handleError = require("./src/helpers/handleError");
 
 // app.post("/api/v1/upload", (req, res) => {
 // 	console.log(req.files);
@@ -68,17 +68,17 @@ app.use("/api/v1/user-image", express.static("./public/images/users"));
 app.use("/api/v1/icons", express.static("./public/images/icons"));
 app.use("/api/v1/settings-images", express.static("./public/images/settings"));
 
-app.use("/api/v1/", require("./routes/auth"));
-app.use("/api/v1/levels", require("./routes/levels"));
-app.use("/api/v1/languages", require("./routes/languages"));
-app.use("/api/v1/categories", require("./routes/categories"));
-app.use("/api/v1/courses", require("./routes/courses"));
-app.use("/api/v1/students", require("./routes/students"));
-app.use("/api/v1/instructors", require("./routes/instructors"));
-app.use("/api/v1/admins", require("./routes/admins"));
-app.use("/api/v1/pages", require("./routes/pages"));
-app.use("/api/v1/settings", require("./routes/settings"));
-app.use("/api/v1/chat", require("./routes/chat"));
+app.use("/api/v1/", require("./src/routes/auth"));
+app.use("/api/v1/levels", require("./src/routes/levels"));
+app.use("/api/v1/languages", require("./src/routes/languages"));
+app.use("/api/v1/categories", require("./src/routes/categories"));
+app.use("/api/v1/courses", require("./src/routes/courses"));
+app.use("/api/v1/students", require("./src/routes/students"));
+app.use("/api/v1/instructors", require("./src/routes/instructors"));
+app.use("/api/v1/admins", require("./src/routes/admins"));
+app.use("/api/v1/pages", require("./src/routes/pages"));
+app.use("/api/v1/settings", require("./src/routes/settings"));
+app.use("/api/v1/chat", require("./src/routes/chat"));
 
 app.get(/.*/, (req, res) => {
 	res.sendFile(__dirname + "/public/dist/index.html");

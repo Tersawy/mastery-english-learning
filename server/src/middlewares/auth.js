@@ -29,7 +29,7 @@ module.exports = {
 
 			if (!user) return res.status(401).json({ msg: "Unauthentication" });
 
-			if (!user.isActive) return res.status(403).json( {msg: "Wait for activation" });
+			if (!user.isActive) return res.status(403).json({ msg: "Wait for activation" });
 
 			let _user = { ...user._doc };
 
