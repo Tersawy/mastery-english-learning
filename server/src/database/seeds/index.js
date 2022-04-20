@@ -13,7 +13,7 @@ fs.readdir(path.resolve(__dirname), async (err, files) => {
 
 	let actionName = process.argv[2] || "refresh";
 
-	await require("../config");
+	await require("../connection");
 
 	console.log("\x1b[1m\x1b[32m%s\x1b[0m", `[${actionName} Seed] started`);
 
