@@ -3,7 +3,7 @@ const { INSTRUCTOR, STUDENT, ADMIN, OWNER } = require("../helpers/constants");
 const Chat = require("../Models/Chat");
 const User = require("../Models/User");
 
-const { getSocket, anySocket } = require("../src/ws/socket");
+const { getSocket, anySocket } = require("../ws/socket");
 
 exports.contacts = async (req, res) => {
 	const { me, isStudent, isInstructor } = req.body;

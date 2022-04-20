@@ -1,10 +1,10 @@
-const User = require("../src/Models/User");
+const User = require("../Models/User");
 
-const { INSTRUCTOR } = require("../src/helpers/constants");
+const { INSTRUCTOR } = require("../helpers/constants");
 
 const bcrypt = require("bcrypt");
 
-const { handleQueries } = require("../src/helpers/functions");
+const { handleQueries } = require("../helpers/functions");
 
 exports.instructors = async (req, res) => {
 
