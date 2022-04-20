@@ -1,4 +1,4 @@
 node_modules
 *.key
 *.key.pub
-./package-lock.json
+package-lock.json
