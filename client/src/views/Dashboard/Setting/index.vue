@@ -36,24 +36,12 @@
 									<input-error :vuelidate="$v.setting.appName" field="appName" :namespace="namespace" />
 								</b-form-group>
 							</b-col>
+
 							<!-- -------------App Logo Light------------- -->
 							<b-col class="d-flex justify-content-center">
-								<b-card header="App Logo" header-class="font-weight-900 text-muted" body-class="p-0" class="shadow-sm" style="width: max-content">
-									<VueUploadMultipleImage
-										:disabled="isLoading"
-										class="upload-image"
-										browseText="(or) Select"
-										dragText="Drag & Drop image"
-										:data-images="setting.logoDark"
-										@upload-success="uploadLogoLight"
-										@before-remove="beforeRemoveLogoLight"
-										:showEdit="false"
-										accept="image/jpeg,image/png,image/jpg"
-										:multiple="false"
-										:showPrimary="false"
-									/>
-								</b-card>
+								<DragAndDropImage v-model="setting.logoDark" :image="setting.logoDark" maxHeight="350px" minHeight="280px" />
 							</b-col>
+
 							<b-col>
 								<div class="text-right mt-4">
 									<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
@@ -100,24 +88,9 @@
 
 							<!-- -------------Home page background header------------- -->
 							<b-col class="d-flex justify-content-center">
-								<b-card header="Header background" header-class="font-weight-900 text-muted" body-class="p-0" class="shadow-sm" style="width: max-content">
-									<VueUploadMultipleImage
-										idUpload="homePageHeader"
-										idEdit="homePageHeaderEdit"
-										:disabled="isLoading"
-										class="upload-image"
-										browseText="(or) Select"
-										dragText="Drag & Drop image"
-										:data-images="homePage.headerBg"
-										@upload-success="uploadHomePageHeaderBg"
-										@before-remove="beforeRemoveHomePageHeaderBg"
-										:showEdit="false"
-										accept="image/jpeg,image/png,image/jpg"
-										:multiple="false"
-										:showPrimary="false"
-									/>
-								</b-card>
+								<DragAndDropImage v-model="homePage.headerBg" :image="homePage.headerBg" maxHeight="350px" minHeight="280px" />
 							</b-col>
+
 							<b-col>
 								<div class="text-right mt-4">
 									<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
@@ -143,24 +116,9 @@
 						<b-row cols="1">
 							<!-- -------------App Logo Light------------- -->
 							<b-col class="d-flex justify-content-center">
-								<b-card header="Header background" header-class="font-weight-900 text-muted" body-class="p-0" class="shadow-sm" style="width: max-content">
-									<VueUploadMultipleImage
-										idUpload="studentCoursesPageHeader"
-										idEdit="studentCoursesPageHeaderEdit"
-										:disabled="isLoading"
-										class="upload-image"
-										browseText="(or) Select"
-										dragText="Drag & Drop image"
-										:data-images="studentCoursesPage.headerBg"
-										@upload-success="uploadStudentCoursesPageHeaderBg"
-										@before-remove="beforeRemoveStudentCoursesPageHeaderBg"
-										:showEdit="false"
-										accept="image/jpeg,image/png,image/jpg"
-										:multiple="false"
-										:showPrimary="false"
-									/>
-								</b-card>
+								<DragAndDropImage v-model="studentCoursesPage.headerBg" :image="studentCoursesPage.headerBg" maxHeight="350px" minHeight="280px" />
 							</b-col>
+
 							<b-col>
 								<div class="text-right mt-4">
 									<b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
@@ -177,222 +135,179 @@
 </template>
 
 <script>
-	import Multiselect from "vue-multiselect";
-	import VueUploadMultipleImage from "vue-upload-multiple-image";
-	import Levels from "@/components/dashboard/setting/Levels.vue";
-	import Categories from "@/components/dashboard/setting/Categories.vue";
-	import Languages from "@/components/dashboard/setting/Languages.vue";
-	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
-	import { required, minLength, maxLength } from "vuelidate/lib/validators";
-	export default {
-		components: { DashboardLayout, Levels, Categories, Languages, Multiselect, VueUploadMultipleImage },
-		data() {
-			return {
-				namespace: "Setting",
-				setting: { appName: "", logoDark: [] },
-				homePage: { categories: [], headerBg: [] },
-				studentCoursesPage: { headerBg: [] },
-				settingFormData: new FormData(),
-				homePageFormData: new FormData(),
-				studentCoursesPageFormData: new FormData()
-			};
+import Multiselect from "vue-multiselect";
+import VueUploadMultipleImage from "vue-upload-multiple-image";
+import Levels from "@/components/dashboard/setting/Levels.vue";
+import Categories from "@/components/dashboard/setting/Categories.vue";
+import Languages from "@/components/dashboard/setting/Languages.vue";
+import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
+import DragAndDropImage from "@/components/DragAndDropImage";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
+export default {
+	components: { DragAndDropImage, DashboardLayout, Levels, Categories, Languages, Multiselect, VueUploadMultipleImage },
+	data() {
+		return {
+			namespace: "Setting",
+			setting: { appName: "", logoDark: "" },
+			homePage: { categories: [], headerBg: "" },
+			studentCoursesPage: { headerBg: "" },
+			settingFormData: new FormData(),
+			homePageFormData: new FormData(),
+			studentCoursesPageFormData: new FormData()
+		};
+	},
+
+	validations: {
+		setting: {
+			appName: { required, minLength: minLength(3), maxLength: maxLength(50) },
+			logoDark: { required }
+		},
+		homePage: {
+			categories: { required, minLength: minLength(1), maxLength: maxLength(3) },
+			headerBg: { required }
+		},
+		studentCoursesPage: {
+			headerBg: { required }
+		}
+	},
+
+	async mounted() {
+		await this.getSetting();
+
+		this.homePage.headerBg = `${this.API_URL}/settings-images/${this.settings.homePage.headerBg}`;
+		this.studentCoursesPage.headerBg = `${this.API_URL}/settings-images/${this.settings.studentCoursesPage.headerBg}`;
+		this.setting.appName = this.settings.appName;
+		this.setting.logoDark = `${this.API_URL}/settings-images/${this.settings.logoDark}`;
+
+		if (this.settings.homePage.categories && this.settings.homePage.categories.length > 0) {
+			this.settings.homePage.categories.forEach((categoryId) => {
+				let category = this.categoriesOptions.find((category) => category._id === categoryId);
+				if (category) {
+					this.homePage.categories.push({ _id: category._id, name: category.name });
+				}
+			});
+		}
+	},
+
+	computed: {
+		settings() {
+			return this.$store.state.Setting.settingsData;
 		},
 
-		validations: {
-			setting: {
-				appName: { required, minLength: minLength(3), maxLength: maxLength(50) },
-				logoDark: { required, minLength: minLength(1), maxLength: maxLength(1) }
-			},
-			homePage: {
-				categories: { required, minLength: minLength(1), maxLength: maxLength(3) },
-				headerBg: { required, minLength: minLength(1), maxLength: maxLength(1) }
-			},
-			studentCoursesPage: {
-				headerBg: { required, minLength: minLength(1), maxLength: maxLength(1) }
+		categoriesOptions() {
+			return this.$store.state.Category.all.docs;
+		}
+	},
+
+	methods: {
+		getSetting() {
+			return this.$store.dispatch("Setting/showSettings");
+		},
+
+		addCategory(newCategory) {
+			if (newCategory) {
+				let oldCategory = this.categoriesOptions.find((category) => category.name == newCategory);
+
+				if (oldCategory) {
+					this.homePage.categories = [...this.homePage.categories, { _id: oldCategory._id, name: oldCategory.name }];
+				}
 			}
 		},
 
-		async mounted() {
-			await this.getSetting();
+		async handleSaveSetting() {
+			let formData = new FormData();
 
-			this.homePage.headerBg = [{ path: `${this.API_URL}/settings-images/${this.settings.homePage.headerBg}` }];
-			this.studentCoursesPage.headerBg = [{ path: `${this.API_URL}/settings-images/${this.settings.studentCoursesPage.headerBg}` }];
-			this.setting.appName = this.settings.appName;
-			this.setting.logoDark = [{ path: `${this.API_URL}/settings-images/${this.settings.logoDark}` }];
+			formData.set("appName", this.setting.appName);
 
-			if (this.settings.homePage.categories && this.settings.homePage.categories.length > 0) {
-				this.settings.homePage.categories.forEach((categoryId) => {
-					let category = this.categoriesOptions.find((category) => category._id === categoryId);
-					if (category) {
-						this.homePage.categories.push({ _id: category._id, name: category.name });
-					}
-				});
+			formData.set("logoDark", this.setting.logoDark);
+
+			this.$v.setting.$touch();
+
+			if (this.$v.setting.$invalid) return;
+
+			try {
+				this.isLoading = true;
+
+				let config = { headers: { "Content-Type": "multipart/form-data" } };
+
+				let data = { settings: formData, config };
+
+				let res = await this.$store.dispatch(`${this.namespace}/update`, data);
+
+				this.$showToast(res.msg);
+			} catch (error) {
+				this.$showToast(error.msg);
+			} finally {
+				this.isLoading = false;
 			}
 		},
 
-		computed: {
-			settings() {
-				return this.$store.state.Setting.settingsData;
-			},
-			categoriesOptions() {
-				return this.$store.state.Category.all.docs;
+		async handleSaveHomePage() {
+			let formData = new FormData();
+
+			formData.set("headerBg", this.homePage.headerBg);
+
+			this.homePage.categories.forEach((category, i) => {
+				formData.set(`categories[${i}]`, category._id);
+			});
+
+			this.$v.homePage.$touch();
+
+			if (this.$v.homePage.$invalid) return;
+
+			try {
+				this.isLoading = true;
+
+				let config = { headers: { "Content-Type": "multipart/form-data" } };
+
+				let data = { homePage: formData, config };
+
+				let res = await this.$store.dispatch(`${this.namespace}/updateHomePage`, data);
+
+				this.$showToast(res.msg);
+			} catch (error) {
+				this.$showToast(error.msg);
+			} finally {
+				this.isLoading = false;
 			}
 		},
 
-		methods: {
-			getSetting() {
-				return this.$store.dispatch("Setting/showSettings");
-			},
+		async handleSaveStudentCoursesPage() {
+			let formData = new FormData();
 
-			addCategory(newCategory) {
-				if (newCategory) {
-					let oldCategory = this.categoriesOptions.find((category) => category.name == newCategory);
+			formData.set("headerBg", this.studentCoursesPage.headerBg);
 
-					if (oldCategory) {
-						this.homePage.categories = [...this.homePage.categories, { _id: oldCategory._id, name: oldCategory.name }];
-					}
-				}
-			},
+			this.$v.studentCoursesPage.$touch();
 
-			uploadHomePageHeaderBg(formData, _index, fileList) {
-				this.homePage.headerBg = fileList;
+			if (this.$v.studentCoursesPage.$invalid) return;
 
-				formData.forEach((file) => {
-					this.homePageFormData.append("headerBg", file);
-				});
-			},
+			try {
+				this.isLoading = true;
 
-			beforeRemoveHomePageHeaderBg(_index, done) {
-				this.homePage.headerBg = [];
+				let config = { headers: { "Content-Type": "multipart/form-data" } };
 
-				this.homePageFormData.delete("headerBg");
+				let data = { studentCoursesPage: formData, config };
 
-				done();
-				// var r = confirm("remove header image");
+				let res = await this.$store.dispatch(`${this.namespace}/updateStudentCoursesPage`, data);
 
-				// if (r == true) return done();
-			},
-
-			uploadStudentCoursesPageHeaderBg(formData, _index, fileList) {
-				this.studentCoursesPage.headerBg = fileList;
-
-				formData.forEach((file) => {
-					this.studentCoursesPageFormData.append("headerBg", file);
-				});
-			},
-
-			beforeRemoveStudentCoursesPageHeaderBg(_index, done) {
-				this.studentCoursesPage.headerBg = [];
-
-				this.studentCoursesPageFormData.delete("headerBg");
-
-				done();
-				// var r = confirm("remove header image");
-
-				// if (r == true) return done();
-			},
-
-			uploadLogoLight(formData, _index, fileList) {
-				this.setting.logoDark = fileList;
-
-				formData.forEach((file) => {
-					this.settingFormData.append("logoDark", file);
-				});
-			},
-
-			beforeRemoveLogoLight(_index, done) {
-				this.setting.logoDark = [];
-
-				this.settingFormData.delete("logoDark");
-
-				done();
-				// var r = confirm("remove logo");
-
-				// if (r == true) return done();
-			},
-
-			async handleSaveSetting() {
-				this.settingFormData.set("appName", this.setting.appName);
-
-				this.$v.setting.$touch();
-
-				if (this.$v.setting.$invalid) return;
-
-				try {
-					this.isLoading = true;
-
-					let config = { headers: { "Content-Type": "multipart/form-data" } };
-
-					let data = { settings: this.settingFormData, config };
-
-					let res = await this.$store.dispatch(`${this.namespace}/update`, data);
-
-					this.$showToast(res.msg);
-				} catch (error) {
-					this.$showToast(error.msg);
-				} finally {
-					this.isLoading = false;
-				}
-			},
-
-			async handleSaveHomePage() {
-				this.homePage.categories.forEach((category, i) => {
-					this.homePageFormData.set(`categories[${i}]`, category._id);
-				});
-
-				this.$v.homePage.$touch();
-
-				if (this.$v.homePage.$invalid) return;
-
-				try {
-					this.isLoading = true;
-
-					let config = { headers: { "Content-Type": "multipart/form-data" } };
-
-					let data = { homePage: this.homePageFormData, config };
-
-					let res = await this.$store.dispatch(`${this.namespace}/updateHomePage`, data);
-
-					this.$showToast(res.msg);
-				} catch (error) {
-					this.$showToast(error.msg);
-				} finally {
-					this.isLoading = false;
-				}
-			},
-
-			async handleSaveStudentCoursesPage() {
-				this.$v.studentCoursesPage.$touch();
-
-				if (this.$v.studentCoursesPage.$invalid) return;
-
-				try {
-					this.isLoading = true;
-
-					let config = { headers: { "Content-Type": "multipart/form-data" } };
-
-					let data = { studentCoursesPage: this.studentCoursesPageFormData, config };
-
-					let res = await this.$store.dispatch(`${this.namespace}/updateStudentCoursesPage`, data);
-
-					this.$showToast(res.msg);
-				} catch (error) {
-					this.$showToast(error.msg);
-				} finally {
-					this.isLoading = false;
-				}
+				this.$showToast(res.msg);
+			} catch (error) {
+				this.$showToast(error.msg);
+			} finally {
+				this.isLoading = false;
 			}
 		}
-	};
+	}
+};
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style lang="scss">
-	.multiselect__tags {
-		font-size: 12px;
-	}
-	.multiselect,
-	.multiselect__input,
-	.multiselect__single {
-		font-size: 13px;
-	}
+.multiselect__tags {
+	font-size: 12px;
+}
+.multiselect,
+.multiselect__input,
+.multiselect__single {
+	font-size: 13px;
+}
 </style>
