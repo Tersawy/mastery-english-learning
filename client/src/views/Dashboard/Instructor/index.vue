@@ -96,25 +96,24 @@
 				<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
 			</b-col>
 		</b-row>
-		<DeleteFieldModal msg="Are you sure to delete this instructor ?" @done="removeInstructor" modal-id="deleteInstructorModal" />
+		<DeleteModal field="Instructor" ref="deleteInstructorModal" @ok="removeInstructor" />
 		<InstructorForm />
 	</dashboard-layout>
 </template>
 
 <script>
 import dataTableMixin from "@/mixins/dataTableMixin";
-import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
+import DeleteModal from "@/components/DeleteModal.vue";
 import InstructorForm from "@/components/dashboard/instructor/InstructorForm.vue";
 import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 export default {
 	mixins: [dataTableMixin],
 
-	components: { DashboardLayout, DeleteFieldModal, InstructorForm },
+	components: { DashboardLayout, DeleteModal, InstructorForm },
 
 	data() {
 		return {
 			namespace: "Instructor",
-			instructor: {},
 			fields: [
 				{ key: "image", lable: "Image", sortable: true },
 				{ key: "username", lable: "Username", sortable: true },
@@ -126,23 +125,7 @@ export default {
 		};
 	},
 
-	computed: {},
-
 	methods: {
-		async showCourses() {
-			try {
-				this.$store.commit("Instructor/setOne", this.instructor);
-
-				await this.$store.dispatch("Instructor/courses");
-			} catch (err) {
-				//
-			}
-
-			this.$nextTick(() => {
-				this.$bvModal.show("instructorCourses");
-			});
-		},
-
 		createInstructor() {
 			this.$store.commit("Instructor/setOne", {});
 			this.$bvModal.show("instructorForm");
@@ -154,19 +137,18 @@ export default {
 		},
 
 		showDeleteInstructor(instructor) {
-			this.instructor = instructor;
-			this.$bvModal.show("deleteInstructorModal");
+			this.$refs.deleteInstructorModal.open(instructor);
 		},
 
-		async removeInstructor() {
+		async removeInstructor(instructor) {
 			try {
-				let res = await this.$store.dispatch("Instructor/remove", this.instructor);
+				this.$refs.deleteInstructorModal.setBusy(true);
+
+				let res = await this.$store.dispatch("Instructor/remove", instructor);
 
 				if (res && res.msg) this.setGlobalSuccess(res.msg);
 
-				this.$nextTick(() => {
-					this.$bvModal.hide("deleteInstructorModal");
-				});
+				this.$nextTick(this.$refs.deleteInstructorModal.close);
 			} catch (err) {
 				//
 			}

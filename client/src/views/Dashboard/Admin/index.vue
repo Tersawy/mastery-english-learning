@@ -97,25 +97,24 @@
 				<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
 			</b-col>
 		</b-row>
-		<DeleteFieldModal msg="Are you sure to delete this admin ?" @done="removeAdmin" modal-id="deleteAdminModal" />
+		<DeleteModal field="Admin" ref="deleteAdminModal" @ok="removeAdmin" />
 		<AdminForm />
 	</dashboard-layout>
 </template>
 
 <script>
 import dataTableMixin from "@/mixins/dataTableMixin";
-import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
+import DeleteModal from "@/components/DeleteModal.vue";
 import AdminForm from "@/components/dashboard/admin/AdminForm.vue";
 import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 export default {
 	mixins: [dataTableMixin],
 
-	components: { DashboardLayout, DeleteFieldModal, AdminForm },
+	components: { DashboardLayout, AdminForm, DeleteModal },
 
 	data() {
 		return {
 			namespace: "Admin",
-			admin: {},
 			fields: [
 				{ key: "image", lable: "Image", sortable: true },
 				{ key: "username", lable: "Username", sortable: true },
@@ -127,12 +126,9 @@ export default {
 		};
 	},
 
-	computed: {},
-
 	methods: {
 		showDeleteAdmin(admin) {
-			this.admin = admin;
-			this.$bvModal.show("deleteAdminModal");
+			this.$refs.deleteAdminModal.open(admin);
 		},
 
 		createAdmin() {
@@ -145,15 +141,15 @@ export default {
 			this.$bvModal.show("adminForm");
 		},
 
-		async removeAdmin() {
+		async removeAdmin(admin) {
 			try {
-				let res = await this.$store.dispatch("Admin/remove", this.admin);
+				this.$refs.deleteAdminModal.setBusy(true);
+
+				let res = await this.$store.dispatch("Admin/remove", admin);
 
 				if (res && res.msg) this.setGlobalSuccess(res.msg);
 
-				this.$nextTick(() => {
-					this.$bvModal.hide("deleteAdminModal");
-				});
+				this.$nextTick(this.$refs.deleteAdminModal.close);
 			} catch (err) {
 				//
 			}

@@ -96,25 +96,24 @@
 				<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
 			</b-col>
 		</b-row>
-		<DeleteFieldModal msg="Are you sure to delete this student ?" @done="removeStudent" modal-id="deleteStudentModal" />
+		<DeleteModal field="Student" ref="deleteStudentModal" @ok="removeStudent" />
 		<StudentForm />
 	</dashboard-layout>
 </template>
 
 <script>
 import dataTableMixin from "@/mixins/dataTableMixin";
-import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
+import DeleteModal from "@/components/DeleteModal.vue";
 import StudentForm from "@/components/dashboard/student/StudentForm.vue";
 import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
 export default {
 	mixins: [dataTableMixin],
 
-	components: { DashboardLayout, DeleteFieldModal, StudentForm },
+	components: { DashboardLayout, DeleteModal, StudentForm },
 
 	data() {
 		return {
 			namespace: "Student",
-			student: {},
 			fields: [
 				{ key: "image", lable: "Image", sortable: true },
 				{ key: "fullname", lable: "Fullname", sortable: true },
@@ -126,23 +125,7 @@ export default {
 		};
 	},
 
-	computed: {},
-
 	methods: {
-		async showCourses() {
-			try {
-				this.$store.commit("Student/setOne", this.student);
-
-				await this.$store.dispatch("Student/courses");
-			} catch (err) {
-				//
-			}
-
-			this.$nextTick(() => {
-				this.$bvModal.show("studentCourses");
-			});
-		},
-
 		createStudent() {
 			this.$store.commit("Student/setOne", {});
 			this.$bvModal.show("studentForm");
@@ -154,19 +137,18 @@ export default {
 		},
 
 		showDeleteStudent(student) {
-			this.student = student;
-			this.$bvModal.show("deleteStudentModal");
+			this.$refs.deleteStudentModal.open(student);
 		},
 
-		async removeStudent() {
+		async removeStudent(student) {
 			try {
-				let res = await this.$store.dispatch("Student/remove", this.student);
+				this.$refs.deleteStudentModal.setBusy(true);
+
+				let res = await this.$store.dispatch("Student/remove", student);
 
 				if (res && res.msg) this.setGlobalSuccess(res.msg);
 
-				this.$nextTick(() => {
-					this.$bvModal.hide("deleteStudentModal");
-				});
+				this.$nextTick(this.$refs.deleteStudentModal.close);
 			} catch (err) {
 				//
 			}
