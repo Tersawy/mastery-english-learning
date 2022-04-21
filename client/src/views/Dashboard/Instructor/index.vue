@@ -9,7 +9,7 @@
 		</b-breadcrumb>
 
 		<b-row class="mb-30px">
-			<b-col cols="4">
+			<b-col cols="8" lg="6">
 				<b-form-group class="mb-0">
 					<b-input-group>
 						<b-form-input placeholder="Search in Instructors" v-model="search" />
@@ -29,31 +29,9 @@
 			</b-col>
 		</b-row>
 
-		<b-modal id="dropdownActionModal" hide-header hide-footer body-class="p-0" centered size="sm">
-			<ul class="m-0 p-0 list-unstyled">
-				<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="showCourses">
-					<b-icon icon="eye" scale="0.8"></b-icon>
-					<span class="mx-2 text-muted">Show Courses</span>
-				</b-dropdown-item>
-
-				<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="editInstructor">
-					<b-icon icon="pencil-square" scale="0.8"></b-icon>
-					<span class="mx-2 text-muted">Edit Instructor</span>
-				</b-dropdown-item>
-
-				<hr class="m-0" />
-
-				<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" v-b-modal.deleteInstructorModal>
-					<b-icon icon="trash" scale="0.8"></b-icon>
-					<span class="mx-2 text-muted">Delete Instructor</span>
-				</b-dropdown-item>
-			</ul>
-		</b-modal>
-
 		<b-table
 			show-empty
 			stacked="lg"
-			responsive
 			hover
 			sort-icon-left
 			:busy="tableIsBusy"
@@ -77,7 +55,24 @@
 						class="ml-2 c-pointer"
 						switch
 					></b-form-checkbox>
-					<b-icon @click="showActions(row.item)" icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+					<b-dropdown toggle-class="p-0 bg-transparent text-dark border-0" toggle-tag="div" no-caret right>
+						<template #button-content>
+							<b-icon icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+						</template>
+
+						<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="editInstructor({ ...row.item })">
+							<b-icon icon="pencil-square" scale="0.8"></b-icon>
+							<span class="mx-2 text-muted">Edit Instructor</span>
+						</b-dropdown-item>
+
+						<hr class="m-0" />
+
+						<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" @click="showDeleteInstructor({ ...row.item })">
+							<b-icon icon="trash" scale="0.8"></b-icon>
+
+							<span class="mx-2 text-muted">Delete Instructor</span>
+						</b-dropdown-item>
+					</b-dropdown>
 				</div>
 			</template>
 
@@ -107,88 +102,87 @@
 </template>
 
 <script>
-	import dataTableMixin from "@/mixins/dataTableMixin";
-	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
-	import InstructorForm from "@/components/dashboard/instructor/InstructorForm.vue";
-	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
-	export default {
-		mixins: [dataTableMixin],
+import dataTableMixin from "@/mixins/dataTableMixin";
+import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
+import InstructorForm from "@/components/dashboard/instructor/InstructorForm.vue";
+import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
+export default {
+	mixins: [dataTableMixin],
 
-		components: { DashboardLayout, DeleteFieldModal, InstructorForm },
+	components: { DashboardLayout, DeleteFieldModal, InstructorForm },
 
-		data() {
-			return {
-				namespace: "Instructor",
-				instructor: {},
-				fields: [
-					{ key: "image", lable: "Image", sortable: true },
-					{ key: "username", lable: "Username", sortable: true },
-					{ key: "fullname", lable: "Fullname", sortable: true },
-					{ key: "phone", lable: "Phone", sortable: true },
-					{ key: "email", lable: "Email", sortable: true },
-					{ key: "actions", lable: "Actions" }
-				]
-			};
+	data() {
+		return {
+			namespace: "Instructor",
+			instructor: {},
+			fields: [
+				{ key: "image", lable: "Image", sortable: true },
+				{ key: "username", lable: "Username", sortable: true },
+				{ key: "fullname", lable: "Fullname", sortable: true },
+				{ key: "phone", lable: "Phone", sortable: true },
+				{ key: "email", lable: "Email", sortable: true },
+				{ key: "actions", lable: "Actions" }
+			]
+		};
+	},
+
+	computed: {},
+
+	methods: {
+		async showCourses() {
+			try {
+				this.$store.commit("Instructor/setOne", this.instructor);
+
+				await this.$store.dispatch("Instructor/courses");
+			} catch (err) {
+				//
+			}
+
+			this.$nextTick(() => {
+				this.$bvModal.show("instructorCourses");
+			});
 		},
 
-		computed: {},
+		createInstructor() {
+			this.$store.commit("Instructor/setOne", {});
+			this.$bvModal.show("instructorForm");
+		},
 
-		methods: {
-			async showCourses() {
-				try {
-					this.$store.commit("Instructor/setOne", this.instructor);
+		editInstructor(instructor) {
+			this.$store.commit("Instructor/setOne", instructor);
+			this.$bvModal.show("instructorForm");
+		},
 
-					await this.$store.dispatch("Instructor/courses");
-				} catch (err) {
-					//
-				}
+		showDeleteInstructor(instructor) {
+			this.instructor = instructor;
+			this.$bvModal.show("deleteInstructorModal");
+		},
+
+		async removeInstructor() {
+			try {
+				let res = await this.$store.dispatch("Instructor/remove", this.instructor);
+
+				if (res && res.msg) this.setGlobalSuccess(res.msg);
 
 				this.$nextTick(() => {
-					this.$bvModal.show("instructorCourses");
+					this.$bvModal.hide("deleteInstructorModal");
 				});
-			},
+			} catch (err) {
+				//
+			}
+		},
 
-			createInstructor() {
-				this.$store.commit("Instructor/setOne", {});
-				this.$bvModal.show("instructorForm");
-			},
+		async changeStatus(user) {
+			try {
+				await this.$store.dispatch("Instructor/changeStatus", user);
 
-			editInstructor() {
-				this.$store.commit("Instructor/setOne", this.instructor);
-				this.$bvModal.show("instructorForm");
-			},
+				let msg = `${user.username} has been ${user.isActive ? "activated" : "deactivated"} sucessfully.`;
 
-			showActions(instructor) {
-				this.instructor = instructor;
-				this.$bvModal.show("dropdownActionModal");
-			},
-
-			async removeInstructor() {
-				try {
-					let res = await this.$store.dispatch("Instructor/remove", this.instructor);
-
-					if (res && res.msg) this.setGlobalSuccess(res.msg);
-
-					this.$nextTick(() => {
-						this.$bvModal.hide("deleteInstructorModal");
-						this.$bvModal.hide("dropdownActionModal");
-					});
-				} catch (err) {
-					//
-				}
-			},
-
-			async changeStatus(user) {
-				try {
-					await this.$store.dispatch("Instructor/changeStatus", user);
-
-					let msg = `${user.username} has been ${user.isActive ? "activated" : "deactivated"} sucessfully.`;
-
-					this.setGlobalSuccess(msg);
-				} catch (err) {
-					//
-				}
+				this.setGlobalSuccess(msg);
+			} catch (err) {
+				//
 			}
 		}
-	};
+	}
+};
 </script>

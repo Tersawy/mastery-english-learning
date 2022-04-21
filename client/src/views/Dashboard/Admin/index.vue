@@ -29,26 +29,9 @@
 			</b-col>
 		</b-row>
 
-		<b-modal id="dropdownActionModal" hide-header hide-footer body-class="p-0" centered size="sm">
-			<ul class="m-0 p-0 list-unstyled">
-				<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="editAdmin">
-					<b-icon icon="pencil-square" scale="0.8"></b-icon>
-					<span class="mx-2 text-muted">Edit Admin</span>
-				</b-dropdown-item>
-
-				<hr class="m-0" />
-
-				<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" @click="admin = row.item" v-b-modal.deleteAdminModal>
-					<b-icon icon="trash" scale="0.8"></b-icon>
-					<span class="mx-2 text-muted">Delete Admin</span>
-				</b-dropdown-item>
-			</ul>
-		</b-modal>
-
 		<b-table
 			show-empty
 			stacked="lg"
-			responsive
 			hover
 			sort-icon-left
 			:busy="tableIsBusy"
@@ -72,7 +55,25 @@
 						class="ml-2 c-pointer"
 						switch
 					></b-form-checkbox>
-					<b-icon @click="showActions(row.item)" icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+
+					<b-dropdown toggle-class="p-0 bg-transparent text-dark border-0" toggle-tag="div" no-caret right>
+						<template #button-content>
+							<b-icon icon="three-dots-vertical" scale="1.5" class="c-pointer"></b-icon>
+						</template>
+
+						<b-dropdown-item link-class="py-2 d-flex align-items-center" @click="editAdmin({ ...row.item })">
+							<b-icon icon="pencil-square" scale="0.8"></b-icon>
+							<span class="mx-2 text-muted">Edit Admin</span>
+						</b-dropdown-item>
+
+						<hr class="m-0" />
+
+						<b-dropdown-item link-class="py-2 d-flex align-items-center text-danger" @click="showDeleteAdmin({ ...row.item })">
+							<b-icon icon="trash" scale="0.8"></b-icon>
+
+							<span class="mx-2 text-muted">Delete Admin</span>
+						</b-dropdown-item>
+					</b-dropdown>
 				</div>
 			</template>
 
@@ -102,73 +103,73 @@
 </template>
 
 <script>
-	import dataTableMixin from "@/mixins/dataTableMixin";
-	import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
-	import AdminForm from "@/components/dashboard/admin/AdminForm.vue";
-	import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
-	export default {
-		mixins: [dataTableMixin],
+import dataTableMixin from "@/mixins/dataTableMixin";
+import DeleteFieldModal from "@/components/DeleteFieldModal.vue";
+import AdminForm from "@/components/dashboard/admin/AdminForm.vue";
+import DashboardLayout from "@/components/layouts/DashboardLayout.vue";
+export default {
+	mixins: [dataTableMixin],
 
-		components: { DashboardLayout, DeleteFieldModal, AdminForm },
+	components: { DashboardLayout, DeleteFieldModal, AdminForm },
 
-		data() {
-			return {
-				namespace: "Admin",
-				admin: {},
-				fields: [
-					{ key: "image", lable: "Image", sortable: true },
-					{ key: "username", lable: "Username", sortable: true },
-					{ key: "fullname", lable: "Fullname", sortable: true },
-					{ key: "phone", lable: "Phone", sortable: true },
-					{ key: "email", lable: "Email", sortable: true },
-					{ key: "actions", lable: "Actions" }
-				]
-			};
+	data() {
+		return {
+			namespace: "Admin",
+			admin: {},
+			fields: [
+				{ key: "image", lable: "Image", sortable: true },
+				{ key: "username", lable: "Username", sortable: true },
+				{ key: "fullname", lable: "Fullname", sortable: true },
+				{ key: "phone", lable: "Phone", sortable: true },
+				{ key: "email", lable: "Email", sortable: true },
+				{ key: "actions", lable: "Actions" }
+			]
+		};
+	},
+
+	computed: {},
+
+	methods: {
+		showDeleteAdmin(admin) {
+			this.admin = admin;
+			this.$bvModal.show("deleteAdminModal");
 		},
 
-		computed: {},
+		createAdmin() {
+			this.$store.commit("Admin/setOne", {});
+			this.$bvModal.show("adminForm");
+		},
 
-		methods: {
-			showActions(admin) {
-				this.admin = admin;
-				this.$bvModal.show("dropdownActionModal");
-			},
+		editAdmin(admin) {
+			this.$store.commit("Admin/setOne", admin);
+			this.$bvModal.show("adminForm");
+		},
 
-			createAdmin() {
-				this.$store.commit("Admin/setOne", {});
-				this.$bvModal.show("adminForm");
-			},
+		async removeAdmin() {
+			try {
+				let res = await this.$store.dispatch("Admin/remove", this.admin);
 
-			editAdmin() {
-				this.$store.commit("Admin/setOne", this.admin);
-				this.$bvModal.show("adminForm");
-			},
+				if (res && res.msg) this.setGlobalSuccess(res.msg);
 
-			async removeAdmin() {
-				try {
-					let res = await this.$store.dispatch("Admin/remove", this.admin);
+				this.$nextTick(() => {
+					this.$bvModal.hide("deleteAdminModal");
+				});
+			} catch (err) {
+				//
+			}
+		},
 
-					if (res && res.msg) this.setGlobalSuccess(res.msg);
+		async changeStatus(user) {
+			try {
+				await this.$store.dispatch("Admin/changeStatus", user);
 
-					this.$nextTick(() => {
-						this.$bvModal.hide("deleteAdminModal");
-					});
-				} catch (err) {
-					//
-				}
-			},
+				let msg = `${user.username} has been ${user.isActive ? "activated" : "deactivated"} sucessfully.`;
 
-			async changeStatus(user) {
-				try {
-					await this.$store.dispatch("Admin/changeStatus", user);
-
-					let msg = `${user.username} has been ${user.isActive ? "activated" : "deactivated"} sucessfully.`;
-
-					this.setGlobalSuccess(msg);
-				} catch (err) {
-					//
-				}
+				this.setGlobalSuccess(msg);
+			} catch (err) {
+				//
 			}
 		}
-	};
+	}
+};
 </script>
