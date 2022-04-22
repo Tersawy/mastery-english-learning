@@ -20,9 +20,33 @@ const handleError = require("./helpers/handleError");
 
 const path = require("path");
 
-app.use(express.static(path.join(__dirname, "./public/dist")));
+const { readdirSync, existsSync } = require("fs");
 
 app.use((req, res, next) => {
+    let first = req.path.split("/")[1];
+
+    if (first == "api") return next();
+
+    let buildDir = path.resolve(path.join(__dirname, "../", "public", "build"));
+    
+    let buildChildrens = readdirSync(buildDir);
+
+    let directories = buildChildrens.filter(file => !file.includes("."));
+
+    let files = buildChildrens.filter(file => file.includes("."));
+
+    let isFile = files.find(file => file === first);
+
+    if (isFile) return res.sendFile(path.join(buildDir, first));
+
+    let isDir = directories.find(dir => dir === first);
+
+    if (isDir) {
+        let fileExists = existsSync(path.join(buildDir, req.path));
+
+        if (fileExists) return res.sendFile(path.join(buildDir, req.path));
+    }
+
     next();
 })
 
@@ -56,7 +80,7 @@ for (let route of routes) {
     app.use("/api/v2" + route.path, require("./routes/" + route.file));
 }
 
-app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "../public/dist/index.html")));
+app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "../public/build/index.html")));
 
 app.use((err, req, res, next) => {
     handleError(err, (error) => res.status(error.status).json(error));
